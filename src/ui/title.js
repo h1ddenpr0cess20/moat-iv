@@ -23,7 +23,7 @@ export function createTitle({ seed, difficulty, disasters, size, sizes, canConti
   };
   const loadBtn = h('button.btn', { onclick: () => { shelf.hidden = !shelf.hidden; } }, 'Load a saved city');
   const el = h('div.title-screen', {},
-    h('h1', {}, 'MOAT IV', h('small', {}, 'Furniture City')),
+    h('h1', {}, 'MOAT IV', h('small', {}, 'Ice Moat')),
     h('div.tag-line', {}, 'You are the founder whose hotel tower stands on the Grand River, in the middle of downtown Grand Rapids. You walled it in with ice. Now build the company town on the real map: zone the land, lay the streets, and the real buildings of downtown rise on their lots.'),
     h('div.panel.title-card', {},
       canContinue ? h('button.btn.gold', { onclick: onContinue }, 'Continue your city') : null,

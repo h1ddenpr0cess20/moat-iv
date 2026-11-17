@@ -24,7 +24,7 @@ import './style.css';
 
 function chronicle(ctx) {
   return {
-    title: 'Furniture City News',
+    title: 'Ice Moat News',
     icon: 'scroll',
     refresh: true,
     draw(body) {

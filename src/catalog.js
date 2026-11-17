@@ -104,7 +104,7 @@ export const CASTLE_LEVELS = Object.freeze([
   { name: 'Company Offices', cost: null, weeks: 0, wards: 3, jobs: 4, rank: 0, desc: 'Your company’s first tower, and your penthouse on top. Glass and white stone on a plaza by the river.' },
   { name: 'Corporate Headquarters', cost: { gold: 600 }, weeks: 16, wards: 6, jobs: 8, rank: 1, desc: 'A company this size deserves a third setback and a taller spire.' },
   { name: 'Grand Plaza', cost: { gold: 1800 }, weeks: 28, wards: 12, jobs: 14, rank: 2, desc: 'A gold crown you can see from the pier, and a helipad for the board.' },
-  { name: 'Furniture City Tower', cost: { gold: 5000 }, weeks: 48, wards: 49, jobs: 24, rank: 3, desc: 'The tallest tower in Michigan, lit gold all night. You have made Grand Rapids the Furniture Capital of the World.' },
+  { name: 'Ice Moat Tower', cost: { gold: 5000 }, weeks: 48, wards: 49, jobs: 24, rank: 3, desc: 'The tallest tower in Michigan, lit gold all night. You have made Grand Rapids the Furniture Capital of the World.' },
 ]);
 
 /** The ranks, and what a city needs to be called one. */

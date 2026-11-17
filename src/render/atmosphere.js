@@ -59,7 +59,7 @@ export function createAtmosphere({ GFX, stage, sunDir, materials, terrain, water
     update(dt, { week, frac = 0, storm = false }) {
       const inYearF = (week % WEEKS_PER_YEAR) + frac;
       const yearT = inYearF / WEEKS_PER_YEAR;
-      // It is winter in Furniture City all year: the leaves are down, the ground is white and the river is frozen.
+      // It is winter in Ice Moat all year: the leaves are down, the ground is white and the river is frozen.
       const season = 3;
       const k = 0.5;
       flicker += dt;
