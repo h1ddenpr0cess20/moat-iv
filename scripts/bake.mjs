@@ -112,7 +112,7 @@ for (const b of read('buildings.json')) {
 const tower = read('buildings.json').find((b) => b.name === 'Amway Grand Hotel' && Math.hypot(bbox(b.rings)[0] - CX, bbox(b.rings)[1] - CZ) < 60);
 if (tower) {
   const m = lidar[tower.id];
-  writeFileSync(`${OUT}/tower.json`, JSON.stringify({ id: tower.id, name: tower.name, use: tower.use, height: tower.height, rings: tower.rings.map((r) => r.map(([x, z]) => [r1(x), r1(z)])), measured: m ? { height: m.height, cover: m.cover } : undefined }));
+  writeFileSync(`${OUT}/tower.json`, JSON.stringify({ id: tower.id, name: tower.name, use: tower.use, height: tower.height, rings: tower.rings.map((r) => r.map(([x, z]) => [r1(x), r1(z)])), measured: m ? { height: m.height, cover: m.cover, ...(m.parts ? { parts: m.parts.map(([lo, hi, ps]) => [lo, hi, ps.map((p) => p.map((r) => r.map(([x, z]) => [r1(x), r1(z)])))]) } : {}) } : undefined, roof: tower.roof, floors: tower.floors }));
 }
 parcels.sort((p, q) => (p.id < q.id ? -1 : 1));
 writeFileSync(`${OUT}/parcels.json`, JSON.stringify(parcels));

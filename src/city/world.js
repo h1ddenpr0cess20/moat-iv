@@ -340,6 +340,8 @@ export function buildCity(data, { tile = null, alone = true, outer = null, bare 
       return bare(ci - 1, cj) + bare(ci + 1, cj) + bare(ci, cj - 1) + bare(ci, cj + 1) >= 2;
     };
   }
+  // Bare: nothing is built, so nothing is paved where the aerial photo saw a roof or a lot: the ground is the land's own.
+  if (bare) paved = () => false;
   terrain.mesh(builder, {
     grass: 'ground:turf', paved: 'road:concrete', built: paved,
     skip: tile || reach ? (x, z) => x < own[0] || x > own[2] || z < own[1] || z > own[3] || (hole && x > hole[0] && x < hole[2] && z > hole[1] && z < hole[3]) : null,
@@ -355,7 +357,7 @@ export function buildCity(data, { tile = null, alone = true, outer = null, bare 
   // The riverfront round the amphitheater, where the city's yard was: lawn (the Green Ribbon along the river).
   if (!tile && !bare) drape(builder, terrain, 'ground:turf', [SITES[1]], { lift: 0.1, tile: 1.5, color: [0.92, 1.02, 0.86], most: 12 });
   for (const p of data.infrastructure) {
-    if (!p.rings || p.subtype !== 'transit' || p.class !== 'parking') continue;
+    if (bare || !p.rings || p.subtype !== 'transit' || p.class !== 'parking') continue;
     // Calder Plaza is a garage's roof, and the map calls it parking; on top it is a plaza of pale concrete.
     if (inside(p.rings, VITESSE[0], VITESSE[1])) drape(builder, terrain, 'road:sidewalk', p.rings, { lift: 0.14, tile: 3, color: [1.04, 1.02, 0.98], most: 12 });
     else drape(builder, terrain, 'road:lot', p.rings, { lift: 0.12, tile: 2, color: [1, 1, 1], most: 12 });
