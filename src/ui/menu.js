@@ -56,7 +56,7 @@ export function menuDialog(ctx) {
         }),
         h('h3', {}, 'How to play'),
         h('table', {}, h('tbody', {}, ...CONTROLS.map(([k, v]) => h('tr', {}, h('td', {}, h('b', {}, k)), h('td', {}, v))))),
-        h('p.dim', { html: `${icon('castle', 16)} <b>Moat IV: Furniture City</b> is built on the Madness Engine. Seed: <b>${game.seed}</b> · ${game.difficulty}.` }));
+        h('p.dim', { html: `${icon('castle', 16)} <b>Moat IV: Ice Moat</b> is built on the Madness Engine. Seed: <b>${game.seed}</b> · ${game.difficulty}.` }));
     },
   };
 }

@@ -1,29 +1,18 @@
-import { MONTHS, SEASONS, WEEKS_PER_MONTH, WEEKS_PER_YEAR } from '../config.js';
+/**
+ * Time in this city is counted in weeks, and in months of four of them from the first: it is winter all the time, so no month has a name and there are no years and no
+ * seasons. (`calendar` still answers in the shape the older code asks, always midwinter.)
+ */
 
-/** The date of a week: week 0 is the first of March, and a year is forty-eight weeks. */
+/** Week 0 is the first week; a "month" of four weeks is only what the budget is struck on. */
 export function calendar(week) {
-  const year = Math.floor(week / WEEKS_PER_YEAR) + 1;
-  const inYear = week % WEEKS_PER_YEAR;
-  const month = Math.floor(inYear / WEEKS_PER_MONTH);
-  const season = Math.floor(month / 3);
   return {
-    week, year, inYear, month, monthName: MONTHS[month], season, seasonName: SEASONS[season],
-    weekInMonth: inYear % WEEKS_PER_MONTH, weekInSeason: inYear % (WEEKS_PER_MONTH * 3),
-    /** How far through the year, 0 up to 1. */
-    t: inYear / WEEKS_PER_YEAR,
+    week, year: 1, inYear: week, month: 9, monthName: '', season: 3, seasonName: 'Winter',
+    weekInMonth: week % 4, weekInSeason: week % 12, t: 0,
   };
 }
 
-/** How cold it is for the hearth: 1 in the winter months, half in November and March, 0 otherwise. */
-export function coldness(week) {
-  const { month } = calendar(week);
-  if (month >= 9) return 1;
-  if (month === 8 || month === 0) return 0.5;
-  return 0;
-}
+/** How cold it is for the hearth: always winter. */
+export const coldness = () => 1;
 
-export const dateText = (week) => {
-  const c = calendar(week);
-  return `${c.monthName}, Year ${c.year}`;
-};
-
+/** The time as people read it: months counted from the first, four weeks each, with no names. */
+export const dateText = (week) => `Month ${Math.floor(week / 4) + 1}`;

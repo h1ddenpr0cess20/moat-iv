@@ -4,12 +4,12 @@ import { tileRange } from '../world/world.js';
 
 /**
  * The walls: ice. On every wall tile the engine's ice cube (the block its winter walls are built of: the clear
- * shell and its frost rim, nothing inside), two high, standing on the ground as it lies. The gates are the road
+ * shell and its frost rim, nothing inside), three high, standing on the ground as it lies. The gates are the road
  * tiles through them, which carry no blocks. Rebuilt when the walls change (`world.wver`).
  */
 
 /** Blocks a wall is high. */
-const HIGH = 2;
+const HIGH = 3;
 
 export function createWalls(GFX, world, scene) {
   const group = new GFX.Group();

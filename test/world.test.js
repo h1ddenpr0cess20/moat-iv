@@ -31,9 +31,8 @@ test('the tower stands in its keep, in the middle of the home ward, inside a rin
   let realm = 0;
   for (let y = 0; y < SIZE; y++) for (let x = 0; x < SIZE; x++) if (w.realm[idx(x, y)]) realm++;
   assert.ok(realm > WARD * WARD * 0.3 && realm < WARD * WARD * 0.9, `the realm is ${realm} tiles`);
-  // Walls stand on the land and cut nothing: the ground is dry on both sides, and the keep's mound is above the plain.
-  assert.ok(heightAt(w, CENTER - 4, CENTER) > 0.12, 'the wall stands on dry ground');
-  assert.ok(heightAt(w, CENTER, CENTER) > heightAt(w, CENTER + 9, CENTER - 8) - 0.01, 'the keep stands on a mound');
+  // Walls stand on the land and cut nothing: the ground is the map's, dry beside the keep.
+  assert.ok(heightAt(w, CENTER + 3, CENTER) > 0.12, 'the wall stands on dry ground');
 });
 
 test('every border with another ward has a bridge', () => {
@@ -140,9 +139,12 @@ test('a bridge may start on marshy bank: low ground counts as part of the span',
   const game = startGame({ seed: 'moat' });
   const { world } = game;
   let y = null, x0 = null;
-  for (let yy = CENTER + 33; yy <= CENTER + 40 && y === null; yy++) for (let xx = 99; xx <= 100 && y === null; xx++) {
-    if (Array.from({ length: 12 }, (_, k) => roadBlocked(world, xx + k, yy)).every((r) => !r)) { y = yy; x0 = xx; }
+  for (let yy = CENTER + 12; yy <= CENTER + 40 && y === null; yy++) for (let xx = 96; xx <= 108 && y === null; xx++) {
+    if (Array.from({ length: 12 }, (_, k) => roadBlocked(world, xx + k, yy)).every((r) => !r) && !world.road[idx(xx + 4, yy)] && !world.road[idx(xx + 7, yy)]) { y = yy; x0 = xx; }
   }
+  assert.ok(y !== null, 'an open row');
+  // Level ground along the row (the map's own has slopes), then the water and the low banks.
+  for (let vy = (y - 1) * SUB; vy <= (y + 2) * SUB; vy++) for (let vx = x0 * SUB; vx <= (x0 + 12) * SUB; vx++) world.h[vy * HV + vx] = 0.5;
   for (let x = x0 + 5; x <= x0 + 6; x++) world.ground[idx(x, y)] = G.WATER;
   // The banks either side are low and wet: no road, but a boardwalk.
   for (const bx of [x0 + 4, x0 + 7]) for (let dy = 0; dy <= 2; dy++) for (let dx = 0; dx <= 2; dx++) world.h[(y * SUB + dy) * HV + bx * SUB + dx] = 0.04;

@@ -1,5 +1,5 @@
 import { RANKS, money } from '../catalog.js';
-import { calendar } from '../sim/calendar.js';
+import { calendar, dateText } from '../sim/calendar.js';
 import { headcount, housingCap } from '../sim/game.js';
 import { HOME_WARD } from '../config.js';
 import { wardId } from '../world/wards.js';
@@ -110,7 +110,7 @@ export function createHud(ctx) {
     const rank = RANKS[game.rank];
     title.textContent = `${game.world.wards[wardId(HOME_WARD, HOME_WARD)].name} · ${rank.name}`;
     const weather = ctx.scene.atmosphere.state;
-    date.innerHTML = `${icon(weather.rain ? 'rain' : SEASON_ICON[cal.season], 16)} ${cal.monthName} · Year ${cal.year}`;
+    date.innerHTML = `${icon(weather.rain ? 'rain' : SEASON_ICON[cal.season], 16)} ${dateText(game.week)}`;
   };
 
   const set = (key, text, { sub = '', low = false, warn = false, delta = null } = {}) => {

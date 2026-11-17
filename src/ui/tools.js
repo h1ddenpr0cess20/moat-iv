@@ -66,6 +66,8 @@ export function createTools(ctx) {
   tools.set = (id, patch = {}) => {
     if (tools.current !== id) { clearPreview(); drag = null; pending = null; }
     tools.current = id;
+    // The lots the real buildings stood on show only while zoning, which is when they are wanted.
+    scene.setLots?.(id === 'zone');
     if (patch.build) Object.assign(tools.opts.build, patch.build);
     if (patch.road) tools.opts.road = patch.road;
     if (patch.zone) tools.opts.zone = patch.zone;

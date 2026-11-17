@@ -1,75 +1,41 @@
-import { CENTER, GROUND, SIZE } from '../config.js';
-import { clamp, fbm, lerp, smoothstep } from '../rng.js';
+import { GROUND, SIZE } from '../config.js';
+import { clamp, fbm } from '../rng.js';
 import { HV, SUB, idx, tileRange, touchAll } from './world.js';
+import { groundOfMap, SCALE } from '../map.js';
+import { ORIGIN, TILE } from '../parcels.js';
 import gr from '../data/grand-rapids.json' with { type: 'json' };
 
 /**
- * The land is downtown Grand Rapids, Michigan, as it lies: the Grand River
- * running down the west side, the east bank rising away from it, the parks
- * and the lawns of the campuses. It is read from `src/data/grand-rapids.json`
- * (baked by scripts/bake.mjs from the 3d-city map: heights from USGS
- * lidar and SRTM, water and land use from Overture Maps, the trees from the
- * lidar's crowns). Nothing is built: no streets, no buildings. The footprints
- * the real buildings stand on are kept as parcels (see parcels.js) that say
- * what the lot has been good for.
+ * The land is downtown Grand Rapids, Michigan, as 3d-city has it: its ground (the satellite's heights with the river's
+ * bed cut in, built by 3d-city's own code: `src/city/terrain.js`), taken at the game's height vertices, at true scale,
+ * with the river's surface the game's water level. Nothing is built: no streets, no buildings. What the game keeps
+ * beside it, baked by scripts/bake.mjs from the same map, is the river and land use by tile, the footprints the
+ * real buildings stood on (parcels, see parcels.js) and how many trees the lidar saw.
  */
 
 export const GR = gr;
-/** The height the town's ground is level at, near the home ward. */
-export const PLATEAU = 0.9;
-/** Metres of the real city to a unit of height, and the deepest the river goes. */
-const RISE = 0.05;
-const RIVER_BED = -1.35;
-const BANK_MIN = 0.42;
 
 const N = gr.size;
-const V = N + 1;
-const metres = (vx, vy) => gr.heights.data[vy * V + vx] / 10;
+const toMetres = (vx, vy) => [ORIGIN[0] + (vx / SUB) * TILE, ORIGIN[1] + (vy / SUB) * TILE];
 
-/** Real height in metres at tile coordinates (x, z), bilinear, held at the edge. */
-function realAt(x, z) {
-  const gx = clamp(x, 0, N - 0.001), gz = clamp(z, 0, N - 0.001);
-  const i = Math.floor(gx), j = Math.floor(gz), fx = gx - i, fz = gz - j;
-  return metres(i, j) * (1 - fx) * (1 - fz) + metres(i + 1, j) * fx * (1 - fz) + metres(i, j + 1) * (1 - fx) * fz + metres(i + 1, j + 1) * fx * fz;
-}
-const HOME_M = realAt(CENTER, CENTER);
-
-/** The land's height with no water cut into it, at world (x, z); beyond the map it climbs gently into the hills round the town. */
+/** The ground's height at tile coordinates (x, z), in the game's units: 0 is the river's surface, a unit is a tile (SCALE metres). */
 export function baseHeight(seed, x, z) {
-  const out = Math.hypot(Math.max(0, -x, x - SIZE), Math.max(0, -z, z - SIZE));
-  const h = PLATEAU + (realAt(x, z) - HOME_M) * RISE;
-  return Math.max(BANK_MIN, h) + smoothstep(0, 40, out) * 1.2 + out * 0.012;
+  const { terrain } = groundOfMap();
+  const [mx, mz] = [ORIGIN[0] + x * TILE, ORIGIN[1] + z * TILE];
+  return (terrain.heightAt(mx, mz) - terrain.waterLevel) / SCALE;
 }
-
-/** A tile's water, 0 or 1; off the map it is whatever the nearest edge tile is. */
-const wet = (x, y) => gr.water[clamp(y, 0, N - 1)][clamp(x, 0, N - 1)] === '1';
 
 /** Fills `world` from the map. */
 export function generate(world) {
   const seed = world.seed;
   if (SIZE !== N) throw new Error(`the map is ${N} tiles and the game ${SIZE}`);
 
-  // How wet each height vertex is: the water of the tiles round it, blurred so the banks come out round.
-  let field = new Float32Array(HV * HV);
-  for (let vy = 0; vy < HV; vy++) for (let vx = 0; vx < HV; vx++) field[vy * HV + vx] = wet(Math.floor(vx / SUB - 0.01), Math.floor(vy / SUB - 0.01)) ? 1 : 0;
-  for (let pass = 0; pass < 3; pass++) {
-    const next = new Float32Array(HV * HV);
-    for (let vy = 0; vy < HV; vy++) for (let vx = 0; vx < HV; vx++) {
-      let s = 0, n = 0;
-      for (let dy = -2; dy <= 2; dy++) for (let dx = -2; dx <= 2; dx++) {
-        const x = vx + dx, y = vy + dy;
-        s += field[clamp(y, 0, HV - 1) * HV + clamp(x, 0, HV - 1)]; n++;
-      }
-      next[vy * HV + vx] = s / n;
-    }
-    field = next;
-  }
+  // The ground: 3d-city's, at every height vertex.
+  const { terrain } = groundOfMap();
   for (let vy = 0; vy < HV; vy++) {
     for (let vx = 0; vx < HV; vx++) {
-      const x = vx / SUB, z = vy / SUB;
-      const land = Math.max(BANK_MIN, baseHeight(seed, x, z));
-      const w = smoothstep(0.3, 0.72, field[vy * HV + vx]);
-      world.h[vy * HV + vx] = lerp(land, RIVER_BED, w);
+      const [mx, mz] = toMetres(vx, vy);
+      world.h[vy * HV + vx] = (terrain.heightAt(mx, mz) - terrain.waterLevel) / SCALE;
     }
   }
 
@@ -81,10 +47,8 @@ export function generate(world) {
     for (let x = 0; x < SIZE; x++) {
       const i = idx(x, y);
       const [lo, hi] = tileRange(world, x, y);
-      let under = 0;
-      for (let j = 0; j <= SUB; j++) for (let k = 0; k <= SUB; k++) if (world.h[(y * SUB + j) * HV + x * SUB + k] < 0.02) under++;
       let g = GROUND.GRASS;
-      if (under >= 5) g = GROUND.WATER;
+      if (gr.water[y][x] === '1') g = GROUND.WATER;
       else if (hi - lo > 1.15) g = GROUND.CLIFF;
       ground[i] = g;
       amount[i] = 0;
@@ -105,7 +69,7 @@ export function generate(world) {
         const nx = x + dx, ny = y + dy;
         if (nx >= 0 && ny >= 0 && nx < SIZE && ny < SIZE && ground[idx(nx, ny)] === GROUND.WATER) { near = true; break; }
       }
-      if (near && world.h[(y * SUB + 1) * HV + x * SUB + 1] < BANK_MIN + 0.06 && world.parcel[i] === 46) ground[i] = GROUND.SAND;
+      if (near && world.parcel[i] === 46 && world.h[(y * SUB + 1) * HV + x * SUB + 1] < 0.25) ground[i] = GROUND.SAND;
     }
   }
 

@@ -1,7 +1,9 @@
 import { DIRS } from '../config.js';
 import { BUILDINGS } from '../catalog.js';
 import { heightAt } from '../world/world.js';
-import { ORIGIN, TILE, TOWER, parcelByType, toMetres } from '../parcels.js';
+import { ORIGIN, TILE, TOWER, parcelByType, recordAt, toMetres } from '../parcels.js';
+import { Builder } from '../city/builder.js';
+import { devosPlace, vitesse } from '../city/rt/landmarks.js';
 import { Designs } from '../city/rt/buildings.js';
 import { materialFor } from '../city/rt/look.js';
 import { castsShadow } from './materials.js';
@@ -28,12 +30,12 @@ export function designFrame(GFX) {
 export function recordOf(b) {
   if (b.type === 'castle') return TOWER;
   const real = parcelByType.get(b.type);
-  if (real) return real.record;
+  if (real) return recordAt(real, b.x, b.y);
   const def = BUILDINGS[b.type], m = 1.4;
   const [x0, z0] = toMetres(b.x, b.y), [x1, z1] = toMetres(b.x + b.w, b.y + b.d);
   const ring = [[x0 + m, z0 + m], [x1 - m, z0 + m], [x1 - m, z1 - m], [x0 + m, z1 - m]];
   ring.push(ring[0]);
-  return { id: `lot${b.id}`, rings: [ring], use: def.design.use, height: def.design.h };
+  return { id: `lot${b.id}`, rings: [ring], use: def.design.use, height: def.design.h, kind: def.design.kind };
 }
 
 export function createDesigner(GFX, world) {
@@ -51,7 +53,21 @@ export function createDesigner(GFX, world) {
     const kept = cache.get(b.id);
     if (kept && kept.sig === sig) return kept.parts;
     const [dx, dy] = DIRS[b.front] ?? [0, 1];
-    const parts = (b.type === 'castle' || parcelByType.has(b.type) ? real : free).detail([[recordOf(b), [], [], [dx, -dy]]]);
+    const lot = parcelByType.get(b.type);
+    let parts;
+    if (lot?.set) {
+      // A set piece 3d-city draws as a whole (La Grande Vitesse, DeVos Place).
+      const builder = new Builder(), record = recordOf(b);
+      if (lot.set === 'devosplace') devosPlace(builder, ground, record.rings[0]);
+      else if (lot.set === 'vitesse') {
+        let cx = 0, cz = 0;
+        for (const [x, z] of record.rings[0].slice(0, 4)) { cx += x / 4; cz += z / 4; }
+        vitesse(builder, ground, [cx, -cz]);
+      }
+      parts = builder.finish();
+    } else {
+      parts = (b.type === 'castle' || lot ? real : free).detail([[recordOf(b), BUILDINGS[b.type]?.design?.names ?? [], [], [dx, -dy]]]);
+    }
     cache.set(b.id, { sig, parts });
     return parts;
   };

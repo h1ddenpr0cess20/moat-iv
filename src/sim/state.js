@@ -21,8 +21,7 @@ export function newGame({ seed = 'venice', difficulty = 'normal', disasters = tr
     /** Fires and earthquakes: off, the city only has its budget to answer to. */
     disasters,
     world,
-    // The game opens in the middle of November: the first snow.
-    week: 33,
+    week: 0,
     stock: { ...START.stock },
     pop: { ...START.pop },
     happiness: 62,

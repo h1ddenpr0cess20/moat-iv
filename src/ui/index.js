@@ -1,7 +1,6 @@
-import { calendar } from '../sim/calendar.js';
+import { dateText } from '../sim/calendar.js';
 import { HEARTS, blockAt } from '../sim/blocks.js';
 import { idx } from '../world/world.js';
-import { MONTHS } from '../config.js';
 import { createDialogs } from './dialogs.js';
 import { createTip, h } from './dom.js';
 import { createHud } from './hud.js';
@@ -25,14 +24,13 @@ import './style.css';
 
 function chronicle(ctx) {
   return {
-    title: 'Furniture City News',
+    title: 'Ice Moat News',
     icon: 'scroll',
     refresh: true,
     draw(body) {
       const rows = ctx.game.log.map((e) => {
-        const cal = calendar(e.week);
         return h('div.stat', { style: { cursor: e.at ? 'pointer' : 'default' }, onclick: () => { if (e.at) { ctx.dialogs.close(); ctx.scene.focusOn(e.at[0], e.at[1], { zoom: 0.8 }); } } },
-          h('span', { class: e.kind === 'bad' ? 'bad' : e.kind === 'good' ? 'good' : '' }, e.text), h('span.dim', {}, `${MONTHS[cal.month]}, Year ${cal.year}`));
+          h('span', { class: e.kind === 'bad' ? 'bad' : e.kind === 'good' ? 'good' : '' }, e.text), h('span.dim', {}, dateText(e.week)));
       });
       body.replaceChildren(...(rows.length ? rows : [h('p', {}, 'Nothing has happened yet.')]));
     },

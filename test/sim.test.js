@@ -81,8 +81,8 @@ test('a blizzard gives a week of warning, blows for two, and is over', () => {
   const game = startGame({ seed: 'venice' });
   const phases = [];
   game.on('hurricane', ({ phase }) => phases.push(phase));
-  // Into the season (December is month 9 of a year that starts in March), and make sure one comes.
-  game.week = 48 + 9 * 4;
+  // Past the first year's grace, and make sure one comes.
+  game.week = 48 + 4;
   const rnd = game.rnd;
   game.rnd = () => 0;
   step(game);

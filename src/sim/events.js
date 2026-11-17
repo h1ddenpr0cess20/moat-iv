@@ -1,7 +1,6 @@
 import { BUILDINGS, RANKS } from '../catalog.js';
 import { GROUND } from '../config.js';
 import { countNear } from '../world/buildings.js';
-import { calendar } from './calendar.js';
 import { CENTER } from '../config.js';
 import { removeBuilding } from '../world/buildings.js';
 import { ownedCount } from '../world/wards.js';
@@ -132,9 +131,8 @@ export function hurricanes(game) {
     }
     return;
   }
-  const month = calendar(game.week).month;
-  // March is month 0: the season runs from November to March.
-  if (!game.disasters || game.week < 48 || month < 8 && month !== 0 || game.rnd() > HURRICANE * (DIFFICULTY[game.difficulty] ?? 1)) return;
+  // It is winter all the time: a blizzard can come any week after the first year's grace.
+  if (!game.disasters || game.week < 48 || game.rnd() > HURRICANE * (DIFFICULTY[game.difficulty] ?? 1)) return;
   game.hurricane = { warn: 1, weeks: BLOWS, at: [game.world.size / 2, game.world.size / 2] };
   game.note('A blizzard is coming down off Lake Michigan! It hits next week.', 'bad');
   game.emit('hurricane', { phase: 'warning' });

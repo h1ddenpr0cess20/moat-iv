@@ -329,6 +329,8 @@ export class Designs {
     let look = LOOKS[b.id] ?? (b.name ? LOOKS[b.name] : null) ?? null;
     const h = look?.height ? +look.height : heightOf(b);
     let kind = look ? 'landmark' : archetype(b, h, area, names);
+    // Moat IV: a building that is asked for as a kind of building (a church, a gas station) is built as that kind.
+    if (b.kind && !look && this[`b_${b.kind}`]) kind = b.kind;
     // Built as a house whatever its use says: the Jenison Museum, an old house with a turret.
     const featured = FEATURED[b.name];
     if (featured) { kind = 'heritage'; look = null; }
