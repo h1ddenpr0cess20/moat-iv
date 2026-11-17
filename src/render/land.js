@@ -52,7 +52,7 @@ export async function createLand({ GFX, stage, progress = () => {} }) {
       if (!m || snowed.has(m) || !/^(ground:(turf|lawn)|surface:dirt)/.test(m.name ?? '')) return;
       snowed.add(m);
       m.map = null;
-      m.color.set('#c8d2dc').lerp(new GFX.Color('#e8eef4'), 1 - k);
+      m.color.set('#a2b0be').lerp(new GFX.Color('#c4cfda'), 1 - k);
       m.roughness = 0.92;
       m.needsUpdate = true;
     });
@@ -60,7 +60,7 @@ export async function createLand({ GFX, stage, progress = () => {} }) {
 
   let sky = 'noon';
   return {
-    group, ocean, terrain, city,
+    group, ocean, terrain, city, bounds, pixels,
     /** The ground's tint for a season (3 is winter) and the snow lying on it, 0 to 1. */
     terrainSet: { setSeason(season, k, lying) { if (lying > 0) snow(0.78 * lying); } },
     /** Once a frame, with the camera's target in tiles from the map's corner. */

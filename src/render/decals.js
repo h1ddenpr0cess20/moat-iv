@@ -3,7 +3,7 @@ import { FARM_ZONES, ZONES, ZONE_ID } from '../catalog.js';
 /** The zones drawn as crops rather than as a wash of the zone's color. */
 const FIELDS = new Set(FARM_ZONES.map((z) => ZONE_ID[z]));
 import { CHUNK, CHUNKS, ROAD } from '../config.js';
-import { HV, SUB, heightAt, idx, inb } from '../world/world.js';
+import { HV, SUB, idx, inb } from '../world/world.js';
 import { rgb } from 'madness-engine/mesher';
 import { freeGeometry } from './dispose.js';
 
@@ -26,8 +26,6 @@ const PAD = 8;
 const STRIDE = CELL + 2 * PAD;
 /** The roads' atlas: a column for each of the 16 ways a road meets its neighbors, and one that is solid; four rows (variants) for each kind of road. */
 const ROAD_COLS = 17, ROAD_ROWS = 12;
-/** The atlas rows each kind of road begins at. */
-const ROAD_ROW = { [ROAD.DIRT]: 0, [ROAD.COBBLE]: 4, [ROAD.AVENUE]: 8 };
 /** An avenue's half, by the way it meets its neighbors: which side its other half is on (N 1, E 2, S 4, W 8). Where both halves run straight on, one side of each is the other half. */
 const AVENUE_HALF = { 7: 2, 13: 8, 11: 1, 14: 4 };
 const SOLID = 16;
@@ -214,8 +212,6 @@ function paintFields() {
   return atlas;
 }
 
-/** The corners of a tile: which two sides meet there (N 1, E 2, S 4, W 8), and which way the diagonal neighbor is. */
-const CORNERS = [[0, 1, 2, 1, -1], [1, 2, 4, 1, 1], [2, 4, 8, -1, 1], [3, 8, 1, -1, -1]];
 
 /** The stage of a field's year, 0 to 5. */
 export function fieldStage(zone, crop, cal) {
@@ -277,17 +273,6 @@ export function createDecals(GFX, world, materials, scene) {
    * A square of a tile's corner, `size` of the tile along its sides, on the ground. `corner` is 0 for the
    * north-east, 1 south-east, 2 south-west, 3 north-west; `uv` is the cell it is cut from, as for `tileQuads`.
    */
-  const cornerQuad = (out, x, y, corner, uv, size) => {
-    const east = corner === 0 || corner === 1, south = corner === 1 || corner === 2;
-    const fu = east ? 1 - size : 0, fv = south ? 1 - size : 0;
-    const pts = [[fu, fv], [fu + size, fv], [fu + size, fv + size], [fu, fv + size]].map(([u, v]) => ({ x: x + u, z: y + v, y: heightAt(world, x + u, y + v) + LIFT, u, v }));
-    for (const k of [0, 2, 1, 0, 3, 2]) {
-      const p = pts[k];
-      out.pos.push(p.x, p.y, p.z);
-      out.nor.push(0, 1, 0);
-      out.uv.push(uv[0] + (uv[2] - uv[0]) * p.u, uv[1] + (uv[3] - uv[1]) * p.v);
-    }
-  };
 
   const geometry = (out, withUv, withColor) => {
     if (!out.pos.length) return null;
@@ -315,22 +300,12 @@ export function createDecals(GFX, world, materials, scene) {
     const roads = { pos: [], nor: [], uv: [] }, fields = { pos: [], nor: [], uv: [] }, zones = { pos: [], nor: [], col: [] };
     const c = chunks[i];
     let any = false;
-    const roadAt = (x, y) => inb(x, y) && world.road[idx(x, y)] !== ROAD.NONE;
     for (let y = cy * CHUNK; y < (cy + 1) * CHUNK; y++) {
       for (let x = cx * CHUNK; x < (cx + 1) * CHUNK; x++) {
         const t = idx(x, y);
         const r = world.road[t];
-        if (r === ROAD.DIRT || r === ROAD.COBBLE || r === ROAD.AVENUE) {
-          const mask = (roadAt(x, y - 1) ? 1 : 0) | (roadAt(x + 1, y) ? 2 : 0) | (roadAt(x, y + 1) ? 4 : 0) | (roadAt(x - 1, y) ? 8 : 0);
-          const variant = Math.floor(((x * 73856093) ^ (y * 19349663)) >>> 0) % 4;
-          const row = ROAD_ROW[r] + variant;
-          tileQuads(roads, x, y, cellUV(mask, row, ROAD_COLS, ROAD_ROWS));
-          // Where the road goes on both ways and on the diagonal too, the tile's corner is road: the shape has a notch there that a road two tiles wide would show as a hole at every crossing of the tiles.
-          for (const [corner, a, b, dx, dy] of CORNERS) {
-            if ((mask & a) && (mask & b) && roadAt(x + dx, y + dy)) cornerQuad(roads, x, y, corner, cellUV(SOLID, row, ROAD_COLS, ROAD_ROWS), 0.135);
-          }
-          continue;
-        }
+        // The streets themselves are laid with 3d-city's road assets (render/streets.js), not drawn here.
+        if (r === ROAD.DIRT || r === ROAD.COBBLE || r === ROAD.AVENUE) continue;
         const z = world.zone[t];
         if (!z || world.bld[t] || world.road[t]) continue;
         if (FIELDS.has(z)) {

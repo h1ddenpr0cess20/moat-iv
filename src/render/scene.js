@@ -12,6 +12,7 @@ import { createFx } from './effects.js';
 import { createGates } from './gates.js';
 import { createWalls } from './walls.js';
 import { createSnow } from './snow.js';
+import { createStreets } from './streets.js';
 import { createMaterials } from './materials.js';
 import { createLand } from './land.js';
 import { createOverlays } from './overlays.js';
@@ -49,6 +50,8 @@ export async function createScene({ host, game, progress = () => {} }) {
   const gates = createGates(GFX, world, materials, stage.scene);
   const walls = createWalls(GFX, world, stage.scene);
   const snow = createSnow(GFX, stage.scene, world);
+  // The founder's streets are laid with 3d-city's road assets, on its ground.
+  const streets = createStreets({ GFX, scene: stage.scene, world, terrain: land.city.terrain, bounds: land.bounds, pixels: land.pixels });
   const traffic = createTraffic({ GFX, scene: stage.scene, game, world, materials });
   const fx = createFx(GFX, stage.scene, world);
   const overlays = createOverlays(GFX, world, stage.scene);
@@ -115,6 +118,7 @@ export async function createScene({ host, game, progress = () => {} }) {
       if (emitClock <= 0) { emitClock = 1.5; emitters = buildings.emitters(); }
       buildings.update(live, 0.6 + 0.4 * Math.sin(time * 0.3));
       gates.update(dt);
+      streets.update(dt);
       walls.update(time);
       traffic.update(dt, { live, eye: camera.eye });
       // The lots the real buildings stood on, that the city has not built again: faintly in the color of their zone.
