@@ -120,17 +120,17 @@ export const RANKS = Object.freeze([
 export const ROADS = Object.freeze({
   dirt: { name: 'Street', cost: { gold: 1 }, desc: 'Two lanes of asphalt.' },
   avenue: { name: 'Avenue', cost: { gold: 2 }, desc: 'Four lanes, two tiles wide, with a double yellow line down the middle. Drag along the ground: it is laid on the tiles you drag over and the row beside them.' },
-  bridge: { name: 'Canal Bridge', cost: { gold: 6 }, desc: 'A bridge over a canal or a lagoon: drag from one bank to the other, up to six tiles of water, in a straight line. The grand canal is crossed only at its bridges.' },
+  bridge: { name: 'Bridge', cost: { gold: 6 }, desc: 'A bridge over the river: drag from one bank to the other, up to six tiles of water, in a straight line. The ice wall is crossed only at its gates.' },
   cobble: { name: 'Boulevard', cost: { gold: 3 }, desc: 'Trees down the median. Land along it is worth more.' },
 });
 
-/** The cost of digging canals around a new district: it grows with the city and with how hard the ground is. */
+/** The cost of raising an ice wall around a new district: it grows with the city and with how hard the ground is. */
 export function annexCost(owned, hardness = 0) {
   const k = 1 + hardness * 0.8;
   return { gold: Math.round((300 + owned * 180) * k / 10) * 10 };
 }
 
-/** How many weeks the digging takes, and how many hands it wants. */
+/** How many weeks the wall takes, and how many hands it wants. */
 export function annexWork(owned) {
   return { weeks: 10 + owned * 2, crew: Math.min(24, 8 + owned * 2) };
 }

@@ -1,5 +1,5 @@
 /**
- * The maps that change as the barony is built, and the heights (which a moat
+ * The maps that change as the barony is built, and the heights (which a wall
  * or a leveled plot changes). `snapshot` keeps a copy of them as the land
  * was made, so that a save need keep only what has changed since.
  */

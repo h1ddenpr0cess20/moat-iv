@@ -2,7 +2,7 @@ import { params } from './launch.js';
 
 /**
  * The numbers the whole game agrees on. One tile is one unit of the engine's
- * world; the map is a grid of wards, and a ward is what the moat is dug around.
+ * world; the map is a grid of wards, and a ward is what the wall is raised around.
  */
 
 /** Tiles along one side of a ward, wards along one side of the map, and so tiles along the map. */
@@ -44,13 +44,13 @@ export const TILES = SIZE * SIZE;
 export const HOME_WARD = (WARDS - 1) / 2;
 export const CENTER = SIZE / 2;
 
-/** Standing water, in world units up; and what the ground around a moat is cut to. */
+/** Standing water, in world units up. */
 export const WATER_LEVEL = 0;
-/** The moat's half width (water), and how far from its middle nothing may be built (the banks). */
-export const MOAT_HALF = 1.6;
-export const MOAT_BANK = 2.8;
-/** The castle's island: half its side (the courtyard), the inner moat's two edges, and the bank beyond. */
-export const CASTLE = Object.freeze({ half: 3, moatIn: 3.4, moatOut: 4.7, bank: 5.4 });
+/** The wall's half thickness (ice blocks, no building), and how far from its middle nothing may be built (the verge). */
+export const WALL_HALF = 0.6;
+export const WALL_VERGE = 1.7;
+/** The tower's keep: half its side (the courtyard), the keep wall's two edges, and the verge beyond. */
+export const CASTLE = Object.freeze({ half: 3, wallIn: 3.3, wallOut: 4.3, verge: 5.2 });
 
 /** The calendar: a tick is a week; four to a month, twelve months to a year. */
 export const WEEKS_PER_MONTH = 4;

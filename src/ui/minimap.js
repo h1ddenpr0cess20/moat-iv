@@ -25,7 +25,8 @@ export function createMinimap(ctx) {
       let c;
       if (world.bld[t]) c = world.bld[t] === 1 ? [200, 60, 50] : [226, 200, 150];
       else if (world.road[t]) c = [188, 160, 110];
-      else if (g === GROUND.WATER || world.moat[t] === 1) c = [64, 120, 170];
+      else if (g === GROUND.WATER) c = [64, 120, 170];
+      else if (world.wall[t] === 1) c = [200, 228, 245];
       else if (g === GROUND.CLIFF) c = [110, 100, 90];
       else if (g === GROUND.ROCK || g === GROUND.ORE) c = [140, 134, 124];
       else if (world.zone[t]) c = [150, 190, 90];
@@ -46,7 +47,7 @@ export function createMinimap(ctx) {
     for (let i = 1; i < WARDS; i++) { c.beginPath(); c.moveTo(i * WARD * k, 0); c.lineTo(i * WARD * k, canvas.height); c.moveTo(0, i * WARD * k); c.lineTo(canvas.width, i * WARD * k); c.stroke(); }
     for (const w of world.wards) {
       if (w.owned) { c.strokeStyle = 'rgba(240,200,90,0.9)'; c.lineWidth = 2; c.strokeRect(w.gx * WARD * k + 1, w.gy * WARD * k + 1, WARD * k - 2, WARD * k - 2); }
-      if (w.dig) { c.fillStyle = 'rgba(90,150,220,0.35)'; c.fillRect(w.gx * WARD * k, w.gy * WARD * k, WARD * k, WARD * k); }
+      if (w.dig) { c.fillStyle = 'rgba(200,228,245,0.4)'; c.fillRect(w.gx * WARD * k, w.gy * WARD * k, WARD * k, WARD * k); }
     }
     for (const b of game.blocks) if (b.rating > 0) { c.fillStyle = 'rgba(255,214,90,0.9)'; c.beginPath(); c.arc(b.center[0] * k, b.center[1] * k, 3 + b.q * 3, 0, 7); c.fill(); }
     const eye = scene.camera.eye;

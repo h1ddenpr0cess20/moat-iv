@@ -16,11 +16,11 @@ const DAY = 150;
 /** How much snow lies on the ground, 0 to 1, by the week of the year. */
 export const snowAt = (inYear) => (inYear >= 36 ? Math.min(1, (inYear - 35) / 4) * 0.9 : inYear < 3 ? Math.max(0, 1 - inYear / 3) * 0.9 : 0);
 
-/** Is it raining? Showers in spring and autumn, now and then in summer, in three-week spells. */
+/** Is it snowing? In three-week spells, now and then. */
 export function rainAt(week, seed) {
   const season = Math.floor(((week % WEEKS_PER_YEAR) % 48) / 12);
-  const p = [0.24, 0.1, 0.3, 0][season];
-  return hash2(Math.floor(week / 3), season, seed) < p;
+  void season;
+  return hash2(Math.floor(week / 3), 3, seed) < 0.4;
 }
 
 const FILMS = [
@@ -56,16 +56,17 @@ export function createAtmosphere({ GFX, stage, sunDir, materials, terrain, water
     update(dt, { week, frac = 0, storm = false }) {
       const inYearF = (week % WEEKS_PER_YEAR) + frac;
       const yearT = inYearF / WEEKS_PER_YEAR;
-      const season = Math.floor(inYearF / 12);
-      const k = (inYearF % 12) / 12;
+      // It is winter in Furniture City all year: the leaves are down, the ground is white and the river is frozen.
+      const season = 3;
+      const k = 0.5;
       flicker += dt;
       if (mode === 'auto') clock = (clock + dt / DAY) % 1;
       else clock = { day: 0.45, dusk: 0.74, night: 0.0 }[mode] ?? clock;
-      const maxElev = 0.7 + 0.3 * Math.cos(Math.PI * 2 * (yearT - 0.4));
+      const maxElev = 0.5 + 0.04 * Math.cos(Math.PI * 2 * yearT);
       const L = lightAt(clock, maxElev);
-      // A hurricane brings its own rain, and a sky as dark as it gets.
-      const rain = storm || rainAt(week, seed);
-      overcast += ((rain ? 1 : 0) - overcast) * Math.min(1, dt * 0.8);
+      // A blizzard brings its own snow, and a sky as dark as it gets; the rest of the time snow comes in three-week spells under a grey sky.
+      const snowing = storm || rainAt(week, seed);
+      overcast += ((snowing ? 1 : 0.35) - overcast) * Math.min(1, dt * 0.8);
       const dim = 1 - 0.38 * overcast;
       sunDir.set(...L.dir);
       stage.key.color.setRGB(...L.key);
@@ -84,13 +85,12 @@ export function createAtmosphere({ GFX, stage, sunDir, materials, terrain, water
       const glow = Math.max(L.night, 0.55 * overcast * (1 - L.night) * 0.3, L.dusk * 0.8);
       mat.glow.color.setScalar(Math.min(1, glow * 1.15));
       mat.flame.color.setScalar(0.85 + 0.15 * Math.sin(flicker * 20));
-      // Southern California: it never snows on the coast, and the palms are green all year.
-      const snow = 0;
+      const snow = 0.95;
       // The year turns slowly: the leaves, the ground and the roofs need touching up a few times a second, not every frame.
       slow += dt;
       if (slow > 0.25 || first) {
         slow = 0; first = false;
-        colorLeaves(materials, GFX, 1, 0.3);
+        colorLeaves(materials, GFX, 3, 0.5);
         terrain.setSeason(season, k, snow);
         for (const name of ['thatch', 'tile', 'slate']) mat[name].emissive.setRGB(0.12 * snow * L.day, 0.13 * snow * L.day, 0.15 * snow * L.day);
       }
@@ -104,7 +104,7 @@ export function createAtmosphere({ GFX, stage, sunDir, materials, terrain, water
         const gray = overcast > 0.5 ? ' saturate(0.85)' : '';
         stage.film.set({ filter: base + night + gray, vignette: VIGNETTE, grain: null, ui: null });
       }
-      Object.assign(state, { night: L.night, day: L.day, rain: rain && season !== 3, snow, season, tod: clock, overcast });
+      Object.assign(state, { night: L.night, day: L.day, rain: false, snowing, snow, season, tod: clock, overcast });
     },
   };
   return atm;

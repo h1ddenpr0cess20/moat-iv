@@ -3,7 +3,7 @@ import { seedOf } from '../rng.js';
 
 /**
  * The land: one flat array for each thing a tile can have, and the heights
- * of its corners (two vertices a tile, so a moat's bank and a hill's brow
+ * of its corners (two vertices a tile, so a river bank and a hill's brow
  * come out round). A tile is (x, y), x east and y south; the engine's world
  * is x and z the same, with y up. Nothing here knows about drawing, except
  * which chunks have changed and so want drawing again.
@@ -21,7 +21,7 @@ export function createWorld(seedText = 'moat') {
     seedText: String(seedText),
     seed: seedOf(seedText),
     size: SIZE,
-    /** Heights, one every half tile, row by row; and the same before any moat is cut (see wards.js). */
+    /** Heights, one every half tile, row by row; and the same before any wall is raised (see wards.js). */
     h: new Float32Array(HV * HV),
     hBase: null,
     /** What each tile is made of (GROUND). */
@@ -37,13 +37,13 @@ export function createWorld(seedText = 'moat') {
     zone: new Uint8Array(TILES),
     bld: new Int32Array(TILES),
     crop: new Uint8Array(TILES),
-    /** What the moat does to a tile: 1 water, 2 bank (nothing may be built); castle's own ring likewise. */
-    moat: new Uint8Array(TILES),
-    /** Whether the tile is the realm's: inside the moat, and not on its banks. */
+    /** What the wall does to a tile: 1 ice wall, 2 verge (nothing may be built); the keep's own ring likewise. */
+    wall: new Uint8Array(TILES),
+    /** Whether the tile is the realm's: inside the wall, and not on its verge. */
     realm: new Uint8Array(TILES),
     /** Distance from each height vertex to the nearest exposed ward border. */
-    moatD: new Float32Array(HV * HV).fill(99),
-    /** Which height of the moat each ward's border has been dug to, 0 to 1 (for the digging to show). */
+    wallD: new Float32Array(HV * HV).fill(99),
+    /** The work on each ward's wall. */
     wards: [],
     gates: [],
     buildings: new Map(),
@@ -139,8 +139,8 @@ export function flatten(world, x0, y0, w, d, { ease = 1.2 } = {}) {
       const k = dist <= 0 ? 1 : Math.max(0, 1 - dist / ease);
       if (k <= 0) continue;
       const i = vy * HV + vx;
-      // The banks of a moat are left as they were cut.
-      if (world.moatD[i] < 2.7 || castleNorm(vx / SUB, vy / SUB) < 5.6) continue;
+      // The ground beside a wall is left as it was.
+      if (world.wallD[i] < 2.7 || castleNorm(vx / SUB, vy / SUB) < 5.6) continue;
       world.h[i] += (target - world.h[i]) * (k * k * (3 - 2 * k));
       if (world.hBase) world.hBase[i] = world.h[i];
     }

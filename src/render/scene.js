@@ -10,6 +10,7 @@ import { createCamera } from './camera.js';
 import { createDecals } from './decals.js';
 import { createFx } from './effects.js';
 import { createGates } from './gates.js';
+import { createWalls } from './walls.js';
 import { createMaterials } from './materials.js';
 import { createOverlays } from './overlays.js';
 import { PARCELS, parcelByType } from '../parcels.js';
@@ -46,6 +47,7 @@ export async function createScene({ host, game, progress = () => {} }) {
   const decals = createDecals(GFX, world, materials, stage.scene);
   const buildings = createBuildings(GFX, world, materials, stage.scene);
   const gates = createGates(GFX, world, materials, stage.scene);
+  const walls = createWalls(GFX, world, stage.scene);
   const traffic = createTraffic({ GFX, scene: stage.scene, game, world, materials });
   const fx = createFx(GFX, stage.scene, world);
   const overlays = createOverlays(GFX, world, stage.scene);
@@ -90,6 +92,7 @@ export async function createScene({ host, game, progress = () => {} }) {
   let lodClock = 0;
   let time = 0;
   let lotsAt = -1;
+  let wasSnowing = false;
 
   const scene = {
     GFX, stage, camera, viewDef, materials, terrain, water, trees, decals, buildings, gates, traffic, fx, overlays, atmosphere,
@@ -117,6 +120,7 @@ export async function createScene({ host, game, progress = () => {} }) {
       if (emitClock <= 0) { emitClock = 1.5; emitters = buildings.emitters(); }
       buildings.update(live, 0.6 + 0.4 * Math.sin(time * 0.3));
       gates.update(dt);
+      walls.update(time);
       traffic.update(dt, { live, eye: camera.eye });
       // The lots the real buildings stood on, that the city has not built again: faintly in the color of their zone.
       if (lotsAt !== world.bver) {
@@ -131,6 +135,10 @@ export async function createScene({ host, game, progress = () => {} }) {
       }
       overlays.update(dt);
       const frac = Math.min(1, scene.weekFrac);
+      // Snow falls round the camera's target while it snows.
+      const snowing = Boolean(atmosphere.state.snowing);
+      if (snowing !== wasSnowing) { wasSnowing = snowing; fx.effects.setWeather(snowing ? 'snow' : null); }
+      if (snowing) fx.effects.weather(live, stage.target.x, heightAt(world, stage.target.x, stage.target.z) + 6, stage.target.z);
       atmosphere.update(live, { week: game.week, frac, storm: Boolean(game.hurricane && !game.hurricane.warn) });
       const cold = cal.season === 3 ? 1.7 : cal.season === 2 ? 1.2 : 0.8;
       fx.update(live, { emitters, near: [stage.target.x, stage.target.z], reach: 20 + 4 * camera.distance, rate: 0.5 * cold, wind: [0.35, 0.12], time });

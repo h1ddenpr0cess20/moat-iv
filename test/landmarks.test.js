@@ -38,7 +38,7 @@ test('the port and the marina go on the shore of the open water (the Grand River
   let sea = 0;
   for (let dy = -5; dy <= 8; dy++) for (let dx = -5; dx <= 8; dx++) {
     const i = (at[1] + dy) * coast.world.size + at[0] + dx;
-    if (coast.world.ground[i] === GROUND.WATER && !coast.world.moat[i]) sea++;
+    if (coast.world.ground[i] === GROUND.WATER && !coast.world.wall[i]) sea++;
   }
   assert.ok(sea >= 12);
 });

@@ -64,8 +64,15 @@ export function createDesigner(GFX, world) {
     geometry.computeBoundingSphere();
     return geometry;
   };
+  // Snow on the roofs: the roofing materials are shared by every building, so they are whitened once.
+  const snowed = new Set();
+  const roofOf = (name) => {
+    const m = materialFor(GFX, name);
+    if (!snowed.has(m) && /^M_(Roof_Membrane|Roof_Gravel|Shingles_|Slate)/.test(name)) { snowed.add(m); m.color.lerp(new GFX.Color('#f4f8fc'), 0.8); }
+    return m;
+  };
   const meshOf = (geometry, material) => {
-    const mesh = new GFX.Mesh(geometry, materialFor(GFX, material));
+    const mesh = new GFX.Mesh(geometry, roofOf(material));
     mesh.castShadow = castsShadow(material.startsWith('M_Glass') ? 'glass' : 'wall');
     mesh.receiveShadow = true;
     return mesh;

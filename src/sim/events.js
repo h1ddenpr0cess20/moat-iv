@@ -12,7 +12,7 @@ import { headcount } from './people.js';
 
 /**
  * What happens to the city that the founder did not order: fires, the odd
- * earthquake, a hurricane in a bad autumn, and the day the city is called by
+ * earthquake, a blizzard in a bad winter, and the day the city is called by
  * a bigger name.
  */
 
@@ -96,13 +96,13 @@ export function quakes(game) {
   game.note(`An earthquake shook the city.${down ? ` ${down} building${down > 1 ? 's' : ''} came down.` : ' Nothing came down.'}`, 'bad', [ex, ey]);
 }
 
-/** The chance in a week of the hurricane season that a hurricane makes landfall, and how many weeks it blows. */
+/** The chance in a week of the blizzard season that a blizzard comes down, and how many weeks it blows. */
 const HURRICANE = 1 / 90, BLOWS = 2;
 
 /**
- * Hurricanes: in the late summer and the autumn one may come in off the
- * Pacific. A week's warning, then two weeks of storm: the sea gets up, the
- * rain comes down, and low buildings near the shore may be wrecked. Towers
+ * Blizzards: from November to February one may come down off Lake Michigan.
+ * A week's warning, then two weeks of storm: the snow comes down, and low
+ * buildings by the river may be wrecked. Towers
  * stand; fire stations and police get people through it.
  */
 export function hurricanes(game) {
@@ -110,7 +110,7 @@ export function hurricanes(game) {
   if (h) {
     if (h.warn > 0) {
       h.warn--;
-      if (!h.warn) { game.note('The hurricane has made landfall.', 'bad', h.at); game.emit('hurricane', { phase: 'landfall' }); }
+      if (!h.warn) { game.note('The blizzard has come down on the city.', 'bad', h.at); game.emit('hurricane', { phase: 'landfall' }); }
       return;
     }
     const { world } = game;
@@ -124,19 +124,19 @@ export function hurricanes(game) {
       if (game.rnd() < 0.03 * low * shelter * (0.3 + 2 * Math.min(1, shore)) * (DIFFICULTY[game.difficulty] ?? 1)) { wreck(game, b, 'storm'); down++; }
     }
     game.shock += 1.5;
-    if (down) game.note(`The hurricane wrecked ${down} building${down > 1 ? 's' : ''} this week.`, 'bad', h.at);
+    if (down) game.note(`The blizzard wrecked ${down} building${down > 1 ? 's' : ''} this week.`, 'bad', h.at);
     if (--h.weeks <= 0) {
       game.hurricane = null;
-      game.note('The hurricane has blown itself out.', 'good');
+      game.note('The blizzard has blown itself out.', 'good');
       game.emit('hurricane', { phase: 'over' });
     }
     return;
   }
   const month = calendar(game.week).month;
-  // March is month 0: the season runs from August to November.
-  if (!game.disasters || game.week < 48 || month < 5 || month > 8 || game.rnd() > HURRICANE * (DIFFICULTY[game.difficulty] ?? 1)) return;
+  // March is month 0: the season runs from November to March.
+  if (!game.disasters || game.week < 48 || month < 8 && month !== 0 || game.rnd() > HURRICANE * (DIFFICULTY[game.difficulty] ?? 1)) return;
   game.hurricane = { warn: 1, weeks: BLOWS, at: [game.world.size / 2, game.world.size / 2] };
-  game.note('A hurricane is coming in off the Pacific! It makes landfall next week.', 'bad');
+  game.note('A blizzard is coming down off Lake Michigan! It hits next week.', 'bad');
   game.emit('hurricane', { phase: 'warning' });
 }
 

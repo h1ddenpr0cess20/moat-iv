@@ -105,7 +105,7 @@ export function createSound({ game, scene }) {
       for (let x = tx - 10; x <= tx + 10; x += 2) {
         if (x < 0 || y < 0 || x >= world.size || y >= world.size) continue;
         const i = y * world.size + x;
-        if (world.ground[i] === GROUND.WATER || world.moat[i] === 1) water++;
+        if (world.ground[i] === GROUND.WATER) water++;
         if (world.tree[i]) forest++;
         const b = world.bld[i] ? world.buildings.get(world.bld[i]) : null;
         if (b && b.state === 'building') building++;

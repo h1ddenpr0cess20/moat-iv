@@ -55,7 +55,7 @@ export function createInspector(ctx) {
       return `<b>${def.name}</b><div class="dim">${status}</div>${block && block.q > 0 ? `<div class="good">Part of ${block.name} · rating ${block.rating}</div>` : ''}`;
     },
     gate(g) {
-      return `<b>${EDGES[g.dir][0].toUpperCase() + EDGES[g.dir].slice(1)} bridge</b><div class="dim">Over the grand canal</div>`;
+      return `<b>${EDGES[g.dir][0].toUpperCase() + EDGES[g.dir].slice(1)} gate</b><div class="dim">Through the ice wall</div>`;
     },
     block(block) {
       return `<b>${block.name}</b> <span class="dim">· rating ${block.rating}</span><div class="dim">${block.standing} · ${block.homes} homes, ${block.specials.length} ${block.specials.length === 1 ? 'building' : 'buildings'} at its heart</div>${block.rating < 40 ? '<div class="dim">Click for what would improve it.</div>' : ''}`;
@@ -63,7 +63,7 @@ export function createInspector(ctx) {
     tile(x, y) {
       if (!world.realm[idx(x, y)]) {
         const w = world.wards[wardOfTile(x, y)];
-        return `<b>${w.name}</b><div class="dim">${w.owned ? '' : 'Beyond the canals. Annex it from the district map (M).'}</div>`;
+        return `<b>${w.name}</b><div class="dim">${w.owned ? '' : 'Beyond the wall. Annex it from the district map (M).'}</div>`;
       }
       const z = world.zone[idx(x, y)];
       return `<b>${describeTile(world, x, y)}</b>${z ? `<div class="dim">${ZONES[ZONE_NAME[z]].name} zone${world.road[idx(x, y)] ? '' : ''}</div>` : world.road[idx(x, y)] ? '<div class="dim">Road</div>' : ''}`;
@@ -170,8 +170,8 @@ export function createInspector(ctx) {
   }
 
   function showGate(g) {
-    const parts = [...head(`${EDGES[g.dir][0].toUpperCase() + EDGES[g.dir].slice(1)} bridge`, 'A bridge over the grand canal')];
-    parts.push(h('p', {}, 'The grand canal is crossed only here. Streets out of the district start at its bridges.'));
+    const parts = [...head(`${EDGES[g.dir][0].toUpperCase() + EDGES[g.dir].slice(1)} gate`, 'A gate through the ice wall')];
+    parts.push(h('p', {}, 'The ice wall is crossed only here. Streets out of the district start at its gates.'));
     ctx.scene.overlays.clear('select');
     return parts;
   }
@@ -187,7 +187,7 @@ export function createInspector(ctx) {
     const i = idx(x, y);
     const w = world.wards[wardOfTile(x, y)];
     const g = world.ground[i];
-    const parts = [...head(describeTile(world, x, y), `${w.name}${w.owned ? '' : ' · beyond the canals'}`)];
+    const parts = [...head(describeTile(world, x, y), `${w.name}${w.owned ? '' : ' · beyond the wall'}`)];
     const rows = [['Ground', ['Meadow', 'Rock', 'Iron ore', 'Water', 'Cliff', 'Shore'][g]]];
     if (world.realm[i]) {
       rows.push(['Soil', `${Math.round((world.fert[i] / 255) * 100)}% fertile`]);

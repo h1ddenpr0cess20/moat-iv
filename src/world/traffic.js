@@ -7,7 +7,7 @@ import { CASTLE_BRIDGE } from './wards.js';
 /**
  * The traffic, as rules and no drawing: where the lanes run, who may go, and
  * where each car is. Cars keep to the right, as in California. A street has
- * a lane each way; an avenue (and a canal bridge) is two tiles wide, each
+ * a lane each way; an avenue (and a river bridge) is two tiles wide, each
  * tile one way with two lanes, and nobody turns across its double yellow line
  * except at a crossing. Where streets meet there is an all-way stop: each car
  * comes to a stop at the line, and goes when nobody from another way is in

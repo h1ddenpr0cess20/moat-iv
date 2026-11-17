@@ -8,7 +8,7 @@ import { fill, h } from './dom.js';
 /**
  * The map of the coast, drawn like a surveyor's: the districts,
  * what each is made of, which are the city's, which can be taken by digging
- * the moat out around them, and what it will cost.
+ * the wall out around them, and what it will cost.
  */
 
 const PX = 3;
@@ -103,16 +103,16 @@ export function realmDialog(ctx, { ward: initial = null } = {}) {
     const owned = ownedCount(world);
     const cap = CASTLE_LEVELS[game.castleLevel].wards;
     const parts = [h('h3', {}, w.name), h('div.badge-line', {}, ...wardTraits(w).map((t) => h('span.tag', {}, t))),
-      meter('Open land', s.arable / s.tiles * 2.2), meter('Trees', s.forest / s.tiles * 1.8), meter('Waterfront', s.water / s.tiles * 3), meter('Hard to dig', s.hardness, s.hardness > 0.5 ? 'bad' : s.hardness > 0.3 ? 'warn' : '')];
+      meter('Open land', s.arable / s.tiles * 2.2), meter('Trees', s.forest / s.tiles * 1.8), meter('Waterfront', s.water / s.tiles * 3), meter('Hard to build on', s.hardness, s.hardness > 0.5 ? 'bad' : s.hardness > 0.3 ? 'warn' : '')];
     if (w.owned) parts.push(h('p', { html: '<b class="good">Part of your city.</b>' }));
     else if (w.dig) {
-      parts.push(h('p', {}, h('b', {}, 'The diggers are at work.')), h('div.meter', {}, h('span', {}, 'Canals'), h('div.bar.warn', {}, h('i', { style: { width: `${Math.round(w.dig.progress * 100)}%` } }))), h('p.dim', {}, `About ${Math.max(1, Math.ceil((1 - w.dig.progress) * w.dig.weeks))} weeks to go with a full crew of ${w.dig.crew}.`));
+      parts.push(h('p', {}, h('b', {}, 'The crews are raising the wall.')), h('div.meter', {}, h('span', {}, 'Wall'), h('div.bar.warn', {}, h('i', { style: { width: `${Math.round(w.dig.progress * 100)}%` } }))), h('p.dim', {}, `About ${Math.max(1, Math.ceil((1 - w.dig.progress) * w.dig.weeks))} weeks to go with a full crew of ${w.dig.crew}.`));
     } else {
       const cost = plan.cost ?? annexCost(owned, s.hardness);
       const work = plan.work ?? annexWork(owned);
-      parts.push(h('h3', {}, 'Dig the canals around it'), h('div.kv', { style: { color: 'inherit' } }, h('span', {}, 'Cost'), h('span', { html: `<span class="${game.stock.gold < cost.gold ? 'bad' : ''}">${money(cost.gold)}</span>` }), h('span', {}, 'Time'), h('span', {}, `${work.weeks} weeks`), h('span', {}, 'Diggers'), h('span', {}, `${work.crew} hands`)),
-        h('p.dim', {}, 'The old canal between is filled in, the ground is graded and the new canal floods, with a bridge to the next district.'),
-        h('div.actions', {}, h('button.btn.gold', { disabled: !plan.ok, onclick: () => { const r = startAnnex(game, w.id); if (!r.ok) ctx.say(r.reason, 'warn'); else { ctx.sfx('place'); } draw(); showInfo(); } }, 'Dig the canals'), plan.ok ? null : h('span', { class: plan.capped ? 'warn' : 'bad' }, plan.reason)));
+      parts.push(h('h3', {}, 'Raise an ice wall around it'), h('div.kv', { style: { color: 'inherit' } }, h('span', {}, 'Cost'), h('span', { html: `<span class="${game.stock.gold < cost.gold ? 'bad' : ''}">${money(cost.gold)}</span>` }), h('span', {}, 'Time'), h('span', {}, `${work.weeks} weeks`), h('span', {}, 'Crew'), h('span', {}, `${work.crew} hands`)),
+        h('p.dim', {}, 'The old wall between comes down, the ground is graded and a new wall of ice goes up round the district, with a gate to the next.'),
+        h('div.actions', {}, h('button.btn.gold', { disabled: !plan.ok, onclick: () => { const r = startAnnex(game, w.id); if (!r.ok) ctx.say(r.reason, 'warn'); else { ctx.sfx('place'); } draw(); showInfo(); } }, 'Raise the wall'), plan.ok ? null : h('span', { class: plan.capped ? 'warn' : 'bad' }, plan.reason)));
       if (plan.capped) parts.push(h('p', { html: `Your tower can run ${cap} ${cap === 1 ? 'district' : 'districts'}. <b>Build it taller</b> to take more.` }), h('button.btn.small', { onclick: () => { ctx.dialogs.close(); ctx.inspector.show({ kind: 'building', id: 1 }); } }, 'Look at the tower'));
     }
     parts.push(h('p.dim', {}, `City: ${owned} of ${cap} districts your ${CASTLE_LEVELS[game.castleLevel].name} can run.`));

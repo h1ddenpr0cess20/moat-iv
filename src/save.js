@@ -4,7 +4,7 @@ import { mulberry32 } from './rng.js';
 import { START } from './catalog.js';
 import { defaultTrade, newGame } from './sim/state.js';
 import { prime } from './sim/game.js';
-import { clearMoatTrees, computeMoat } from './world/wards.js';
+import { clearWallTrees, computeWalls } from './world/wards.js';
 import { HEIGHTS, MAPS } from './world/snapshot.js';
 import { idx, touchAll } from './world/world.js';
 
@@ -102,20 +102,20 @@ export function deserialize(data) {
   if ((data.mapWards ?? 7) !== WARDS) throw new Error('This save was made on a map of another size.');
   const game = newGame({ seed: data.seed, difficulty: data.difficulty, disasters: data.disasters !== false });
   const { world } = game;
-  // Wards first: the moat and the realm follow from which are owned.
+  // Wards first: the wall and the realm follow from which are owned.
   for (const [id, owned, dig] of data.wards) { world.wards[id].owned = Boolean(owned); world.wards[id].dig = dig; }
   // Where each gate was slid to along its border. A save from before that kept its gatehouses at the middle.
   world.gateOffsets = new Map(data.gates.filter((e) => e[4] !== null && (e[4] !== undefined || e[3])).map((e) => [`${e[0]}:${e[1]}`, e[4] ?? 0]));
-  computeMoat(world);
+  computeWalls(world);
   for (const [ward, dir, open, gatehouse] of data.gates) {
     const g = world.gates.find((x) => x.ward === ward && x.dir === dir);
     if (g) { g.open = Boolean(open); g.gatehouse = gatehouse; }
   }
   for (const k of MAPS) apply(world[k], data.maps[k]);
   for (const k of HEIGHTS) apply(world[k], data.maps[k], 1000);
-  // A save from before the moat kept its trees out of the water may still have some in it.
-  clearMoatTrees(world);
-  // The bridges the moat makes are the map's own: the road map must keep them.
+  // Trees stand off the walls.
+  clearWallTrees(world);
+  // The gates the walls make are the map's own: the road map must keep them.
   for (const g of world.gates) if (!g.wet) for (const [x, y] of g.tiles) if (x >= 0 && y >= 0 && x < world.size && y < world.size) world.road[idx(x, y)] = ROAD.BRIDGE;
   world.bld.fill(0);
   world.buildings.clear();

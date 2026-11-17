@@ -82,7 +82,7 @@ export function seedHamlet(game) {
   const C = CENTER;
   const free = { free: true };
   const { world } = game;
-  // The founder bought the district south of the tower with the tower: its canals are dug, and the avenue runs on into it.
+  // The founder bought the district south of the tower with the tower: its wall is up, and the avenue runs on into it.
   completeAnnex(game, world.wards[wardId(HOME_WARD, HOME_WARD + 1)]);
   game.log.length = 0;
   buildRoad(game, rectTiles(C - 1, C + 6, C - 1, C + 42), 'avenue', free);

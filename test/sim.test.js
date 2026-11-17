@@ -77,23 +77,23 @@ test('smog from factories weighs on the homes near them', () => {
   assert.ok(smogAt(game, f.x + 1, f.y + 1) > 0.3);
 });
 
-test('a hurricane gives a week of warning, blows for two, and is over', () => {
+test('a blizzard gives a week of warning, blows for two, and is over', () => {
   const game = startGame({ seed: 'venice' });
   const phases = [];
   game.on('hurricane', ({ phase }) => phases.push(phase));
-  // Into the season (August is month 5 of a year that starts in March), and make sure one comes.
-  game.week = 48 + 5 * 4;
+  // Into the season (December is month 9 of a year that starts in March), and make sure one comes.
+  game.week = 48 + 9 * 4;
   const rnd = game.rnd;
   game.rnd = () => 0;
   step(game);
   game.rnd = rnd;
-  assert.ok(game.hurricane, 'a hurricane is coming');
+  assert.ok(game.hurricane, 'a blizzard is coming');
   for (let w = 0; w < 4; w++) step(game);
   assert.deepEqual(phases, ['warning', 'landfall', 'over']);
   assert.equal(game.hurricane, null);
 });
 
-test('no hurricanes, earthquakes or fires when disasters are off', () => {
+test('no blizzards, earthquakes or fires when disasters are off', () => {
   const game = startGame({ seed: 'venice', disasters: false });
   let trouble = 0;
   for (const kind of ['hurricane', 'quake', 'fire']) game.on(kind, () => trouble++);

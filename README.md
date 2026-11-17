@@ -2,7 +2,7 @@
 
 A city builder on the real map of downtown Grand Rapids, Michigan, built on the [Madness Engine](https://github.com/h1ddenpr0cess20/madness-engine). It is Moat III's game on [3d-city](https://github.com/h1ddenpr0cess20/3d-city)'s land and buildings.
 
-You own the tallest tower downtown, the real Amway Grand Hotel, on the east bank of the Grand River, with a canal dug round it. Zone the land, lay the streets, run the police, fire stations, schools, parks and hospitals, and dig the canals wider to take in more districts. The best way to lay out a neighborhood is still the **donut block**.
+You own the tallest tower downtown, the real Amway Grand Hotel, on the east bank of the Grand River, inside a keep wall of ice. Zone the land, lay the streets, run the police, fire stations, schools, parks and hospitals, and raise the ice wall wider to take in more districts. The best way to lay out a neighborhood is still the **donut block**.
 
 The map starts empty: the real land, the real river, the parks and trees, and none of the buildings or streets. The real buildings come back as you build.
 
@@ -17,6 +17,10 @@ npm run lint
 ```
 
 Node 22.12 or later. The game needs a browser with WebGPU or WebGL 2. The controls and rules are Moat III's: WASD to slide the map, Q E to turn, the wheel to zoom, 1 look · 2 streets · 3 zones · 4 blocks · 5 build · 6 bulldoze, Space to pause.
+
+## Winter, and the ice walls
+
+It is winter in Furniture City all year (the game opens in the middle of November): snow on the ground and the roofs, the Grand River frozen, snow falling in three-week spells, the deciduous trees bare, and a blizzard now and then where Moat III had hurricanes. The walls are ice. Each wall tile carries the engine's ice cube (`madness-engine/scenery/ice`, the block its winter walls are built of: the clear shell and its frost rim, no core or bubbles), two high, drawn by `src/render/walls.js`. A district's border is a wall, with a gate (an asphalt road through it, and an iron portcullis once there is a gatehouse) where a street may cross; taking a district in builds the wall round it and takes the old one down. The river is crossed with a Bridge; nothing is dug and no canal holds water.
 
 ## The map and the parcels
 

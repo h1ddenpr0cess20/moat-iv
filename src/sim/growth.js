@@ -228,7 +228,7 @@ export function grow(game) {
         const nx = x + dx, ny = y + dy;
         if (inb(nx, ny)) {
           const j = idx(nx, ny);
-          if (!world.tree[j] && world.ground[j] === GROUND.GRASS && !world.bld[j] && !world.road[j] && !world.zone[j] && !world.moat[j] && (!world.realm[j] || game.rnd() < 0.3)) { world.tree[j] = 1; touch(world, 'trees', nx, ny); }
+          if (!world.tree[j] && world.ground[j] === GROUND.GRASS && !world.bld[j] && !world.road[j] && !world.zone[j] && !world.wall[j] && (!world.realm[j] || game.rnd() < 0.3)) { world.tree[j] = 1; touch(world, 'trees', nx, ny); }
         }
       }
     }

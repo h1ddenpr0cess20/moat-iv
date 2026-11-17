@@ -1,4 +1,4 @@
-import { CASTLE, CENTER, DIRS, GROUND, HOME_WARD, MOAT_BANK, MOAT_HALF, ROAD, SIZE, WARD, WARDS, WATER_LEVEL } from '../config.js';
+import { CASTLE, CENTER, DIRS, GROUND, HOME_WARD, WALL_HALF, WALL_VERGE, ROAD, SIZE, WARD, WARDS, WATER_LEVEL } from '../config.js';
 import { mulberry32, pick, smoothstep, lerp } from '../rng.js';
 import { PLATEAU } from './generate.js';
 import { HV, SUB, castleNorm, idx, tileRange, touchAll } from './world.js';
@@ -7,9 +7,9 @@ export { castleNorm };
 
 /**
  * The map is a grid of wards, and the realm is the wards that have been
- * moated. A moat runs around the realm, along every ward border that has
- * unmoated land on the far side; where two of the realm's wards meet there is
- * no moat. The castle has a moat of its own, which never moves.
+ * walled. A wall of ice runs around the realm, along every ward border that has
+ * unwalled land on the far side; where two of the realm's wards meet there is
+ * no wall. The tower has a keep wall of its own, which never moves.
  */
 
 // California names: a saint, a Spanish word, or an English one, and a word for the kind of place.
@@ -136,7 +136,7 @@ export const CASTLE_BRIDGE = Object.freeze({ x: CENTER - 1, y: CENTER + 3, w: 2,
 /** Where the town's first road starts: the tiles just beyond the drawbridge. */
 export const CASTLE_ROOT = Object.freeze({ x: CENTER - 1, y: CENTER + 6, w: 2 });
 
-/** Is this tile dry, firm land a bridge can start or end on? Judged on the land as it was made, before any moat is cut. */
+/** Is this tile dry, firm land a gate can stand on? Judged on the land as it was made. */
 function firmLand(world, x, y) {
   if (x < 0 || y < 0 || x >= SIZE || y >= SIZE) return false;
   const g = world.ground[idx(x, y)];
@@ -170,17 +170,17 @@ function gateOffset(world, s, horizontal) {
 }
 
 /**
- * Works out where the moat is from which wards are the realm's: the distance
+ * Works out where the wall is from which wards are the realm's: the distance
  * to it from every vertex, which tiles are water, which are bank, and which
  * are the realm's to build on. Also where the gates are, keeping the state of
  * any that were there before.
  */
-export function computeMoat(world) {
+export function computeWalls(world) {
   const borders = exposedBorders(world);
   world.borders = borders;
-  const D = world.moatD;
+  const D = world.wallD;
   D.fill(99);
-  const reach = MOAT_BANK + 5;
+  const reach = WALL_VERGE + 5;
   for (const s of borders) {
     const vx0 = Math.max(0, Math.floor((Math.min(s.x0, s.x1) - reach) * SUB)), vx1 = Math.min(HV - 1, Math.ceil((Math.max(s.x0, s.x1) + reach) * SUB));
     const vy0 = Math.max(0, Math.floor((Math.min(s.y0, s.y1) - reach) * SUB)), vy1 = Math.min(HV - 1, Math.ceil((Math.max(s.y0, s.y1) + reach) * SUB));
@@ -192,8 +192,8 @@ export function computeMoat(world) {
       }
     }
   }
-  const { moat, realm } = world;
-  moat.fill(0);
+  const { wall, realm } = world;
+  wall.fill(0);
   realm.fill(0);
   for (let y = 0; y < SIZE; y++) {
     for (let x = 0; x < SIZE; x++) {
@@ -205,11 +205,11 @@ export function computeMoat(world) {
         if (sd < d) d = sd;
       }
       const cn = castleNorm(cx, cy);
-      if (cn < CASTLE.bank + 0.2) moat[i] = cn >= 3.1 && cn <= 5.0 ? 1 : 2;
-      else if (d < MOAT_HALF) moat[i] = 1;
-      else if (d < MOAT_BANK) moat[i] = 2;
+      if (cn < CASTLE.verge) wall[i] = cn >= CASTLE.wallIn && cn <= CASTLE.wallOut ? 1 : 2;
+      else if (d < WALL_HALF) wall[i] = 1;
+      else if (d < WALL_VERGE) wall[i] = 2;
       const w = world.wards[wardId(Math.floor(x / WARD), Math.floor(y / WARD))];
-      if (w.owned && !moat[i]) realm[i] = 1;
+      if (w.owned && !wall[i]) realm[i] = 1;
     }
   }
   // Gates: one at the middle of every border that has another ward across it.
@@ -225,7 +225,7 @@ export function computeMoat(world) {
     if (wet) off = 0;
     const mid = (horizontal ? s.x0 : s.y0) + WARD / 2 + off;
     const tiles = [];
-    // Six tiles long across the moat, two wide.
+    // Six tiles long through the wall, two wide.
     for (let k = -3; k < 3; k++) {
       for (let a = -1; a < 1; a++) {
         const along = mid + a;
@@ -252,7 +252,7 @@ export function computeMoat(world) {
   return world;
 }
 
-/** Shapes the castle's island: a mound for the keep, a moat around it, a bank beyond. Done once, into the base heights. */
+/** Shapes the keep: a low mound for the tower, easing into the ground round it. Done once, into the base heights. */
 export function shapeCastle(world) {
   if (!world.hBase) world.hBase = Float32Array.from(world.h);
   for (let vy = 0; vy < HV; vy++) {
@@ -260,45 +260,30 @@ export function shapeCastle(world) {
       const dp = castleNorm(vx / SUB, vy / SUB);
       if (dp > 6) continue;
       const i = vy * HV + vx;
-      let h;
-      if (dp < 2.9) h = PLATEAU + 0.55;
-      else if (dp < 3.5) h = lerp(PLATEAU + 0.55, -0.95, smoothstep(2.9, 3.5, dp));
-      else if (dp < 4.6) h = -0.95;
-      else h = lerp(-0.95, PLATEAU, smoothstep(4.6, 5.6, dp));
-      world.hBase[i] = h;
+      const top = PLATEAU + 0.55;
+      world.hBase[i] = dp < 2.9 ? top : lerp(top, Math.max(PLATEAU, world.hBase[i]), smoothstep(2.9, 5.2, dp));
     }
   }
   world.h.set(world.hBase);
   touchAll(world);
 }
 
-/** Cuts the trench of the moat along every exposed border into the base heights. The ground can only be lowered by it; where a border is gone the land comes back. */
-export function carveMoat(world) {
+/** Lays the land out as it is: the walls stand on it and cut nothing, so the heights are the base heights; trees are cleared from under the walls. */
+export function levelLand(world) {
   if (!world.hBase) world.hBase = Float32Array.from(world.h);
-  const D = world.moatD;
-  for (let i = 0; i < world.h.length; i++) {
-    let h = world.hBase[i];
-    const d = D[i];
-    if (d < 7) {
-      const cap = PLATEAU + 0.5 * Math.max(0, d - 2.5);
-      const trench = -0.95 + (cap + 0.95) * smoothstep(0.7, 3.2, d);
-      if (trench < h) h = trench;
-    }
-    world.h[i] = h;
-  }
-  clearMoatTrees(world);
+  world.h.set(world.hBase);
+  clearWallTrees(world);
+  world.wver = (world.wver ?? 0) + 1;
   touchAll(world);
 }
 
-/** Trees do not stand in the water: the woods a new moat is dug through (the ward's own, or its neighbor's) lose the trees the water reaches. */
-export function clearMoatTrees(world) {
+/** Trees do not stand in a wall: the woods a new wall is raised through (the ward's own, or its neighbor's) lose the trees it covers. */
+export function clearWallTrees(world) {
   for (let y = 0; y < world.size; y++) {
     for (let x = 0; x < world.size; x++) {
       const i = idx(x, y);
-      if (!world.tree[i] || !world.moat[i]) continue;
-      let wet = world.moat[i] === 1;
-      for (let j = 0; j <= SUB && !wet; j++) for (let k = 0; k <= SUB; k++) if (world.h[(y * SUB + j) * HV + x * SUB + k] < WATER_LEVEL + 0.04) { wet = true; break; }
-      if (wet) world.tree[i] = 0;
+      if (!world.tree[i] || !world.wall[i]) continue;
+      if (world.wall[i] === 1) world.tree[i] = 0;
     }
   }
 }
@@ -313,7 +298,7 @@ export function gradeWard(world, id, passes = 3) {
     for (let vy = Math.max(1, vy0); vy < Math.min(HV - 1, vy1); vy++) {
       for (let vx = Math.max(1, vx0); vx < Math.min(HV - 1, vx1); vx++) {
         const i = vy * HV + vx;
-        if (world.moatD[i] < 3.2 || castleNorm(vx / SUB, vy / SUB) < 6) continue;
+        if (world.wallD[i] < 3.2 || castleNorm(vx / SUB, vy / SUB) < 6) continue;
         if (copy[i] < 0.08) continue;
         let sum = 0;
         for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) sum += copy[i + dy * HV + dx];
@@ -321,7 +306,7 @@ export function gradeWard(world, id, passes = 3) {
       }
     }
   }
-  carveMoat(world);
+  levelLand(world);
 }
 
 /** The gate whose bridge covers tile (x, y), if any. */

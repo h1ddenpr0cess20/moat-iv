@@ -31,7 +31,7 @@ test('a saved game comes back as it was', () => {
     assert.ok(c, `building ${id} (${b.type}) is back`);
     assert.deepEqual([c.type, c.x, c.y, c.w, c.d, c.front, c.level, c.state], [b.type, b.x, b.y, b.w, b.d, b.front, b.level, b.state]);
   }
-  for (const k of ['ground', 'tree', 'amount', 'road', 'zone', 'crop', 'bld', 'realm', 'moat']) assert.deepEqual(back.world[k], game.world[k], `the ${k} map is the same`);
+  for (const k of ['ground', 'tree', 'amount', 'road', 'zone', 'crop', 'bld', 'realm', 'wall']) assert.deepEqual(back.world[k], game.world[k], `the ${k} map is the same`);
   let worst = 0;
   for (let i = 0; i < game.world.h.length; i++) worst = Math.max(worst, Math.abs(game.world.h[i] - back.world.h[i]), Math.abs(game.world.hBase[i] - back.world.hBase[i]));
   assert.ok(worst < 0.001, `heights differ by ${worst}`);

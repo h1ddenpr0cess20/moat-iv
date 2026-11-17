@@ -3,15 +3,14 @@ import { HV, SUB } from '../world/world.js';
 import { freeGeometry } from './dispose.js';
 
 /**
- * The water: the sea round the island, the canals, creeks and lagoons, drawn
- * as a flat sheet over every
- * tile the ground dips below the water level in. The ground hides the sheet
- * where it is above it, so the shore falls where the ground meets the level.
- * Deep water is darker, and the ripples drift; in a hurricane they race and
- * the water roughens.
+ * The water, frozen: the Grand River and its creeks, drawn as a flat sheet of
+ * ice over every tile the ground dips below the water level in. The ground
+ * hides the sheet where it is above it, so the shore falls where the ground
+ * meets the level. Thick ice is paler, the cracks and frost are the bump map's,
+ * and nothing moves on it.
  */
 
-const SHALLOW = [0.08, 0.24, 0.22], MID = [0.035, 0.15, 0.22], DEEP = [0.015, 0.07, 0.15];
+const SHALLOW = [0.62, 0.74, 0.8], MID = [0.5, 0.64, 0.74], DEEP = [0.4, 0.54, 0.68];
 
 const mixTo = (a, b, t) => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t];
 const smooth = (t) => { t = Math.max(0, Math.min(1, t)); return t * t * (3 - 2 * t); };
@@ -24,13 +23,11 @@ export function createWater(GFX, world, materials, scene) {
   ripple.wrapS = ripple.wrapT = GFX.RepeatWrapping;
   ripple.anisotropy = 4;
   const material = new GFX.MeshPhysicalMaterial({
-    vertexColors: true, roughness: 0.07, metalness: 0, clearcoat: 0.7, clearcoatRoughness: 0.06, transparent: true, opacity: 0.88,
-    bumpMap: ripple, bumpScale: 0.35, envMapIntensity: 1.5, depthWrite: false,
+    vertexColors: true, roughness: 0.2, metalness: 0, clearcoat: 1, clearcoatRoughness: 0.12, transparent: true, opacity: 0.97,
+    bumpMap: ripple, bumpScale: 0.12, envMapIntensity: 1.1, depthWrite: false,
   });
   const meshes = new Array(CHUNKS * CHUNKS).fill(null);
-  /** How stirred up the water is, 0 to 1, easing in and out with a hurricane. */
-  let rough = 0;
-
+  
   const build = (cx, cy) => {
     const pos = [], nor = [], col = [], uv = [];
     const x0 = cx * CHUNK, y0 = cy * CHUNK;
@@ -111,14 +108,10 @@ export function createWater(GFX, world, materials, scene) {
     group, material,
     build() { for (let i = 0; i < meshes.length; i++) make(i); world.dirty.water.clear(); },
     sync() { for (const i of [...world.dirty.water]) { world.dirty.water.delete(i); make(i); } },
-    /** Drifts the ripples, and brightens the sheet with the sky; `storm` stirs it up. */
+    /** Brightens the ice with the sky. */
     update(dt, { shine = 1, storm = false } = {}) {
-      rough += ((storm ? 1 : 0) - rough) * Math.min(1, dt * 0.5);
-      ripple.offset.x += dt * (0.012 + 0.09 * rough);
-      ripple.offset.y += dt * (0.007 + 0.06 * rough);
-      material.bumpScale = 0.35 + 0.9 * rough;
-      material.roughness = 0.07 + 0.25 * rough;
-      material.envMapIntensity = 0.5 + shine * (1 - 0.5 * rough);
+      void dt; void storm;
+      material.envMapIntensity = 0.4 + 0.6 * shine;
     },
   };
   return water;

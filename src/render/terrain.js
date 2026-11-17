@@ -79,8 +79,8 @@ function gather(world, cx, cy) {
       rock[k] = g === GROUND.ROCK || g === GROUND.ORE ? 1 : g === GROUND.CLIFF ? 0.8 : 0;
       fert[k] = world.fert[t] / 255;
       sand[k] = g === GROUND.SAND ? 1 : 0;
-      bank[k] = world.moat[t] === 2 ? 1 : 0;
-      water[k] = g === GROUND.WATER || world.moat[t] === 1 ? 1 : 0;
+      bank[k] = world.wall[t] ? 1 : 0;
+      water[k] = g === GROUND.WATER ? 1 : 0;
       bld[k] = world.bld[t] ? 1 : 0;
       field[k] = FIELD_IDS.has(world.zone[t]) ? 1 : 0;
     }
@@ -160,7 +160,7 @@ function paint(world, cx, cy, sources, canvas, box = null) {
           const micro2 = dirtL ? dirtL.data[(Math.floor(wz * 16 + 97) & 255) * dirtL.w + (Math.floor(wx * 16 + 31) & 255)] : 0.7;
           const stone = rockL ? rockL.data[(Math.floor(wz * 8) & 255) * rockL.w + (Math.floor(wx * 8) & 255)] : 0.7;
 
-          // Steep ground is rock, but not the banks of a moat, which are earth.
+          // Steep ground is rock, but not the ground by a wall, which is earth.
           let wRock = Math.min(1, smoothstep(0.7, 1.2, slope) * smoothstep(0.6, 1.8, h) * (1 - bank * 0.9) + rockA * 0.95);
           const wSnow = smoothstep(7.2, 9.2, h + (b - 0.5) * 2.2) * (1 - 0.65 * smoothstep(0.7, 1.3, slope));
           const wMud = smoothstep(0.1, -0.35, h);

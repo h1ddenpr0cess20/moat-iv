@@ -25,9 +25,9 @@ const HINTS = {
   red: { text: 'The city is spending more than it takes in. Raise the tax a point in the <b>Budget</b> (<b>L</b>), trim the service budget, or zone more: every home, shop and factory pays.' },
   crime: { text: 'Crime is rising where the police do not reach. Build a <b>Police Station</b> (Build, <b>5</b>) near the busy streets.' },
   smog: { text: 'Factory smoke is reaching homes, and nobody pays much to live in smog. Keep <b>Industrial</b> zones back from where people live, with shops or a park between.' },
-  moat: { text: 'The bank is full. Open the <b>District map</b> (<b>M</b>) and dig the canals around another district: more land to build on. A taller tower can run more districts.' },
+  moat: { text: 'The bank is full. Open the <b>District map</b> (<b>M</b>) and raise the ice wall around another district: more land to build on. A taller tower can run more districts.' },
   idle: { text: 'People are out of work. Zone <b>Commercial</b> or <b>Industrial</b> land along a street, and firms will move in.' },
-  hurricane: { text: 'A hurricane is coming! It makes landfall next week and blows for two. Low buildings by the shore suffer most; <b>fire stations</b> and <b>police</b> nearby get people through it, and towers stand.' },
+  hurricane: { text: 'A blizzard is coming! It hits next week and blows for two. Low buildings by the river suffer most; <b>fire stations</b> and <b>police</b> nearby get people through it, and towers stand.' },
   noroad: { text: 'A building here has no street to the tower, and no one can work in it. Lay a street from it to the city.' },
 };
 

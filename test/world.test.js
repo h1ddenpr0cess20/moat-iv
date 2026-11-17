@@ -19,21 +19,21 @@ test('the land is downtown Grand Rapids whatever the seed; the seed names the di
   assert.ok(river > 1500, `${river} river tiles`);
 });
 
-test('the castle stands on an island in the middle of the home ward', () => {
+test('the tower stands in its keep, in the middle of the home ward, inside a ring of ice wall', () => {
   const w = newWorld('moat');
   assert.equal(wardOfTile(CENTER, CENTER), wardId(HOME_WARD, HOME_WARD));
   assert.equal(ownedCount(w), 1);
   const castle = w.buildings.get(1);
   assert.equal(castle.type, 'castle');
-  // Water all around the island, and the home ward is the realm's but for its banks.
-  const wet = (x, y) => w.moat[idx(x, y)] === 1;
-  assert.ok(wet(CENTER - 4, CENTER) && wet(CENTER + 4, CENTER) && wet(CENTER, CENTER - 4));
+  // Wall all round the keep, and the home ward is the realm's but for its walls.
+  const iced = (x, y) => w.wall[idx(x, y)] === 1;
+  assert.ok(iced(CENTER - 4, CENTER) && iced(CENTER + 3, CENTER) && iced(CENTER, CENTER - 4));
   let realm = 0;
   for (let y = 0; y < SIZE; y++) for (let x = 0; x < SIZE; x++) if (w.realm[idx(x, y)]) realm++;
-  assert.ok(realm > WARD * WARD * 0.4 && realm < WARD * WARD * 0.8, `the realm is ${realm} tiles`);
-  // The moat is below the plain, the plain above the water.
-  assert.ok(heightAt(w, CENTER - 4, CENTER) < 0, 'the inner moat is dug');
-  assert.ok(heightAt(w, CENTER + 9, CENTER - 8) > 0.12, 'the plain is dry');
+  assert.ok(realm > WARD * WARD * 0.3 && realm < WARD * WARD * 0.9, `the realm is ${realm} tiles`);
+  // Walls stand on the land and cut nothing: the ground is dry on both sides, and the keep's mound is above the plain.
+  assert.ok(heightAt(w, CENTER - 4, CENTER) > 0.12, 'the wall stands on dry ground');
+  assert.ok(heightAt(w, CENTER, CENTER) > heightAt(w, CENTER + 9, CENTER - 8) - 0.01, 'the keep stands on a mound');
 });
 
 test('every border with another ward has a bridge', () => {
@@ -54,19 +54,19 @@ test('heightAt agrees with the heights it was made from', () => {
   }
 });
 
-test('digging the moat out around a ward takes it in, and fills the old moat', () => {
+test('raising the wall out around a ward takes it in, and takes down the old wall between', () => {
   const game = startGame({ seed: 'moat' });
   const { world } = game;
   const home = wardId(HOME_WARD, HOME_WARD);
   const east = wardId(HOME_WARD + 1, HOME_WARD);
   assert.ok(bordersRealm(world, east));
-  const before = heightAt(world, (HOME_WARD + 1) * WARD, CENTER);
-  assert.ok(before < 0, 'the old moat holds water');
+  const border = idx((HOME_WARD + 1) * WARD, CENTER);
+  assert.equal(world.wall[border], 1, 'the old wall stands');
   completeAnnex(game, world.wards[east]);
   assert.ok(world.wards[east].owned && world.wards[home].owned);
-  assert.equal(ownedCount(world), 3, 'the home district, the one south of it that comes with the island, and this one');
-  assert.ok(heightAt(world, (HOME_WARD + 1) * WARD, CENTER) > 0.12, 'the old moat is filled in');
-  assert.ok(heightAt(world, (HOME_WARD + 2) * WARD, CENTER) < 0, 'the new border is a moat');
+  assert.equal(ownedCount(world), 3, 'the home district, the one south of it that comes with the tower, and this one');
+  assert.equal(world.wall[border], 0, 'the old wall is down');
+  assert.equal(world.wall[idx((HOME_WARD + 2) * WARD, CENTER)], 1, 'the new border is a wall');
   assert.ok(world.gates.some((g) => g.ward === east), 'the new ward has a gate of its own');
 });
 
@@ -153,12 +153,12 @@ test('a bridge may start on marshy bank: low ground counts as part of the span',
   assert.ok(plan.spans.length >= 4, 'two water tiles and the marshy banks either side');
 });
 
-test('no tree stands in a moat, however many wards are dug around', () => {
+test('no tree stands in a wall, however many wards are walled in', () => {
   const game = startGame({ seed: 'oxmere' });
   const { world } = game;
   const drowned = () => {
     let n = 0;
-    for (let i = 0; i < world.tree.length; i++) if (world.tree[i] && world.moat[i] === 1) n++;
+    for (let i = 0; i < world.tree.length; i++) if (world.tree[i] && world.wall[i] === 1) n++;
     return n;
   };
   assert.equal(drowned(), 0);

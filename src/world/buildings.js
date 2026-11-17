@@ -44,8 +44,8 @@ export function countNear(world, cx, cy, radius, test) {
 }
 
 const isWater = (world) => (i) => world.ground[i] === GROUND.WATER;
-/** Open water: the sea or a lagoon, not a canal. */
-const isSea = (world) => (i) => world.ground[i] === GROUND.WATER && !world.moat[i];
+/** Open water: the river. */
+const isSea = (world) => (i) => world.ground[i] === GROUND.WATER;
 const isTrees = (world) => (i) => world.tree[i] > 0 && world.realm[i] === 1;
 const isRock = (world) => (i) => world.ground[i] === GROUND.ROCK && world.amount[i] > 0 && world.realm[i] === 1;
 const isOre = (world) => (i) => world.ground[i] === GROUND.ORE && world.amount[i] > 0 && world.realm[i] === 1;

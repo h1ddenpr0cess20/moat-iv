@@ -8,11 +8,13 @@ import { castsShadow } from './materials.js';
 import { freeTree } from './dispose.js';
 
 /**
- * The bridges over the canals: concrete, as in Venice Beach. An asphalt deck
- * with a yellow line and a sidewalk each side, low parapet walls, round piers
- * into the water, and a streetlight at each end. The tower has a bridge of
- * its own to its plaza. Each deck runs straight from bank to bank, on the
- * same ramp the cars drive (`world/bridges.js`), meeting the road at both ends.
+ * The gates through the ice walls, and the bridges over the river: an asphalt
+ * deck with a yellow line and a sidewalk each side and a streetlight at each
+ * end. A gate is laid on the ground through the wall, and with a gatehouse it
+ * has an iron portcullis that is let down when the gate is shut. A bridge has
+ * low parapet walls and round piers into the water. The tower has a gate of
+ * its own to its plaza. Each deck runs straight on the same ramp the cars drive
+ * (`world/bridges.js`), meeting the road at both ends.
  */
 
 const CONCRETE = '#c9c6be', CURB = '#dedbd2', ASPHALT = '#4a4b4f';
@@ -42,8 +44,15 @@ function lamp(m, x, y, z, side) {
 }
 
 /** The fixed parts of a bridge `len` long (local x from 0 at the inner end): abutments, piers, deck and parapets where the leaf is not. */
-function fixedBridge(len, leaf, y, depth, w = 2) {
+function fixedBridge(len, leaf, y, depth, w = 2, ground = false) {
   const m = new Mesher();
+  if (ground) {
+    // A gate lies on the ground: a deck and its lamps, nothing under it.
+    deck(m, 0, len, y, w);
+    lamp(m, 0.3, y, -w / 2 + 0.1, -1);
+    lamp(m, len - 0.3, y, w / 2 - 0.1, 1);
+    return m.finish();
+  }
   // Concrete abutments at each end, down into the bank.
   for (const x of [0, len]) m.box('stone', x - 0.25, y - depth, -w / 2 - 0.12, x + 0.25, y - 0.14, w / 2 + 0.12, CONCRETE, { skip: ['bottom'] });
   // Round piers into the water, a pair across under each span.
@@ -60,14 +69,17 @@ function fixedBridge(len, leaf, y, depth, w = 2) {
   return m.finish();
 }
 
-/** A lifting span (kept for saves from before): a deck hinged at its inner end that runs out along +x for `len`. */
-function leafParts(len) {
+/** An iron portcullis across a gate, its foot at y = 0 and in the middle of the wall's thickness. */
+function portcullis(w = 2) {
   const m = new Mesher();
-  deck(m, 0, len, 0, 2);
-  rails(m, 0, len, 0, 2);
+  const IRON = '#5d646c';
+  for (let z = -w / 2 + 0.1; z <= w / 2 - 0.09; z += 0.2) m.box('metal', -0.03, 0, z - 0.03, 0.03, 1.5, z + 0.03, IRON);
+  for (const y of [0.4, 0.9, 1.4]) m.box('metal', -0.04, y - 0.03, -w / 2 + 0.05, 0.04, y + 0.03, w / 2 - 0.05, IRON);
   return m.finish();
 }
 
+/** How far a portcullis is lifted when the gate is open. */
+const RAISED = 1.7;
 const yawOut = (dx, dz) => Math.atan2(-dz, dx);
 
 export function createGates(GFX, world, materials, scene) {
@@ -92,7 +104,7 @@ export function createGates(GFX, world, materials, scene) {
   };
 
   /** One bridge from a world point (the inner end) outward along (dx, dz), on `ramp`: tilted to rise or fall with it. */
-  const bridge = (sx, sz, dx, dz, len, ramp, { leaf = null, hinge = 0, width = 2 } = {}) => {
+  const bridge = (sx, sz, dx, dz, len, ramp, { bars = false, hinge = 0, width = 2, ground = false } = {}) => {
     const ex = sx + dx * len, ez = sz + dz * len;
     const y = deckAt(ramp, sx, sz, { extend: true }) + LIFT, y1 = deckAt(ramp, ex, ez, { extend: true }) + LIFT;
     const root = new GFX.Group();
@@ -101,13 +113,13 @@ export function createGates(GFX, world, materials, scene) {
     // Tilted about its own z after the turn: its +x, the way out, rises by y1 − y over its length.
     root.rotation.z = Math.atan2(y1 - y, len);
     const fixed = new GFX.Group();
-    meshes(fixedBridge(len, leaf, 0, 1.6, width), fixed);
+    meshes(fixedBridge(len, null, 0, 1.6, width, ground), fixed);
     root.add(fixed);
     let pivot = null;
-    if (leaf) {
+    if (bars) {
       pivot = new GFX.Group();
-      pivot.position.set(hinge, 0, 0);
-      meshes(leafParts(leaf[1] - leaf[0]), pivot);
+      pivot.position.set(hinge, 0.04, 0);
+      meshes(portcullis(width), pivot);
       root.add(pivot);
     }
     group.add(root);
@@ -122,19 +134,18 @@ export function createGates(GFX, world, materials, scene) {
   const build = () => {
     clear();
     for (const g of world.gates) {
-      if (g.wet) continue; // all water on that border: no bridge to nowhere
+      if (g.wet) continue; // all water on that border: no gate to nowhere
       const [mx, my] = g.mid;
       // The inner end and the way outward.
       const out = [[0, -1], [1, 0], [0, 1], [-1, 0]][g.dir];
       const inner = [mx - out[0] * 3, my - out[1] * 3];
       const house = g.gatehouse && world.buildings.get(g.gatehouse);
       const hasHouse = house && house.state === 'ready';
-      const leaf = hasHouse ? [2, 5] : null;
       const ramp = rampOver(world, g.tiles.filter(([x, y]) => inb(x, y)).map(([x, y]) => idx(x, y)));
-      const it = bridge(inner[0], inner[1], out[0], out[1], 6, ramp, { leaf, hinge: 2 });
+      const it = bridge(inner[0], inner[1], out[0], out[1], 6, ramp, { bars: hasHouse, hinge: 3, ground: true });
       it.gate = g;
       it.angle = hasHouse && !g.open ? 1.4 : 0;
-      if (it.pivot) it.pivot.rotation.z = it.angle;
+      if (it.pivot) it.pivot.position.y = 0.04 + RAISED * (1 - it.angle / 1.4);
       items.push(it);
     }
     // The founder's own bridges over rivers and lakes: each straight run of span tiles, with a tile of bank at either end where there is one.
@@ -156,11 +167,11 @@ export function createGates(GFX, world, materials, scene) {
         items.push(it);
       }
     }
-    // The castle's own, from the courtyard gate to the road beyond the moat, always down: from the courtyard's height to the road's.
+    // The tower's own, from the courtyard gate to the road beyond the keep wall, always open: from the courtyard's height to the road's.
     const cb = CASTLE_BRIDGE;
     const tiles = [];
     for (let y = cb.y; y < cb.y + cb.d; y++) for (let x = cb.x; x < cb.x + cb.w; x++) tiles.push(idx(x, y));
-    const it = bridge(CENTER, cb.y, 0, 1, cb.d, rampOver(world, tiles), { leaf: [0.6, 2.4], hinge: 0.6 });
+    const it = bridge(CENTER, cb.y, 0, 1, cb.d, rampOver(world, tiles), { ground: true });
     it.castle = true;
     items.push(it);
   };
@@ -170,14 +181,14 @@ export function createGates(GFX, world, materials, scene) {
     build,
     /** Rebuilds the bridges when gates or gatehouses have changed. */
     refresh() { build(); },
-    /** Swings the leaves toward their set angle: down if the gate is open, up if it is raised. */
+    /** Lowers the portcullises of the gates that are shut, and lifts those that are open. */
     update(dt) {
       for (const it of items) {
         if (!it.pivot || !it.gate) continue;
         const house = it.gate.gatehouse && world.buildings.get(it.gate.gatehouse);
         const want = house && house.state === 'ready' && !it.gate.open ? 1.4 : 0;
         const d = want - it.angle;
-        if (Math.abs(d) > 1e-3) { it.angle += Math.sign(d) * Math.min(Math.abs(d), dt * 0.9); it.pivot.rotation.z = it.angle; }
+        if (Math.abs(d) > 1e-3) { it.angle += Math.sign(d) * Math.min(Math.abs(d), dt * 0.9); it.pivot.position.y = 0.04 + RAISED * (1 - it.angle / 1.4); }
       }
     },
   };

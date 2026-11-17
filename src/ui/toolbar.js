@@ -34,7 +34,7 @@ export function createToolbar(ctx) {
   };
   for (const t of TOOLS) mk(t);
   dock.append(h('span.sep'));
-  mk({ id: 'realm', icon: 'map', name: 'Districts', key: 'M', tip: 'The map of the coast: annex districts by digging the canals wider.', run: () => ctx.dialogs.toggle('realm') });
+  mk({ id: 'realm', icon: 'map', name: 'Districts', key: 'M', tip: 'The map of downtown: annex districts by raising the ice wall wider.', run: () => ctx.dialogs.toggle('realm') });
   mk({ id: 'castle', icon: 'castle', name: 'Tower', key: 'C', tip: 'Look at the tower by the river, and raise it higher.', run: () => { ctx.inspector.show({ kind: 'building', id: 1 }); ctx.scene.focusOn(CENTER, CENTER + 2); } });
 
   const seg = (items, value, onPick) => h('span.seg', {}, items.map(([id, label, title]) => h('button', { class: id === value ? 'on' : '', title: title ?? '', onclick: () => onPick(id) }, label)));
@@ -64,7 +64,7 @@ export function createToolbar(ctx) {
     if (t === 'road') {
       put(
         h('div.row', {}, ...Object.entries(ROADS).map(([id, r]) => opt([h('span', { html: icon('road', 18) }), h('span', {}, r.name), h('small.dim', {}, ` ${money(r.cost.gold)} a ${id === 'bridge' ? 'span' : 'tile'}`)], o.road === id, () => tools.set('road', { road: id }), { title: r.desc }))),
-        h('div.hint', { html: o.road === 'bridge' ? '<b>Bridge.</b> Drag in a straight line from one bank to the other: up to six tiles of water, both ends on dry land. The grand canal is crossed only at its bridges.' : 'Drag along the ground to lay a street. Every zone needs a street to front on. Canals and lagoons need a <b>Canal Bridge</b>.' }));
+        h('div.hint', { html: o.road === 'bridge' ? '<b>Bridge.</b> Drag in a straight line from one bank to the other: up to six tiles of water, both ends on dry land. The ice wall is crossed only at its gates.' : 'Drag along the ground to lay a street. Every zone needs a street to front on. The river needs a <b>Bridge</b>.' }));
     } else if (t === 'zone') {
       put(
         ...[['Homes', ['res', 'dense']], ['Work', ['com', 'ind']]].map(([label, ids]) => h('div.row', {}, h('span.label', {}, label),

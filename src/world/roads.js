@@ -17,7 +17,7 @@ export const isRoad = (world, x, y) => inb(x, y) && world.road[idx(x, y)] !== RO
 export function blocked(world, x, y, { strict = true, slope = MAX_SLOPE } = {}) {
   if (!inb(x, y)) return 'Off the map';
   const i = idx(x, y);
-  if (!world.realm[i]) return world.moat[i] ? 'The moat' : 'Outside the moat';
+  if (!world.realm[i]) return world.wall[i] ? 'The wall' : 'Outside the wall';
   const g = world.ground[i];
   if (g === GROUND.WATER) return 'Water';
   if (g === GROUND.CLIFF) return 'Too steep';

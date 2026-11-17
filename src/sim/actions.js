@@ -3,7 +3,7 @@ import { CENTER, GROUND, ROAD, WARD } from '../config.js';
 import { addBuilding, check, removeBuilding } from '../world/buildings.js';
 import { blockPlan, BLOCK, setZone, zoneBlocked } from '../world/zoning.js';
 import { clearRoad, roadBlocked, setRoad } from '../world/roads.js';
-import { bordersRealm, carveMoat, computeMoat, gradeWard, ownedCount } from '../world/wards.js';
+import { bordersRealm, levelLand, computeWalls, gradeWard, ownedCount } from '../world/wards.js';
 import { clearTrees, idx, inb, touch, touchAll } from '../world/world.js';
 import { PRICES } from './state.js';
 
@@ -11,7 +11,7 @@ import { PRICES } from './state.js';
  * What the founder can do. Each action has a `plan` (what it would cost and
  * whether it can be done, for the ghost under the cursor) and a doing, which
  * takes the coin and changes the land. Roads and zones are done at once;
- * buildings and moats take the builders time.
+ * buildings and walls take the builders time.
  */
 
 const payAll = (game, cost) => {
@@ -72,8 +72,8 @@ export function planRoad(game, tiles, type = 'dirt') {
   return { tiles: ok, blocked: bad, cost, afford: canPay(game.stock, cost), reason: ok.length ? null : why };
 }
 
-/** Natural water the city may bridge: a river or lake inside the realm, never the moat. */
-const spanWater = (world, x, y) => inb(x, y) && world.ground[idx(x, y)] === GROUND.WATER && world.realm[idx(x, y)] === 1 && !world.moat[idx(x, y)] && !world.bld[idx(x, y)];
+/** Natural water the city may bridge: a river or lake inside the realm, never the wall. */
+const spanWater = (world, x, y) => inb(x, y) && world.ground[idx(x, y)] === GROUND.WATER && world.realm[idx(x, y)] === 1 && !world.bld[idx(x, y)];
 /** Low, marshy ground beside the water: no road will lie on it, but a boardwalk will. */
 const marsh = (world, x, y) => inb(x, y) && !world.bld[idx(x, y)] && !world.road[idx(x, y)] && roadBlocked(world, x, y) === 'Waterlogged';
 /** The longest bridge: tiles of water (or marsh) in a row. */
@@ -286,7 +286,7 @@ export function demolish(game, x, y) {
   return { ok: false };
 }
 
-// ---------------------------------------------------------------- the moat
+// ---------------------------------------------------------------- the wall
 
 export function planAnnex(game, wardId) {
   const { world } = game;
@@ -296,10 +296,10 @@ export function planAnnex(game, wardId) {
   const work = annexWork(owned);
   const out = { ward, cost, work, ok: false, reason: null };
   if (ward.owned) return { ...out, reason: 'Already yours' };
-  if (ward.dig) return { ...out, reason: 'The diggers are at work here' };
+  if (ward.dig) return { ...out, reason: 'The crews are at work here' };
   if (!bordersRealm(world, wardId)) return { ...out, reason: 'It must border your city' };
   const digging = world.wards.find((w) => w.dig);
-  if (digging) return { ...out, reason: `The diggers are busy at ${digging.name}` };
+  if (digging) return { ...out, reason: `The crews are busy at ${digging.name}` };
   const cap = CASTLE_LEVELS[game.castleLevel].wards;
   if (owned >= cap) return { ...out, reason: `A ${CASTLE_LEVELS[game.castleLevel].name} can run only ${cap} ${cap === 1 ? 'district' : 'districts'}`, capped: true };
   if (!canPay(game.stock, cost)) return { ...out, reason: `Needs ${costText(cost)}`, short: true };
@@ -312,18 +312,18 @@ export function startAnnex(game, wardId) {
   payAll(game, plan.cost);
   plan.ward.dig = { progress: 0, weeks: plan.work.weeks, crew: plan.work.crew };
   game.emit('annexStart', { ward: plan.ward });
-  game.note(`The dredgers have begun the canals around ${plan.ward.name}.`, 'info', [plan.ward.gx * WARD + WARD / 2, plan.ward.gy * WARD + WARD / 2]);
+  game.note(`The crews have begun the ice wall around ${plan.ward.name}.`, 'info', [plan.ward.gx * WARD + WARD / 2, plan.ward.gy * WARD + WARD / 2]);
   return plan;
 }
 
-/** The moat is dug: the ward is the realm's, the old moat between is filled, the new one floods. */
+/** The wall is raised: the ward is the realm's, the old wall between is taken down, the new one goes up. */
 export function completeAnnex(game, ward) {
   const { world } = game;
   ward.owned = true;
   ward.dig = null;
-  computeMoat(world);
+  computeWalls(world);
   gradeWard(world, ward.id);
-  carveMoat(world);
+  levelLand(world);
   // Gatehouses whose gates are gone go with them.
   const live = new Set(world.gates.map((g) => g.gatehouse).filter(Boolean));
   for (const b of [...world.buildings.values()]) if (b.type === 'gatehouse' && !live.has(b.id)) removeBuilding(world, b.id);
@@ -331,7 +331,7 @@ export function completeAnnex(game, ward) {
   world.bver = (world.bver ?? 0) + 1;
   touchAll(world);
   game.emit('annexed', { ward });
-  game.note(`${ward.name} is part of the city. The canals are dug and filling.`, 'good', [ward.gx * WARD + WARD / 2, ward.gy * WARD + WARD / 2]);
+  game.note(`${ward.name} is part of the city. The ice wall is up.`, 'good', [ward.gx * WARD + WARD / 2, ward.gy * WARD + WARD / 2]);
 }
 
 // ---------------------------------------------------------------- the castle
