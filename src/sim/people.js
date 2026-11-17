@@ -9,7 +9,7 @@ import { computeCoverage, covered } from './coverage.js';
  * the grown, and the old.
  */
 
-/** Rooms in the tower on the island: none, it is offices. */
+/** Rooms in the tower by the river: none, it is offices. */
 const CASTLE_ROOMS = 0;
 
 /** Stochastic rounding: 2.3 is 2 seven times in ten and 3 the rest. */

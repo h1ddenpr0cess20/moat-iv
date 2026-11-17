@@ -15,10 +15,10 @@ export const GOODS = Object.keys(RESOURCES);
 
 /** Zones: land set aside for people and firms to build on themselves. */
 export const ZONES = Object.freeze({
-  res: { id: 'res', name: 'Low Residential', short: 'R', color: '#59b35f', cost: 1, desc: 'Bungalows, Spanish revivals and beach houses on their own lots, with a palm out front.' },
-  dense: { id: 'dense', name: 'High Residential', short: 'R+', color: '#2f8a3a', cost: 2, desc: 'Dingbats, mid-rise apartments and condo towers. Many more people to a lot, but they want services close.' },
-  com: { id: 'com', name: 'Commercial', short: 'C', color: '#4f8fd6', cost: 2, desc: 'Strip malls, startup rows and, once the city is big, glass tech towers. They want customers: people nearby.' },
-  ind: { id: 'ind', name: 'Industrial', short: 'I', color: '#d6b24f', cost: 1, industry: true, desc: 'Fulfillment centers, chip fabs and tech campuses: jobs, but noise and smoke. Keep them back from the homes.' },
+  res: { id: 'res', name: 'Low Residential', short: 'R', color: '#59b35f', cost: 1, desc: 'Frame houses and townhouses on their own lots, in the way of the neighborhoods round downtown, and the few real houses the map has left.' },
+  dense: { id: 'dense', name: 'High Residential', short: 'R+', color: '#2f8a3a', cost: 2, desc: 'Flats, apartment blocks and residential towers. Many more people to a lot, but they want services close.' },
+  com: { id: 'com', name: 'Commercial', short: 'C', color: '#4f8fd6', cost: 2, desc: 'Corner shops, Main Street blocks and, once the city is big, office towers; the real stores, hotels and offices of downtown. They want customers: people nearby.' },
+  ind: { id: 'ind', name: 'Industrial', short: 'I', color: '#d6b24f', cost: 1, industry: true, desc: 'Warehouses, furniture factories and business parks: jobs, but noise and smoke. Keep them back from the homes.' },
 });
 export const ZONE_LIST = Object.keys(ZONES);
 /** Zone numbers as they are stored on the map: 0 is none. */
@@ -41,7 +41,7 @@ export const FARM_RADIUS = 0;
  * they cost; `weeks` how long they take; `jobs` how many work there; `cap`
  * how many live there. `auto` ones grow by themselves on zoned land. `serve`
  * is what a civic building gives the tiles around it; `upkeep` its weekly
- * budget. `bonus` is what it does for the whole island (see sim/bonus.js);
+ * budget. `bonus` is what it does for the whole city (see sim/bonus.js);
  * `noisy` how loud it is to the homes around it; `where` the ground it needs.
  */
 export const BUILDINGS = {
@@ -60,26 +60,26 @@ export const BUILDINGS = {
   techpark: { name: 'Business Park', cat: 'industry', size: [2, 3], cost: { gold: 70 }, weeks: 6, crew: 3, jobs: 40, shop: 4, auto: 'ind', level: 3, desc: 'A low glass office campus on a green. Wants schools.', design: { use: 'office', h: 14 } },
 
   // The city's own.
-  police: { name: 'Police Station', cat: 'safety', size: [2, 2], cost: { gold: 60 }, weeks: 6, crew: 3, jobs: 8, upkeep: 1.6, serve: { security: 1, radius: 14 }, desc: 'Keeps crime down within fourteen tiles.' },
-  firehouse: { name: 'Fire Station', cat: 'safety', size: [2, 3], cost: { gold: 60 }, weeks: 6, crew: 3, jobs: 8, upkeep: 1.4, serve: { fire: 1, radius: 14 }, desc: 'Fires start less and are put out sooner within fourteen tiles.' },
-  hospital: { name: 'Hospital', cat: 'safety', size: [3, 4], cost: { gold: 180 }, weeks: 12, crew: 4, jobs: 30, upkeep: 3, serve: { health: 1, radius: 20 }, rank: 1, desc: 'Healthier people, who live longer and stay.' },
-  school: { name: 'School', cat: 'civic', size: [3, 3], cost: { gold: 90 }, weeks: 8, crew: 3, jobs: 12, upkeep: 1.8, serve: { education: 1, radius: 14 }, desc: 'Educated people want better homes and bring better firms.' },
-  park: { name: 'Park', cat: 'civic', size: [3, 3], cost: { gold: 20 }, weeks: 2, crew: 2, upkeep: 0.3, serve: { cheer: 0.7, radius: 9 }, desc: 'Palms, a lawn, a fountain. Raises the land around it.' },
+  police: { name: 'Police Station', cat: 'safety', size: [2, 2], cost: { gold: 60 }, weeks: 6, crew: 3, jobs: 8, upkeep: 1.6, serve: { security: 1, radius: 14 }, desc: 'Keeps crime down within fourteen tiles.', design: { use: 'civic', h: 10 } },
+  firehouse: { name: 'Fire Station', cat: 'safety', size: [2, 3], cost: { gold: 60 }, weeks: 6, crew: 3, jobs: 8, upkeep: 1.4, serve: { fire: 1, radius: 14 }, desc: 'Fires start less and are put out sooner within fourteen tiles.', design: { use: 'civic', h: 10 } },
+  hospital: { name: 'Hospital', cat: 'safety', size: [3, 4], cost: { gold: 180 }, weeks: 12, crew: 4, jobs: 30, upkeep: 3, serve: { health: 1, radius: 20 }, rank: 1, desc: 'Healthier people, who live longer and stay.', design: { use: 'hospital', h: 24 } },
+  school: { name: 'School', cat: 'civic', size: [3, 3], cost: { gold: 90 }, weeks: 8, crew: 3, jobs: 12, upkeep: 1.8, serve: { education: 1, radius: 14 }, desc: 'Educated people want better homes and bring better firms.', design: { use: 'school', h: 10 } },
+  park: { name: 'Park', cat: 'civic', size: [3, 3], cost: { gold: 20 }, weeks: 2, crew: 2, upkeep: 0.3, serve: { cheer: 0.7, radius: 9 }, desc: 'Trees, a lawn, a fountain. Raises the land around it.' },
   plaza: { name: 'Plaza', cat: 'civic', size: [3, 3], cost: { gold: 45 }, weeks: 3, crew: 2, upkeep: 0.5, serve: { cheer: 1, radius: 11 }, desc: 'Pavers, cypresses and café umbrellas. The best heart for a donut block.' },
-  clinic: { name: 'Urgent Care', cat: 'safety', size: [2, 2], cost: { gold: 50 }, weeks: 4, crew: 2, jobs: 6, upkeep: 0.8, serve: { health: 0.6, radius: 10 }, desc: 'A walk-in clinic in a stucco box. Not a hospital, but close by.' },
-  library: { name: 'Public Library', cat: 'civic', size: [2, 2], cost: { gold: 40 }, weeks: 4, crew: 2, jobs: 4, upkeep: 0.6, serve: { education: 0.6, cheer: 0.2, radius: 10 }, desc: 'A glass reading room under a butterfly roof. Some of what a school does, for a corner lot.' },
-  university: { name: 'University', cat: 'civic', size: [4, 4], cost: { gold: 320 }, weeks: 16, crew: 5, jobs: 40, upkeep: 4, serve: { education: 1, radius: 24 }, rank: 2, bonus: { tax: { com: 0.08, ind: 0.12 }, growth: 0.1 }, desc: 'Red tile, a bell tower and a quad. Educates a wide circle, and its graduates found startups: shops and industry pay more, and firms grow up sooner.' },
+  clinic: { name: 'Urgent Care', cat: 'safety', size: [2, 2], cost: { gold: 50 }, weeks: 4, crew: 2, jobs: 6, upkeep: 0.8, serve: { health: 0.6, radius: 10 }, desc: 'A walk-in clinic in a brick storefront. Not a hospital, but close by.', design: { use: 'office', h: 8 } },
+  library: { name: 'Public Library', cat: 'civic', size: [2, 2], cost: { gold: 40 }, weeks: 4, crew: 2, jobs: 4, upkeep: 0.6, serve: { education: 0.6, cheer: 0.2, radius: 10 }, desc: 'A glass reading room under a butterfly roof. Some of what a school does, for a corner lot.', design: { use: 'civic', h: 11 } },
+  university: { name: 'University', cat: 'civic', size: [4, 4], cost: { gold: 320 }, weeks: 16, crew: 5, jobs: 40, upkeep: 4, serve: { education: 1, radius: 24 }, rank: 2, bonus: { tax: { com: 0.08, ind: 0.12 }, growth: 0.1 }, desc: 'Red tile, a bell tower and a quad. Educates a wide circle, and its graduates found startups: shops and industry pay more, and firms grow up sooner.', design: { use: 'university', h: 18 } },
 
-  // Getting to the island, and getting things off it.
-  seaport: { name: 'Container Port', cat: 'transport', size: [4, 4], cost: { gold: 260 }, weeks: 14, crew: 5, jobs: 30, upkeep: 2.4, rank: 1, noisy: 0.6, where: { sea: { radius: 5, count: 12 } }, bonus: { demand: { ind: 0.25 }, tax: { ind: 0.2 }, pull: 'ind' }, desc: 'Cranes, a quay and stacks of boxes. Ships what the island makes: industry wants more land and pays more, and grows toward the port. On the shore of the open sea, not a canal. Noisy.' },
+  // Getting to the city, and getting things out of it.
+  seaport: { name: 'Freight Yard', cat: 'transport', size: [4, 4], cost: { gold: 260 }, weeks: 14, crew: 5, jobs: 30, upkeep: 2.4, rank: 1, noisy: 0.6, where: { sea: { radius: 5, count: 12 } }, bonus: { demand: { ind: 0.25 }, tax: { ind: 0.2 }, pull: 'ind' }, desc: 'Cranes, a quay and stacks of boxes. Ships what the city makes: industry wants more land and pays more, and grows toward the port. On the bank of the Grand River, not a canal. Noisy.', design: { use: 'warehouse', h: 13 } },
   airport: { name: 'Airport', cat: 'transport', size: [6, 10], cost: { gold: 900 }, weeks: 30, crew: 8, jobs: 60, upkeep: 6, rank: 2, noisy: 1, bonus: { demand: { com: 0.2, res: 0.1 }, tax: { com: 0.15 }, tourism: 4, tourismK: 0.5, growth: 0.2, pull: 'com' }, desc: 'A runway, a glass terminal and a control tower. Brings tourists and business: shops want more land and pay more, every attraction draws half as many visitors again, and towers go up sooner. Very loud: keep it away from the homes.' },
 
-  // The cloud, on the island.
-  datacenter: { name: 'Data Center', cat: 'transport', size: [3, 4], cost: { gold: 380 }, weeks: 14, crew: 5, jobs: 12, upkeep: 2, rank: 1, noisy: 0.3, bonus: { tax: { com: 0.1, ind: 0.06 }, demand: { com: 0.1, ind: 0.05 }, growth: 0.08 }, desc: 'Windowless halls of servers, a yard of chillers on the roof and backup generators out back. The island’s startups run on it: shops and industry want more land and pay more, and firms grow up sooner. Its fans hum all night.' },
+  // The cloud.
+  datacenter: { name: 'Data Center', cat: 'transport', size: [3, 4], cost: { gold: 380 }, weeks: 14, crew: 5, jobs: 12, upkeep: 2, rank: 1, noisy: 0.3, bonus: { tax: { com: 0.1, ind: 0.06 }, demand: { com: 0.1, ind: 0.05 }, growth: 0.08 }, desc: 'Windowless halls of servers, a yard of chillers on the roof and backup generators out back. The island’s startups run on it: shops and industry want more land and pay more, and firms grow up sooner. Its fans hum all night.', design: { use: 'warehouse', h: 12 } },
 
   // Somewhere to go on a Saturday.
   marina: { name: 'Marina', cat: 'leisure', size: [3, 3], cost: { gold: 140 }, weeks: 8, crew: 3, jobs: 6, upkeep: 1, where: { sea: { radius: 4, count: 8 } }, serve: { cheer: 0.8, radius: 12 }, bonus: { tourism: 2.5 }, desc: 'Docks, sailboats and a yacht club. Cheers the shore and brings in visitors. On the open water.' },
-  stadium: { name: 'Stadium', cat: 'leisure', size: [5, 5], cost: { gold: 420 }, weeks: 20, crew: 6, jobs: 20, upkeep: 3, rank: 2, noisy: 0.4, serve: { cheer: 1, radius: 22 }, bonus: { tourism: 4, mood: 3 }, desc: 'A bowl of seats under the lights, for the island’s own team. Cheers half the island, lifts the mood, and fills with visitors on game day.' },
+  stadium: { name: 'Stadium', cat: 'leisure', size: [5, 5], cost: { gold: 420 }, weeks: 20, crew: 6, jobs: 20, upkeep: 3, rank: 2, noisy: 0.4, serve: { cheer: 1, radius: 22 }, bonus: { tourism: 4, mood: 3 }, desc: 'A bowl of seats under the lights, for the island’s own team. Cheers half the island, lifts the mood, and fills with visitors on game day.', design: { use: 'stadium', h: 24 } },
 };
 registerParcels(BUILDINGS);
 
@@ -99,21 +99,21 @@ export const GROWN = Object.freeze({
   ind: ['warehouse', 'factory', 'techpark'],
 });
 
-/** The tower on the island, the founder's HQ, as it grows: what the work costs, how many districts the city may keep, and the staff. */
+/** The founder's tower beside the river, the company's HQ, as it grows: what the work costs, how many districts the city may keep, and the staff. */
 export const CASTLE_LEVELS = Object.freeze([
-  { name: 'Startup HQ', cost: null, weeks: 0, wards: 3, jobs: 4, rank: 0, desc: 'Your company’s first tower, and your penthouse on top. Glass and white stone on a plaza of palms.' },
-  { name: 'Unicorn Tower', cost: { gold: 600 }, weeks: 16, wards: 6, jobs: 8, rank: 1, desc: 'A billion-dollar valuation deserves a third setback and a taller spire.' },
-  { name: 'Decacorn Spire', cost: { gold: 1800 }, weeks: 28, wards: 12, jobs: 14, rank: 2, desc: 'A gold crown you can see from the pier, and a helipad for the board.' },
-  { name: 'Trillion-Dollar Tower', cost: { gold: 5000 }, weeks: 48, wards: 49, jobs: 24, rank: 3, desc: 'The tallest tower on the coast, lit gold all night. You have won tech.' },
+  { name: 'Company Offices', cost: null, weeks: 0, wards: 3, jobs: 4, rank: 0, desc: 'Your company’s first tower, and your penthouse on top. Glass and white stone on a plaza by the river.' },
+  { name: 'Corporate Headquarters', cost: { gold: 600 }, weeks: 16, wards: 6, jobs: 8, rank: 1, desc: 'A company this size deserves a third setback and a taller spire.' },
+  { name: 'Grand Plaza', cost: { gold: 1800 }, weeks: 28, wards: 12, jobs: 14, rank: 2, desc: 'A gold crown you can see from the pier, and a helipad for the board.' },
+  { name: 'Furniture City Tower', cost: { gold: 5000 }, weeks: 48, wards: 49, jobs: 24, rank: 3, desc: 'The tallest tower in Michigan, lit gold all night. You have made Grand Rapids the Furniture Capital of the World.' },
 ]);
 
 /** The ranks, and what a city needs to be called one. */
 export const RANKS = Object.freeze([
-  { name: 'Garage Town', short: 'Garage Town', need: {} },
-  { name: 'Startup Town', short: 'Startup Town', need: { pop: 300, wards: 2 } },
-  { name: 'Tech Hub', short: 'Tech Hub', need: { pop: 1500, wards: 4, building: 'school' } },
-  { name: 'Silicon City', short: 'Silicon City', need: { pop: 5000, wards: 8, castle: 3 } },
-  { name: 'Tech Capital of the World', short: 'Tech Capital', need: { pop: 12000, wards: 12, building: 'hospital' } },
+  { name: 'Rapids Village', short: 'Rapids Village', need: {} },
+  { name: 'Furniture Town', short: 'Furniture Town', need: { pop: 300, wards: 2 } },
+  { name: 'Market City', short: 'Market City', need: { pop: 1500, wards: 4, building: 'school' } },
+  { name: 'Great Lakes City', short: 'Great Lakes City', need: { pop: 5000, wards: 8, castle: 3 } },
+  { name: 'Furniture Capital of the World', short: 'Furniture Capital', need: { pop: 12000, wards: 12, building: 'hospital' } },
 ]);
 
 /** Roads, and what they cost a tile. */
@@ -121,7 +121,7 @@ export const ROADS = Object.freeze({
   dirt: { name: 'Street', cost: { gold: 1 }, desc: 'Two lanes of asphalt.' },
   avenue: { name: 'Avenue', cost: { gold: 2 }, desc: 'Four lanes, two tiles wide, with a double yellow line down the middle. Drag along the ground: it is laid on the tiles you drag over and the row beside them.' },
   bridge: { name: 'Canal Bridge', cost: { gold: 6 }, desc: 'A bridge over a canal or a lagoon: drag from one bank to the other, up to six tiles of water, in a straight line. The grand canal is crossed only at its bridges.' },
-  cobble: { name: 'Boulevard', cost: { gold: 3 }, desc: 'Palms down the median. Land along it is worth more.' },
+  cobble: { name: 'Boulevard', cost: { gold: 3 }, desc: 'Trees down the median. Land along it is worth more.' },
 });
 
 /** The cost of digging canals around a new district: it grows with the city and with how hard the ground is. */

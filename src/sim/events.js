@@ -152,6 +152,6 @@ export function ranks(game) {
   if (n.building && !has(n.building)) return;
   game.rank++;
   game.shock = Math.max(0, game.shock - 6);
-  game.note(`Your island is a ${next.name} now. The press loves it, and new projects are open to you.`, 'good', [CENTER, CENTER]);
+  game.note(`Your city is a ${next.name} now. The press loves it, and new projects are open to you.`, 'good', [CENTER, CENTER]);
   game.emit('rank', { rank: game.rank });
 }

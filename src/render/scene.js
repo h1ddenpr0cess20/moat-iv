@@ -12,6 +12,8 @@ import { createFx } from './effects.js';
 import { createGates } from './gates.js';
 import { createMaterials } from './materials.js';
 import { createOverlays } from './overlays.js';
+import { PARCELS, parcelByType } from '../parcels.js';
+import { ZONES } from '../catalog.js';
 import { createSkyDomes, paintDay, paintReflections } from './sky.js';
 import { createTerrain } from './terrain.js';
 import { createTrees } from './trees.js';
@@ -35,7 +37,7 @@ export async function createScene({ host, game, progress = () => {} }) {
     lights: { key: { from: sunDir }, fill: null }, shadowSize: 2048, backdrop: '#9fb8c8', label: 'moat',
   });
   useRenderer(stage.renderer);
-  progress(0.04, 'Raising the island');
+  progress(0.04, 'Raising the city');
   const materials = createMaterials(GFX);
   const terrain = createTerrain(GFX, world, materials, stage.scene);
   const water = createWater(GFX, world, materials, stage.scene);
@@ -54,8 +56,8 @@ export async function createScene({ host, game, progress = () => {} }) {
   water.build();
   progress(0.08, 'Painting the beaches and the lawns');
   await terrain.paintAll([CENTER, CENTER], (f) => progress(0.08 + f * 0.55, 'Painting the beaches and the lawns'));
-  progress(0.64, 'Planting the palms');
-  await trees.buildAll(cal0.season, [CENTER, CENTER], (f) => progress(0.64 + f * 0.2, 'Planting the palms'));
+  progress(0.64, 'Planting the trees');
+  await trees.buildAll(cal0.season, [CENTER, CENTER], (f) => progress(0.64 + f * 0.2, 'Planting the trees'));
   progress(0.86, 'Paving the streets and raising the towers');
   trees.updateLod(stage.target.x, stage.target.z, 30);
   decals.refreshFields(cal0);
@@ -87,6 +89,7 @@ export async function createScene({ host, game, progress = () => {} }) {
   let emitClock = 0;
   let lodClock = 0;
   let time = 0;
+  let lotsAt = -1;
 
   const scene = {
     GFX, stage, camera, viewDef, materials, terrain, water, trees, decals, buildings, gates, traffic, fx, overlays, atmosphere,
@@ -115,6 +118,17 @@ export async function createScene({ host, game, progress = () => {} }) {
       buildings.update(live, 0.6 + 0.4 * Math.sin(time * 0.3));
       gates.update(dt);
       traffic.update(dt, { live, eye: camera.eye });
+      // The lots the real buildings stood on, that the city has not built again: faintly in the color of their zone.
+      if (lotsAt !== world.bver) {
+        lotsAt = world.bver;
+        const taken = new Set();
+        for (const b of world.buildings.values()) { const p = parcelByType.get(b.type); if (p) taken.add(p.index); }
+        for (const zone of Object.keys(ZONES)) {
+          const tiles = [];
+          for (const p of PARCELS) if (p.zone === zone && !taken.has(p.index)) for (const t of p.tiles) tiles.push(t);
+          overlays.fill(`lots-${zone}`, tiles, { color: ZONES[zone].color, opacity: 0.2 });
+        }
+      }
       overlays.update(dt);
       const frac = Math.min(1, scene.weekFrac);
       atmosphere.update(live, { week: game.week, frac, storm: Boolean(game.hurricane && !game.hurricane.warn) });

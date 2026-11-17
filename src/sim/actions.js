@@ -297,7 +297,7 @@ export function planAnnex(game, wardId) {
   const out = { ward, cost, work, ok: false, reason: null };
   if (ward.owned) return { ...out, reason: 'Already yours' };
   if (ward.dig) return { ...out, reason: 'The diggers are at work here' };
-  if (!bordersRealm(world, wardId)) return { ...out, reason: 'It must border your island' };
+  if (!bordersRealm(world, wardId)) return { ...out, reason: 'It must border your city' };
   const digging = world.wards.find((w) => w.dig);
   if (digging) return { ...out, reason: `The diggers are busy at ${digging.name}` };
   const cap = CASTLE_LEVELS[game.castleLevel].wards;

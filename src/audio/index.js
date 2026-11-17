@@ -15,9 +15,9 @@ import { createMusic } from './music.js';
 const DEFAULTS = Object.freeze({ music: 0.6, sfx: 0.8 });
 
 export function createSound({ game, scene }) {
-  const slot = saveSlot('moat3.sound.v1');
+  const slot = saveSlot('moat4.sound.v1');
   const settings = { ...DEFAULTS, ...pickSettings(slot.read(), DEFAULTS) };
-  const audio = createAudio({ storageKey: 'moat3.muted', level: 0.85, volume: settings, glue: true, onWake: () => wake() });
+  const audio = createAudio({ storageKey: 'moat4.muted', level: 0.85, volume: settings, glue: true, onWake: () => wake() });
   const rate = new Map();
   let loops = null;
   let env = { water: 0, forest: 0, building: 0, t: 0 };

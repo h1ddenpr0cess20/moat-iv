@@ -13,9 +13,9 @@ export { castleNorm };
  */
 
 // California names: a saint, a Spanish word, or an English one, and a word for the kind of place.
-const FIRST = ['San Pedro', 'Santa Rosa', 'San Miguel', 'Santa Ana', 'San Lucas', 'Santa Clara', 'San Benito', 'Del Mar', 'La Playa', 'Las Palmas', 'El Segundo', 'Mar Vista', 'Playa', 'Solana', 'Coronado', 'Laguna', 'Encinitas', 'Cabrillo', 'Portola', 'Malibu', 'Pacifica', 'Ventura', 'Montecito', 'Topanga', 'Sausal', 'Redondo', 'Hermosa', 'Alameda', 'Marina', 'Sequoia'];
-const LAST = [' Beach', ' Heights', ' Park', ' Hills', ' Shores', ' Bay', ' Point', ' Gardens', ' Village', ' Canyon', ' Mesa', ' Pier', ' Grove', ' Harbor', ' Terrace', ' Vista', ' Cove', ' Landing'];
-const TAIL = { wood: ['Grove', 'Redwoods', 'Woods'], water: ['Lagoon', 'Marsh', 'Inlet'], rock: ['Bluffs', 'Point', 'Rocks'], ore: ['Bluffs', 'Rocks', 'Cliffs'], fertile: ['Valley', 'Gardens', 'Flats'], high: ['Heights', 'Ridge', 'Hills'], plain: ['Mesa', 'Flats', 'Commons', 'Park'] };
+const FIRST = ['Heritage','Belknap','Monroe','Midtown','Westside','Roosevelt','Black Hills','Eastown','John Ball','Creston','Fulton','Oakdale','Garfield','Baxter','Mulick','Kent','Ottawa','Pearl','Ionia','Division','Lyon','Bridge','Leonard','Plainfield','Bostwick','Coldbrook','Straight','Scribner','Wealthy','Cherry'];
+const LAST = [' Hill',' Park',' Flats',' Heights',' Yards',' Landing',' Square',' Crossing',' Terrace',' Row',' Commons',' Bluff'];
+const TAIL = { wood: ['Woods','Grove','Park'], water: ['Riverfront','Landing','Flats'], rock: ['Bluff','Hill','Heights'], ore: ['Yards','Works','Heights'], fertile: ['Flats','Commons','Gardens'], high: ['Heights','Hill','Ridge'], plain: ['Square','Commons','District'] };
 
 /** The four edges of a ward, as the direction they face. */
 export const EDGES = ['north', 'east', 'south', 'west'];
@@ -43,7 +43,7 @@ export function initWards(world) {
     wards.push({ id, gx, gy, name, trait, stats, owned: false, dig: null });
   }
   wards[wardId(HOME_WARD, HOME_WARD)].owned = true;
-  wards[wardId(HOME_WARD, HOME_WARD)].name = `${pick(rnd, ['Nova', 'Vertex', 'Lumen', 'Quanta', 'Helix', 'Arcadia', 'Zenith', 'Cortex', 'Orbit', 'Nimbus'])} Island`;
+  wards[wardId(HOME_WARD, HOME_WARD)].name = `${pick(rnd, ['Riverfront','Pearl Street','Monroe North','Calder Plaza','Lyon Square','Founders'])} District`;
   world.wards = wards;
   return wards;
 }

@@ -11,8 +11,8 @@ import { icon } from './icons.js';
 
 const HINTS = {
   welcome: {
-    text: 'You bought an island. Welcome home, boss. Slide the map with <b>WASD</b> or the <b>right button</b>, turn it with <b>Q</b> and <b>E</b>, and zoom with the wheel. Zone <b>homes</b>, <b>shops</b> and <b>industry</b> along streets; the meter up top says which the city wants.',
-    touch: 'You bought an island. Welcome home, boss. Slide the map with a <b>finger</b>, and <b>pinch</b> and <b>twist</b> with two to zoom and turn it. Tap anything to look at it. Zone <b>homes</b>, <b>shops</b> and <b>industry</b> along streets; the meter up top says which the city wants.',
+    text: 'You own the tallest tower in downtown Grand Rapids, and the land around it. Welcome home, boss. Slide the map with <b>WASD</b> or the <b>right button</b>, turn it with <b>Q</b> and <b>E</b>, and zoom with the wheel. Zone <b>homes</b>, <b>shops</b> and <b>industry</b> along streets; the meter up top says which the city wants.',
+    touch: 'You own the tallest tower in downtown Grand Rapids, and the land around it. Welcome home, boss. Slide the map with a <b>finger</b>, and <b>pinch</b> and <b>twist</b> with two to zoom and turn it. Tap anything to look at it. Zone <b>homes</b>, <b>shops</b> and <b>industry</b> along streets; the meter up top says which the city wants.',
     next: 'block',
   },
   block: {
@@ -32,7 +32,7 @@ const HINTS = {
 };
 
 export function createSteward(ctx) {
-  const slot = saveSlot('moat3.hints.v1');
+  const slot = saveSlot('moat4.hints.v1');
   const seen = new Set(slot.read() ?? []);
   const el = h('div.panel.steward');
   el.hidden = true;

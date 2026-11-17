@@ -1,7 +1,7 @@
 import { DIRS } from '../config.js';
 import { BUILDINGS } from '../catalog.js';
 import { heightAt } from '../world/world.js';
-import { ORIGIN, TILE, parcelByType, toMetres } from '../parcels.js';
+import { ORIGIN, TILE, TOWER, parcelByType, toMetres } from '../parcels.js';
 import { Designs } from '../city/rt/buildings.js';
 import { materialFor } from '../city/rt/look.js';
 import { castsShadow } from './materials.js';
@@ -14,7 +14,7 @@ import { castsShadow } from './materials.js';
  */
 
 /** Is this building drawn in a design (not one of the engine's models)? */
-export const isDesigned = (b) => Boolean(BUILDINGS[b.type]?.design || BUILDINGS[b.type]?.parcel !== undefined);
+export const isDesigned = (b) => b.type === 'castle' || Boolean(BUILDINGS[b.type]?.design || BUILDINGS[b.type]?.parcel !== undefined);
 
 /** The group every designed mesh goes in: metres in, tiles out. */
 export function designFrame(GFX) {
@@ -26,6 +26,7 @@ export function designFrame(GFX) {
 
 /** The record 3d-city's designs read for a building of the game's. */
 export function recordOf(b) {
+  if (b.type === 'castle') return TOWER;
   const real = parcelByType.get(b.type);
   if (real) return real.record;
   const def = BUILDINGS[b.type], m = 1.4;
@@ -50,7 +51,7 @@ export function createDesigner(GFX, world) {
     const kept = cache.get(b.id);
     if (kept && kept.sig === sig) return kept.parts;
     const [dx, dy] = DIRS[b.front] ?? [0, 1];
-    const parts = (parcelByType.has(b.type) ? real : free).detail([[recordOf(b), [], [], [dx, -dy]]]);
+    const parts = (b.type === 'castle' || parcelByType.has(b.type) ? real : free).detail([[recordOf(b), [], [], [dx, -dy]]]);
     cache.set(b.id, { sig, parts });
     return parts;
   };

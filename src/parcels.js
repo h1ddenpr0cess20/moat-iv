@@ -1,4 +1,5 @@
 import parcelData from './data/parcels.json' with { type: 'json' };
+import tower from './data/tower.json' with { type: 'json' };
 import gr from './data/grand-rapids.json' with { type: 'json' };
 
 /**
@@ -13,6 +14,8 @@ import gr from './data/grand-rapids.json' with { type: 'json' };
  * its map); the game's tiles are TILE metres and its (0, 0) is ORIGIN.
  */
 
+/** The founder's tower: the real Amway Grand Hotel, on the middle of the map. */
+export const TOWER = tower;
 export const TILE = gr.tile;
 export const ORIGIN = [gr.center[0] - (gr.size * gr.tile) / 2, gr.center[1] - (gr.size * gr.tile) / 2];
 

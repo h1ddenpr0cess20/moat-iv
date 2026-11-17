@@ -52,7 +52,7 @@ export function realmDialog(ctx, { ward: initial = null } = {}) {
   let selected = initial ?? world.wards.find((w) => !w.owned && bordersRealm(world, w.id))?.id ?? world.wards.find((w) => w.owned).id;
   if (!cached || cached.seed !== world.seedText) cached = { seed: world.seedText, img: terrainImage(world) };
 
-  const canvas = h('canvas', { width: SIZE * PX, height: SIZE * PX, 'aria-label': 'Map of the island' });
+  const canvas = h('canvas', { width: SIZE * PX, height: SIZE * PX, 'aria-label': 'Map of the city' });
   const info = h('div.ward-info');
   let timer = 0;
 

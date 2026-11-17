@@ -25,7 +25,7 @@ import './style.css';
 
 function chronicle(ctx) {
   return {
-    title: 'Island News',
+    title: 'Furniture City News',
     icon: 'scroll',
     refresh: true,
     draw(body) {

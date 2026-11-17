@@ -1,7 +1,7 @@
 {
-  "name": "moat-iii",
+  "name": "moat-iv",
   "version": "0.1.0",
-  "description": "A tech billionaire’s island city builder off the California coast: zone homes, shops and industry, run the services, and dig the canals wider. Built on the Madness Engine.",
+  "description": "A city builder on the real map of downtown Grand Rapids, Michigan: zone the land beside the Grand River, lay the streets, and the real buildings rise on their lots in 3d-city's designs. Built on the Madness Engine.",
   "type": "module",
   "private": true,
   "engines": {

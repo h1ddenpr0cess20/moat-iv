@@ -2,7 +2,7 @@ import { BUILDINGS, money } from '../catalog.js';
 import { clamp } from '../rng.js';
 
 /**
- * What the island's big buildings do for all of it, not only the tiles around
+ * What the city's big buildings do for all of it, not only the tiles around
  * them: a port that ships the factories' goods, an airport that flies the
  * tourists in, a university whose graduates found startups. Each kind counts
  * in full once; a second of a kind adds half as much again, a third a quarter.
@@ -41,7 +41,7 @@ export const bonusOf = (game) => game.bonus ?? empty();
 
 /**
  * The week's visitors' money, in thousands at a 10% tax: what draws them,
- * more with an airport to fly them in, and more again when the island is a
+ * more with an airport to fly them in, and more again when the city is a
  * happy place with parks to show.
  */
 export function tourism(game, cheer = 0) {
@@ -74,7 +74,7 @@ const ZONE_WORD = { res: 'homes', com: 'shops', ind: 'industry' };
 const TAX_WORD = { res: 'Homes pay', com: 'Shops pay', ind: 'Industry pays' };
 const pc = (x) => `${Math.round(x * 100)}%`;
 
-/** What a kind of building does for the island, in words, for the build menu and the inspector. */
+/** What a kind of building does for the city, in words, for the build menu and the inspector. */
 export function bonusLines(def) {
   const B = def.bonus;
   const out = [];
@@ -84,7 +84,7 @@ export function bonusLines(def) {
   if (B.tourism) out.push(`Visitors: about ${money(B.tourism)} a week in hotel and sales taxes`);
   if (B.tourismK) out.push(`Every attraction draws ${pc(B.tourismK)} more visitors`);
   if (B.growth) out.push(`Buildings grow up in a city ${pc(B.growth)} smaller`);
-  if (B.mood) out.push(`+${B.mood} mood across the island`);
+  if (B.mood) out.push(`+${B.mood} mood across the city`);
   if (B.pull) out.push(`New ${ZONE_WORD[B.pull]} grow toward it`);
   return out;
 }

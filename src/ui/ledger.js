@@ -51,7 +51,7 @@ function treasury(ctx, body) {
         h('h3', {}, 'Landmarks'),
         bonusOf(game).sources.length
           ? h('div', {}, ...bonusOf(game).sources.map((type) => h('div', { html: `<b>${BUILDINGS[type].name}</b> <span class="dim">· ${bonusLines(BUILDINGS[type]).join(' · ')}</span>` })))
-          : h('p.dim', {}, 'A port, an airport, a university, a data center or a stadium does something for the whole island. You have none yet.')),
+          : h('p.dim', {}, 'A port, an airport, a university, a data center or a stadium does something for the whole city. You have none yet.')),
       h('div', {}, h('h3', {}, 'Tax rate'), slider, label,
         h('p.dim', {}, 'High taxes fill the bank and empty the city. At 9% or under people are content; over it, they grumble and firms stay away.'),
         h('h3', {}, 'Service budget'), budget, blabel,

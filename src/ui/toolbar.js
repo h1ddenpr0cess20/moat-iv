@@ -35,7 +35,7 @@ export function createToolbar(ctx) {
   for (const t of TOOLS) mk(t);
   dock.append(h('span.sep'));
   mk({ id: 'realm', icon: 'map', name: 'Districts', key: 'M', tip: 'The map of the coast: annex districts by digging the canals wider.', run: () => ctx.dialogs.toggle('realm') });
-  mk({ id: 'castle', icon: 'castle', name: 'Tower', key: 'C', tip: 'Look at the tower on the island, and raise it higher.', run: () => { ctx.inspector.show({ kind: 'building', id: 1 }); ctx.scene.focusOn(CENTER, CENTER + 2); } });
+  mk({ id: 'castle', icon: 'castle', name: 'Tower', key: 'C', tip: 'Look at the tower by the river, and raise it higher.', run: () => { ctx.inspector.show({ kind: 'building', id: 1 }); ctx.scene.focusOn(CENTER, CENTER + 2); } });
 
   const seg = (items, value, onPick) => h('span.seg', {}, items.map(([id, label, title]) => h('button', { class: id === value ? 'on' : '', title: title ?? '', onclick: () => onPick(id) }, label)));
   const opt = (label, on, onclick, extra = {}) => h('button.opt', { class: on ? 'on' : '', onclick, ...extra }, ...(Array.isArray(label) ? label : [label]));

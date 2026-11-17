@@ -12,7 +12,7 @@ import { createUI } from './ui/index.js';
 const host = document.getElementById('game');
 const root = document.getElementById('ui');
 const saves = createSaves();
-const prefs = saveSlot('moat3.prefs.v1');
+const prefs = saveSlot('moat4.prefs.v1');
 const randomSeed = () => Math.random().toString(36).slice(2, 8);
 const dev = import.meta.env.DEV;
 
@@ -21,7 +21,7 @@ const loading = {
     const bar = document.getElementById('loading-bar'), label = document.getElementById('loading-text');
     if (bar) bar.style.width = `${Math.round(f * 100)}%`;
     if (label && text) label.textContent = text;
-    document.title = f >= 1 ? 'Moat III: The Island' : `Moat III · ${Math.round(f * 100)}%`;
+    document.title = f >= 1 ? 'Moat IV: Furniture City' : `Moat IV · ${Math.round(f * 100)}%`;
   },
   done() { document.getElementById('loading')?.remove(); },
 };
@@ -31,7 +31,7 @@ const loading = {
 const difficulty = params.get('difficulty') ?? 'normal';
 const disasters = params.get('disasters') !== '0';
 const saved = saves.current();
-try { localStorage.setItem('moat3.wards', String(WARDS)); } catch { /* no storage, no memory of the size */ }
+try { localStorage.setItem('moat4.wards', String(WARDS)); } catch { /* no storage, no memory of the size */ }
 let game = null;
 let hasSave = false;
 if (saved) {

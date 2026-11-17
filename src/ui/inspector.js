@@ -131,7 +131,7 @@ export function createInspector(ctx) {
     const perks = bonusLines(def);
     if (perks.length) {
       const first = [...world.buildings.values()].find((o) => o.type === b.type && o.state === 'ready' && o.connected);
-      parts.push(h('h3', {}, 'For the whole island'), ...perks.map((t) => h('div', { html: `✦ ${t}` })));
+      parts.push(h('h3', {}, 'For the whole city'), ...perks.map((t) => h('div', { html: `✦ ${t}` })));
       if (b.state === 'ready' && first && first !== b) parts.push(h('p.dim', {}, `A second ${def.name.toLowerCase()} adds half as much again.`));
       if (b.state === 'ready' && !b.connected) parts.push(h('p.bad', {}, 'Not until a road joins it to the tower.'));
     }

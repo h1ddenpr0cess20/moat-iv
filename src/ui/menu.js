@@ -41,9 +41,9 @@ export function menuDialog(ctx) {
       body.replaceChildren(
         h('div.grid2', {},
           h('div', {}, h('h3', {}, 'The game'),
-            h('div.actions', {}, h('button.btn.gold', { onclick: () => { ctx.dialogs.close(); } }, 'Back to the island'), h('button.btn', { onclick: () => { flow.save(); ctx.say('The game is saved.', 'good'); ctx.dialogs.close(); } }, 'Save'), h('button.btn', { disabled: !saved, title: 'Back to the last save of this island', onclick: () => flow.load() }, 'Load')),
+            h('div.actions', {}, h('button.btn.gold', { onclick: () => { ctx.dialogs.close(); } }, 'Back to the city'), h('button.btn', { onclick: () => { flow.save(); ctx.say('The game is saved.', 'good'); ctx.dialogs.close(); } }, 'Save'), h('button.btn', { disabled: !saved, title: 'Back to the last save of this island', onclick: () => flow.load() }, 'Load')),
             h('p.dim', {}, saved ? `Last saved: ${saved}.` : 'Nothing saved yet. The game saves itself each season.'),
-            h('div.actions', {}, h('button.btn', { onclick: () => flow.newGame() }, 'A new island…'), h('button.btn', { onclick: () => { ctx.steward.reset(); ctx.say('Your chief of staff will brief you again.', 'info'); } }, 'Hear the hints again'))),
+            h('div.actions', {}, h('button.btn', { onclick: () => flow.newGame() }, 'A new game…'), h('button.btn', { onclick: () => { ctx.steward.reset(); ctx.say('Your chief of staff will brief you again.', 'info'); } }, 'Hear the hints again'))),
           h('div', {}, h('h3', {}, 'Sound'), mute, slider('Music', 'music'), slider('Effects', 'sfx'),
             h('h3', {}, 'Picture'), h('div.stat', {}, h('span', {}, 'Quality'), quality),
             h('p.dim', {}, 'Low draws fewer shadows and smaller pixels; it helps a slow machine.'))),
@@ -56,7 +56,7 @@ export function menuDialog(ctx) {
         }),
         h('h3', {}, 'How to play'),
         h('table', {}, h('tbody', {}, ...CONTROLS.map(([k, v]) => h('tr', {}, h('td', {}, h('b', {}, k)), h('td', {}, v))))),
-        h('p.dim', { html: `${icon('castle', 16)} <b>Moat III: The Island</b> is built on the Madness Engine. Seed: <b>${game.seed}</b> · ${game.difficulty}.` }));
+        h('p.dim', { html: `${icon('castle', 16)} <b>Moat IV: Furniture City</b> is built on the Madness Engine. Seed: <b>${game.seed}</b> · ${game.difficulty}.` }));
     },
   };
 }
