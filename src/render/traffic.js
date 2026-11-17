@@ -39,10 +39,27 @@ export const SCULPTED = Object.fromEntries([...KINDS.flatMap((k) => [k.def, k.de
 /** What the close-up cars are baked from. */
 const NEAR_JOBS = [...KINDS.map((k) => k.def.body.name), ...new Set(KINDS.map((k) => k.def.wheel))].map((n) => [n, NEAR_DETAIL]);
 
-/** A stop sign on its post: a red octagon, facing the way the cars come. */
+/** A flat eight-sided plate standing up in the x-y plane, centred (0, cy) at depth z, its face toward +z (and its back toward -z). */
+function octagon(m, cy, r, z, face, back) {
+  const pts = Array.from({ length: 8 }, (_, k) => {
+    const a = Math.PI / 8 + (k * Math.PI) / 4;
+    return [r * Math.cos(a), cy + r * Math.sin(a)];
+  });
+  for (let k = 0; k < 8; k++) {
+    const [ax, ay] = pts[k], [bx, by] = pts[(k + 1) % 8];
+    m.tri('plain', [0, cy, z], [ax, ay, z], [bx, by, z], face);
+    m.tri('plain', [0, cy, z - 0.002], [bx, by, z - 0.002], [ax, ay, z - 0.002], back);
+  }
+}
+
+/** A stop sign on its post: a red octagon with a white rim and a white band for the word, standing up and facing the way the cars come (+z). */
 function stopSign(m) {
   m.cylinder('metal', 0, 0, 0, 0.012, 0.012, 0.42, 5, '#b8bcc0');
-  m.cylinder('plain', 0, 0.36, 0.014, 0.075, 0.075, 0.012, 8, '#c8241c', { caps: true });
+  octagon(m, 0.36, 0.08, 0.016, '#f4f4f0', '#9a9ea2');
+  octagon(m, 0.36, 0.07, 0.018, '#c8241c', '#9a9ea2');
+  // The word, as a white band with a gap in it.
+  m.box('plain', -0.05, 0.352, 0.0195, -0.012, 0.368, 0.0215, '#f4f4f0');
+  m.box('plain', 0.012, 0.352, 0.0195, 0.05, 0.368, 0.0215, '#f4f4f0');
 }
 
 /** A traffic signal: a pole and an arm out over the lane, with the head the lamp hangs in. */

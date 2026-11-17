@@ -7,6 +7,7 @@ import { fullTrees } from '../city/trees.js';
 import { cityGroup, chooseLods } from '../city/scene.js';
 import { SURFACES, paintSurfaces } from '../city/surfaces.js';
 import { setNight } from '../city/night.js';
+import { setGlow } from '../city/rt/look.js';
 
 /**
  * The land: 3d-city's own, as 3d-city draws it (src/city, copied from it): the ground draped over the satellite's heights
@@ -67,6 +68,8 @@ export async function createLand({ GFX, stage, progress = () => {} }) {
     /** 0 by day, 1 by night: the windows and lamps, and the sky. */
     setNight(n) {
       setNight(n);
+      // The windows, signs and lamps of 3d-city's designs come on as it gets dark.
+      setGlow(n);
       const want = n > 0.5 ? 'night' : 'noon';
       if (want !== sky) { sky = want; ocean.setSky(want, 5); }
     },

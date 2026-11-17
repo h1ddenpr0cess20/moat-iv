@@ -7,4 +7,4 @@
 - **Level of detail.** Every finished building is full detail. A far version (`Designs.build` with `lod: 'far'`) for a big city would save triangles.
 - **Terrain skirt.** The land past the edge of the map is Moat III's hazy mountain ring, drawn from the real heights; it could be the real surroundings.
 - **Winter all year.** The calendar still runs through twelve months (it starts mid-November), but the look is always winter. A real seasonal cycle (`atmosphere.js` has the pieces) would let the river thaw in summer and the walls drip.
-- **Ice walls.** The wall is two blocks high and two thick on every border tile. A thinner wall, towers at the corners and the gatehouse built into it, and walls that stand in the river (they stop at the banks now), would suit it.
+- **Ice walls.** The wall is three blocks high and two thick on every border tile. A thinner wall, towers at the corners and the gatehouse built into it, and walls that stand in the river (they stop at the banks now), would suit it.

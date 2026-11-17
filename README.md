@@ -20,7 +20,7 @@ Node 22.12 or later. The game needs a browser with WebGPU or WebGL 2. The contro
 
 ## Winter, and the ice walls
 
-It is winter in Furniture City all year (the game opens in the middle of November): snow on the ground and the roofs, the Grand River frozen, snow falling in three-week spells, the deciduous trees bare, and a blizzard now and then where Moat III had hurricanes. The walls are ice. Each wall tile carries the engine's ice cube (`madness-engine/scenery/ice`, the block its winter walls are built of: the clear shell and its frost rim, no core or bubbles), two high, drawn by `src/render/walls.js`. A district's border is a wall, with a gate (an asphalt road through it, and an iron portcullis once there is a gatehouse) where a street may cross; taking a district in builds the wall round it and takes the old one down. The river is crossed with a Bridge; nothing is dug and no canal holds water.
+It is winter in Furniture City all year (the game opens in the middle of November): snow on the ground and the roofs, the Grand River frozen, snow falling in three-week spells, the deciduous trees bare, and a blizzard now and then where Moat III had hurricanes. The walls are ice. Each wall tile carries the engine's ice cube (`madness-engine/scenery/ice`, the block its winter walls are built of: the clear shell and its frost rim, no core or bubbles), three high, drawn by `src/render/walls.js`. A district's border is a wall, with a gate (an asphalt road through it, and an iron portcullis once there is a gatehouse) where a street may cross; taking a district in builds the wall round it and takes the old one down. The river is crossed with a Bridge; nothing is dug and no canal holds water.
 
 ## The map and the parcels
 

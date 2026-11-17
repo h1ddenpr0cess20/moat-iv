@@ -35,6 +35,8 @@ export function createAtmosphere({ GFX, stage, sunDir, materials, terrain, water
   const { mat } = materials;
   let clock = 0.38;
   let mode = 'auto';
+  /** Snow forced on or off (for looking at it), or null to follow the weather. */
+  let forced = null;
   let filmKey = '';
   // The stage's own backdrop dome (drawn first, behind everything): its color dims the sky when it clouds over.
   const backdrop = stage.scene.children.find((o) => o.renderOrder === -1 && o.material?.side === GFX.BackSide);
@@ -47,6 +49,7 @@ export function createAtmosphere({ GFX, stage, sunDir, materials, terrain, water
     state,
     get time() { return clock; },
     setMode(m) { mode = m; },
+    setSnow(on) { forced = on; },
     get mode() { return mode; },
     setTime(t) { clock = t; },
     /**
@@ -65,7 +68,7 @@ export function createAtmosphere({ GFX, stage, sunDir, materials, terrain, water
       const maxElev = 0.5 + 0.04 * Math.cos(Math.PI * 2 * yearT);
       const L = lightAt(clock, maxElev);
       // A blizzard brings its own snow, and a sky as dark as it gets; the rest of the time snow comes in three-week spells under a grey sky.
-      const snowing = storm || rainAt(week, seed);
+      const snowing = forced ?? (storm || rainAt(week, seed));
       overcast += ((snowing ? 1 : 0.35) - overcast) * Math.min(1, dt * 0.8);
       const dim = 1 - 0.38 * overcast;
       sunDir.set(...L.dir);

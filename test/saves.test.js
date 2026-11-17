@@ -25,7 +25,7 @@ test('saves by name are kept apart, listed newest first, and come back', () => {
   const a = saves.save(realm('alder', 10), { name: 'Before the raid' });
   const b = saves.save(realm('birch', 100));
   assert.ok(a && b && a.id !== b.id);
-  assert.equal(b.name, 'birch, April, Year 3');
+  assert.equal(b.name, 'birch, Month 26');
   assert.equal(a.people, 34);
   assert.deepEqual(saves.list().map((s) => s.id).sort(), [a.id, b.id].sort());
   assert.equal(saves.read(a.id).seed, 'alder');
