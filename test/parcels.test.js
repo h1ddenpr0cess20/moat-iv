@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { BUILDINGS } from '../src/catalog.js';
 import { PARCELS, parcelByType } from '../src/parcels.js';
-import { buildZone, completeAnnex, startGame, step } from '../src/sim/game.js';
+import { buildZone, completeAnnex, placeBuilding, startGame, step } from '../src/sim/game.js';
 import { wardId, wardOfTile } from '../src/world/index.js';
 import { connect } from '../src/sim/hamlet.js';
 import { Designs } from '../src/city/rt/buildings.js';
@@ -59,4 +59,34 @@ test('a bot plays on and real parcels go up among the rest', () => {
   const bot = createBot(game);
   for (let w = 0; w < 260 && !game.gameOver; w++) { bot.think(); step(game); }
   assert.ok(game.pop.adults + game.pop.children + game.pop.elders > 50);
+});
+
+test('the named buildings of the map are landmarks: one of each, built by name, on their lot or away from it', () => {
+  const marks = PARCELS.filter((p) => p.landmark);
+  assert.ok(marks.length > 40, `${marks.length} landmarks`);
+  const names = marks.map((p) => p.record.name);
+  assert.equal(new Set(names).size, names.length, 'one of each name');
+  for (const n of ['Grand Rapids Art Museum', 'Van Andel Arena', 'Kent County Courthouse', 'La Grande Vitesse', 'DeVos Place Convention Center']) assert.ok(names.includes(n), n);
+  for (const p of marks) {
+    assert.equal(BUILDINGS[p.type].cat, 'landmark');
+    assert.ok(BUILDINGS[p.type].unique);
+  }
+  const game = startGame({ seed: 'moat' });
+  game.world.realm.fill(1);
+  const museum = marks.find((p) => p.record.name === 'Grand Rapids Art Museum');
+  // Anywhere clear: the lot's own tiles are what it needs.
+  let spot = null;
+  for (let y = 100; y < 190 && !spot; y += 3) for (let x = 112; x < 190 && !spot; x += 3) { const r = placeBuilding(game, museum.type, x, y, 0, { free: true }); if (r.building) spot = r.building; }
+  assert.ok(spot, 'the museum goes up somewhere');
+  assert.equal(placeBuilding(game, museum.type, 105, 140, 0, { free: true }).ok, false, 'only one');
+});
+
+test('3d-city draws the landmarks, the set pieces and every kind of building the Build menu adds', () => {
+  const designs = new Designs({ ground: () => 0, streetDir: () => null, creative: false });
+  for (const [type, def] of Object.entries(BUILDINGS)) {
+    if (def.cat !== 'downtown') continue;
+    const [w, d] = def.size, r = { id: type, rings: [[[0, 0], [w * 6.4 - 3, 0], [w * 6.4 - 3, d * 6.4 - 3], [0, d * 6.4 - 3], [0, 0]]], use: def.design.use, height: def.design.h, kind: def.design.kind };
+    const parts = designs.detail([[r, def.design.names ?? [], [], null]]);
+    assert.ok(parts.some((q) => q.count > 0), `${type} is drawn`);
+  }
 });

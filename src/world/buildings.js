@@ -1,6 +1,7 @@
 import { BUILDINGS } from '../catalog.js';
 import { CENTER, GROUND } from '../config.js';
 import { hash2 } from '../rng.js';
+import { parcelByType, tilesAt } from '../parcels.js';
 import { blocked, nearestRoadSide } from './roads.js';
 import { clearTrees, idx, inb, rectRange, touch } from './world.js';
 
@@ -18,6 +19,8 @@ export const CASTLE_RECT = Object.freeze({ x: CENTER - 3, y: CENTER - 3, w: 6, d
 /** Which way a building is turned, as a footprint on the map: [w, d] along x and along y. */
 export function footprint(type, front) {
   const [w, d] = BUILDINGS[type].size;
+  // A real building is as it stood: it is not turned.
+  if (BUILDINGS[type].parcel !== undefined) return [w, d];
   return front === 1 || front === 3 ? [d, w] : [w, d];
 }
 
@@ -64,14 +67,24 @@ export function check(world, type, x, y, front) {
     if (g.gatehouse) return { ok: false, reason: 'This gate has one', rect: gateRect(g) };
     return { ok: true, rect: gateRect(g), front: g.dir, gate: g, warn: [] };
   }
-  for (let ty = y; ty < y + d; ty++) {
-    for (let tx = x; tx < x + w; tx++) {
+  // A real building needs only the tiles of its own footprint, not the rectangle round them.
+  const lot = parcelByType.get(type);
+  const tiles = lot ? tilesAt(lot, x, y) : null;
+  if (tiles) {
+    for (const [tx, ty] of tiles) {
       const why = blocked(world, tx, ty, { slope: 1.6 });
       if (why) return { ok: false, reason: why, rect };
     }
+  } else {
+    for (let ty = y; ty < y + d; ty++) {
+      for (let tx = x; tx < x + w; tx++) {
+        const why = blocked(world, tx, ty, { slope: 1.6 });
+        if (why) return { ok: false, reason: why, rect };
+      }
+    }
   }
   const [lo, hi] = rectRange(world, x, y, w, d);
-  if (hi - lo > 1.0) return { ok: false, reason: 'Too steep', rect };
+  if (hi - lo > (lot ? 3 : 1.0)) return { ok: false, reason: 'Too steep', rect };
   const cx = x + w / 2, cy = y + d / 2;
   const warn = [];
   const need = def.where;
@@ -103,9 +116,9 @@ export function addBuilding(world, type, x, y, front, { state = 'ready', level =
   };
   let timber = 0;
   // A real parcel stands on the ground as it lies, only on the tiles of its footprint; the rest of its rectangle is left alone.
-  const parcel = BUILDINGS[type]?.parcel !== undefined;
   // (The ground is the map's and is left as it lies: buildings are drawn standing on it.)
-  const mine = parcel && tiles ? new Set(tiles.map(([tx, ty]) => idx(tx, ty))) : null;
+  const lotOf = parcelByType.get(type);
+  const mine = lotOf ? new Set((tiles ?? tilesAt(lotOf, r.x, r.y)).map(([tx, ty]) => idx(tx, ty))) : null;
   for (let ty = r.y; ty < r.y + r.d; ty++) {
     for (let tx = r.x; tx < r.x + r.w; tx++) {
       const i = idx(tx, ty);

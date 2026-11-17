@@ -1,4 +1,5 @@
 import parcelData from './data/parcels.json' with { type: 'json' };
+import { LOOKS } from './city/rt/looks.js';
 import tower from './data/tower.json' with { type: 'json' };
 import gr from './data/grand-rapids.json' with { type: 'json' };
 
@@ -66,6 +67,33 @@ export function zoneOfUse(use, h) {
   return null;
 }
 
+/**
+ * What a named building does for the city that raises it again: the same as the city's own kinds of building did (a
+ * school teaches, a hospital heals, a police station keeps the peace, a museum or an arena cheers and draws visitors),
+ * and the jobs its size holds. `mass` is its footprint's tiles times its storeys.
+ */
+function effectsOf(b, h, mass) {
+  const name = b.name ?? '', use = b.use;
+  const out = { cost: { gold: Math.round(mass * 2.2 + 40) }, weeks: 4 + Math.round(Math.sqrt(mass) / 1.2), crew: mass > 60 ? 5 : 3, jobs: Math.round(mass * 0.3) + 3 };
+  let note = '';
+  if (/police/i.test(name)) { out.serve = { security: 1, radius: 14 }; out.upkeep = 1.6; note = 'Keeps crime down within fourteen tiles.'; }
+  else if (/fire station/i.test(name)) { out.serve = { fire: 1, radius: 14 }; out.upkeep = 1.4; note = 'Fires start less and are put out sooner within fourteen tiles.'; }
+  else if (/library/i.test(name)) { out.serve = { education: 0.6, cheer: 0.2, radius: 10 }; out.upkeep = 0.6; note = 'Some of what a school does.'; }
+  else if (/museum|art museum|theatre|theater/i.test(name)) { out.serve = { cheer: 0.8, radius: 12 }; out.bonus = { tourism: 2 }; out.upkeep = 1; note = 'Cheers the people near it and draws visitors.'; }
+  else if (use === 'school') { out.serve = { education: 1, radius: 14 }; out.upkeep = 1.8; note = 'Educated people want better homes and bring better firms.'; }
+  else if (use === 'university') { out.serve = { education: 1, radius: 20 }; out.upkeep = 2.5; out.bonus = { tax: { com: 0.04 }, growth: 0.04 }; note = 'Educates a wide circle.'; }
+  else if (use === 'hospital') { out.serve = { health: 1, radius: 18 }; out.upkeep = 3; note = 'Healthier people, who live longer and stay.'; }
+  else if (use === 'stadium') { out.serve = { cheer: 1, radius: 20 }; out.bonus = { tourism: 4, mood: 3 }; out.upkeep = 3; out.noisy = 0.3; note = 'Cheers a wide circle and fills with visitors on game day.'; }
+  else if (use === 'church') { out.serve = { cheer: 0.5, radius: 9 }; out.upkeep = 0.3; out.jobs = 2; note = 'A congregation, and a steeple to see from the street.'; }
+  else if (use === 'station') { out.serve = { cheer: 0.2, radius: 8 }; out.bonus = { tourism: 2 }; out.upkeep = 1; note = 'Brings visitors in by train.'; }
+  else if (use === 'hotel') { out.bonus = { tourism: 1.5 }; out.upkeep = 0.5; note = 'Visitors stay here and spend in the city.'; }
+  else if (use === 'civic') { out.serve = { cheer: 0.4, education: 0.2, radius: 12 }; out.upkeep = 0.8; note = 'A building the city is proud of.'; }
+  else if (['office', 'mixed', 'apartments'].includes(use)) { out.shop = Math.min(8, +(out.jobs * 0.15).toFixed(1)); note = use === 'apartments' ? 'People live here.' : 'Firms work here.'; if (use === 'apartments') { out.cap = Math.max(8, Math.round(mass * 0.8)); out.jobs = 2; } }
+  else { out.shop = Math.min(4, +(out.jobs * 0.12).toFixed(1)); }
+  out.desc = `${b.name ? 'The real ' : 'A real '}${(LABEL[use] ?? 'building').toLowerCase()} of downtown Grand Rapids, ${Math.round(h)} m tall, in 3d-city's design for it. ${note}`.trim();
+  return out;
+}
+
 /** What the game makes of a real building: where it stands (in tiles) and what it is worth. */
 function describe(b, index) {
   const ring = b.rings[0];
@@ -92,25 +120,64 @@ function describe(b, index) {
   const mass = tiles.length * floors;
   const tier = h < 12 ? 1 : h < 28 ? 2 : 3;
   const name = b.name ?? LABEL[b.use] ?? 'Building';
+  // A named building the city can raise again by name: one 3d-city gives its own look, or a civic one, or a tower.
+  const looks = Boolean(b.name && (LOOKS[b.name] || LOOKS[b.id]));
+  const landmark = Boolean(b.name && (looks || SITE_USES.includes(b.use) || h >= 35));
   const def = {
-    name, cat: zone ? (zone === 'res' || zone === 'dense' ? 'housing' : zone === 'ind' ? 'industry' : 'market') : 'civic',
+    name, cat: landmark ? 'landmark' : zone ? (zone === 'res' || zone === 'dense' ? 'housing' : zone === 'ind' ? 'industry' : 'market') : 'civic',
     size: [x1 - x0 + 1, y1 - y0 + 1], cost: { gold: Math.round(mass * 1.1 + 4) }, weeks: 2 + Math.round(Math.sqrt(mass) / 1.5), crew: mass > 40 ? 4 : 2,
     parcel: index, level: tier, desc: `${b.name ? 'The real one' : `A real ${(LABEL[b.use] ?? 'building').toLowerCase()}`} on its lot in downtown Grand Rapids, ${Math.round(h)} m tall.`,
   };
-  if (zone) def.auto = zone;
+  if (zone && !landmark) def.auto = zone;
   if (zone === 'res' || zone === 'dense') def.cap = Math.max(b.use === 'house' ? 4 : 2, Math.round(mass * 0.8));
   else if (zone === 'com') { def.jobs = Math.round(mass * 0.45) + 2; def.shop = Math.min(8, +(def.jobs * 0.2).toFixed(1)); }
   else if (zone === 'ind') { def.jobs = Math.round(mass * 0.7) + 3; def.shop = Math.min(4, +(def.jobs * 0.08).toFixed(1)); def.smoky = b.use === 'industrial'; }
-  return { index, type: `lot${index}`, record: b, use: b.use, zone, tier, h, x: x0, y: y0, w: def.size[0], d: def.size[1], tiles, def };
+  if (landmark) Object.assign(def, effectsOf(b, h, mass), { unique: true, landmark: true, level: 1 });
+  return { index, type: `lot${index}`, record: b, use: b.use, zone: landmark ? null : zone, landmark, set: b.name === 'DeVos Place Convention Center' ? 'devosplace' : null, tier, h, x: x0, y: y0, w: def.size[0], d: def.size[1], tiles, def };
 }
 
-export const PARCELS = parcelData.map(describe);
+/** Set pieces the map has that are not buildings with footprints: built here on a lot of a few tiles. */
+const PIECES = [
+  { name: 'La Grande Vitesse', note: 'Alexander Calder’s vermilion steel stabile, in the middle of Calder Plaza.', set: 'vitesse', tiles: 4, serve: { cheer: 0.9, radius: 16 }, bonus: { tourism: 2 } },
+];
+const pieceRecord = (piece, i) => {
+  const [x0, z0] = toMetres(0, 0), side = piece.tiles * TILE;
+  const ring = [[x0, z0], [x0 + side, z0], [x0 + side, z0 + side], [x0, z0 + side], [x0, z0]];
+  return { id: `piece-${i}`, name: piece.name, use: 'civic', rings: [ring], height: 13 };
+};
+
+export const PARCELS = [
+  ...parcelData.map(describe),
+  ...PIECES.map((piece, k) => {
+    const p = describe(pieceRecord(piece, k), parcelData.length + k);
+    Object.assign(p.def, { cat: 'landmark', unique: true, landmark: true, serve: piece.serve, bonus: piece.bonus, cost: { gold: 120 }, weeks: 8, crew: 4, jobs: 2, upkeep: 0.5, desc: piece.note });
+    return Object.assign(p, { zone: null, landmark: true, set: piece.set });
+  }),
+];
+// One of each name is a landmark: the biggest of them; the others (the museum's wings) are left to be what they were.
+{
+  const best = new Map();
+  for (const p of PARCELS) if (p.landmark && !p.set?.startsWith?.('vitesse')) { const k = p.record.name; if (!best.has(k) || p.tiles.length > best.get(k).tiles.length) best.set(k, p); }
+  for (const p of PARCELS) if (p.landmark && !p.set?.startsWith?.('vitesse') && best.get(p.record.name) !== p) { p.landmark = false; p.def.cat = p.def.auto ? 'housing' : 'civic'; delete p.def.unique; delete p.def.landmark; }
+}
 export const parcelByType = new Map(PARCELS.map((p) => [p.type, p]));
+
+/** The tiles a parcel stands on when its building's rectangle is put at (x, y): the lot's own, moved. */
+export const tilesAt = (p, x, y) => p.tiles.map(([tx, ty]) => [tx + x - p.x, ty + y - p.y]);
+
+/** A real building's record moved to (x, y), in the data's metres: for a landmark raised away from its own lot. */
+export function recordAt(p, x, y) {
+  const dx = (x - p.x) * TILE, dz = (y - p.y) * TILE;
+  if (!dx && !dz) return p.record;
+  const mv = (r) => r.map(([px, pz]) => [px + dx, pz + dz]);
+  const b = p.record;
+  return { ...b, rings: b.rings.map(mv), measured: b.measured ? { ...b.measured, parts: b.measured.parts?.map(([lo, hi, pieces]) => [lo, hi, pieces.map((poly) => poly.map(mv))]) } : b.measured };
+}
 
 /** Adds every parcel to the catalog, as a building type of its own (the civic ones are for the Build tool). */
 export function registerParcels(buildings) {
   for (const p of PARCELS) {
-    if (!p.zone) continue;
+    if (!p.zone && !p.landmark) continue;
     buildings[p.type] = p.def;
   }
 }

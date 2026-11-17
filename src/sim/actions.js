@@ -221,6 +221,7 @@ export function planBuilding(game, type, x, y, front) {
   const def = BUILDINGS[type];
   const c = check(game.world, type, x, y, front);
   const reasons = [];
+  if (c.ok && def.unique && [...game.world.buildings.values()].some((b) => b.type === type)) { return { ...c, def, cost: def.cost, afford: false, ok: false, reason: 'There is only one', rankLocked: false }; }
   if (c.ok && def.rank && game.rank < def.rank) reasons.push(`Needs the rank of ${RANKS[def.rank].name}`);
   if (c.ok && !canPay(game.stock, def.cost)) reasons.push('Not enough materials');
   return { ...c, def, cost: def.cost, afford: canPay(game.stock, def.cost), ok: c.ok && reasons.length === 0, reason: c.reason ?? reasons[0] ?? null, rankLocked: Boolean(def.rank && game.rank < def.rank) };

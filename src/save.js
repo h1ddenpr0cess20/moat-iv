@@ -1,4 +1,4 @@
-import { parcelByType } from './parcels.js';
+import { parcelByType, tilesAt } from './parcels.js';
 import { ROAD, WARDS } from './config.js';
 import { mulberry32 } from './rng.js';
 import { START } from './catalog.js';
@@ -124,7 +124,7 @@ export function deserialize(data) {
     world.buildings.set(id, b);
     // A real parcel stands only on the tiles of its footprint.
     const lot = parcelByType.get(type);
-    if (lot) for (const [tx, ty] of lot.tiles) world.bld[idx(tx, ty)] = id;
+    if (lot) for (const [tx, ty] of tilesAt(lot, x, y)) world.bld[idx(tx, ty)] = id;
     else for (let ty = y; ty < y + d; ty++) for (let tx = x; tx < x + w; tx++) world.bld[idx(tx, ty)] = id;
   }
   world.nextId = data.nextId;

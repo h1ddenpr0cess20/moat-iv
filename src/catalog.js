@@ -80,6 +80,18 @@ export const BUILDINGS = {
   // Somewhere to go on a Saturday.
   marina: { name: 'Marina', cat: 'leisure', size: [3, 3], cost: { gold: 140 }, weeks: 8, crew: 3, jobs: 6, upkeep: 1, where: { sea: { radius: 4, count: 8 } }, serve: { cheer: 0.8, radius: 12 }, bonus: { tourism: 2.5 }, desc: 'Docks, sailboats and a yacht club. Cheers the shore and brings in visitors. On the open water.' },
   stadium: { name: 'Stadium', cat: 'leisure', size: [5, 5], cost: { gold: 420 }, weeks: 20, crew: 6, jobs: 20, upkeep: 3, rank: 2, noisy: 0.4, serve: { cheer: 1, radius: 22 }, bonus: { tourism: 4, mood: 3 }, desc: 'A bowl of seats under the lights, for the island’s own team. Cheers half the island, lifts the mood, and fills with visitors on game day.', design: { use: 'stadium', h: 24 } },
+  // Downtown: the other kinds of building 3d-city draws, to set down where the city needs them.
+  church: { name: 'Church', cat: 'downtown', size: [3, 4], cost: { gold: 70 }, weeks: 6, crew: 3, jobs: 2, upkeep: 0.3, serve: { cheer: 0.5, radius: 9 }, desc: 'A brick church with a steeple. Cheers the people near it.', design: { use: 'church', h: 14, kind: 'church' } },
+  hotel: { name: 'Hotel', cat: 'downtown', size: [3, 3], cost: { gold: 120 }, weeks: 8, crew: 4, jobs: 20, upkeep: 0.5, bonus: { tourism: 1.5 }, desc: 'Visitors stay here and spend in the city.', design: { use: 'hotel', h: 26, kind: 'hotel' } },
+  parkingramp: { name: 'Parking Ramp', cat: 'downtown', size: [3, 3], cost: { gold: 40 }, weeks: 4, crew: 3, jobs: 2, desc: 'A concrete deck of cars above the street.', design: { use: 'parking', h: 12, kind: 'parking' } },
+  trainstation: { name: 'Train Station', cat: 'downtown', size: [4, 3], cost: { gold: 140 }, weeks: 8, crew: 4, jobs: 8, upkeep: 1, serve: { cheer: 0.2, radius: 8 }, bonus: { tourism: 2 }, desc: 'Brings visitors in by train.', design: { use: 'station', h: 9, kind: 'station' } },
+  fastfood: { name: 'Fast-Food Restaurant', cat: 'downtown', size: [2, 2], cost: { gold: 14 }, weeks: 2, crew: 2, jobs: 6, shop: 1.2, desc: 'A drive-through, a sign and a few booths.', design: { use: 'restaurant', h: 5, kind: 'fastfood', names: ['burger'] } },
+  gasstation: { name: 'Gas Station', cat: 'downtown', size: [2, 3], cost: { gold: 16 }, weeks: 2, crew: 2, jobs: 4, shop: 1, desc: 'Pumps under a canopy and a little store.', design: { use: 'shop', h: 5, kind: 'mart', names: ['gas station'] } },
+  bigbox: { name: 'Big-Box Store', cat: 'downtown', size: [5, 4], cost: { gold: 60 }, weeks: 5, crew: 3, jobs: 24, shop: 3.5, noisy: 0.1, desc: 'A wide low store and a car park.', design: { use: 'shop', h: 9, kind: 'bigbox' } },
+  heritagehouse: { name: 'Heritage Hill House', cat: 'downtown', size: [2, 2], cost: { gold: 30 }, weeks: 4, crew: 2, cap: 6, desc: 'A Queen Anne, Italianate, colonial or foursquare house, as Heritage Hill has them.', design: { use: 'house', h: 10, kind: 'heritage' } },
+  mainstreet: { name: 'Main Street Shops', cat: 'downtown', size: [3, 2], cost: { gold: 24 }, weeks: 3, crew: 2, jobs: 12, shop: 2.4, desc: 'Brick shop fronts with awnings, offices over them.', design: { use: 'shop', h: 12, kind: 'mainstreet' } },
+  collegehall: { name: 'College Hall', cat: 'downtown', size: [3, 3], cost: { gold: 110 }, weeks: 7, crew: 3, jobs: 12, upkeep: 1.2, serve: { education: 0.7, radius: 12 }, desc: 'Lecture halls and a lawn.', design: { use: 'university', h: 18, kind: 'college' } },
+  civichall: { name: 'Civic Hall', cat: 'downtown', size: [3, 3], cost: { gold: 100 }, weeks: 7, crew: 3, jobs: 10, upkeep: 0.8, serve: { cheer: 0.4, education: 0.2, radius: 12 }, desc: 'A portico, a flag and the city’s business.', design: { use: 'civic', h: 16, kind: 'civic' } },
 };
 registerParcels(BUILDINGS);
 
@@ -89,6 +101,8 @@ export const CATEGORIES = Object.freeze([
   { id: 'civic', name: 'Civic' },
   { id: 'transport', name: 'Infrastructure' },
   { id: 'leisure', name: 'Leisure' },
+  { id: 'downtown', name: 'Downtown' },
+  { id: 'landmark', name: 'Landmarks' },
 ]);
 
 /** The buildings the zones grow, by zone and level. */
