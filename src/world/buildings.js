@@ -2,7 +2,7 @@ import { BUILDINGS } from '../catalog.js';
 import { CENTER, GROUND } from '../config.js';
 import { hash2 } from '../rng.js';
 import { blocked, nearestRoadSide } from './roads.js';
-import { clearTrees, flatten, idx, inb, rectRange, touch } from './world.js';
+import { clearTrees, idx, inb, rectRange, touch } from './world.js';
 
 /**
  * Buildings on the land: where one may stand, putting one there, taking it
@@ -104,7 +104,7 @@ export function addBuilding(world, type, x, y, front, { state = 'ready', level =
   let timber = 0;
   // A real parcel stands on the ground as it lies, only on the tiles of its footprint; the rest of its rectangle is left alone.
   const parcel = BUILDINGS[type]?.parcel !== undefined;
-  if (type !== 'gatehouse' && !parcel) flatten(world, r.x, r.y, r.w, r.d, { ease: 1.0 });
+  // (The ground is the map's and is left as it lies: buildings are drawn standing on it.)
   const mine = parcel && tiles ? new Set(tiles.map(([tx, ty]) => idx(tx, ty))) : null;
   for (let ty = r.y; ty < r.y + r.d; ty++) {
     for (let tx = r.x; tx < r.x + r.w; tx++) {

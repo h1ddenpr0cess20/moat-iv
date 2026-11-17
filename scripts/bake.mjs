@@ -34,17 +34,6 @@ function fill(rings, f) {
   for (let ty = ty0; ty <= ty1; ty++) for (let tx = tx0; tx <= tx1; tx++) if (inside(rings, X0 + (tx + 0.5) * TILE, Z0 + (ty + 0.5) * TILE)) f(tx, ty);
 }
 
-// Heights: the 30 m grid, bilinear, at every tile corner.
-const el = read('elevation.json');
-const hs = el.heights;
-const at = (x, z) => {
-  const gx = Math.max(0, Math.min(el.cols - 1.001, (x - el.x0) / el.step)), gz = Math.max(0, Math.min(el.rows - 1.001, (z - el.z0) / el.step));
-  const i = Math.floor(gx), j = Math.floor(gz), fx = gx - i, fz = gz - j;
-  return hs[j][i] * (1 - fx) * (1 - fz) + hs[j][i + 1] * fx * (1 - fz) + hs[j + 1][i] * (1 - fx) * fz + hs[j + 1][i + 1] * fx * fz;
-};
-const heights = [];
-for (let vy = 0; vy <= SIZE; vy++) for (let vx = 0; vx <= SIZE; vx++) heights.push(Math.round(at(X0 + vx * TILE, Z0 + vy * TILE) * 10));
-
 // Water, and what the land is.
 const water = Array.from({ length: SIZE }, () => new Array(SIZE).fill('0'));
 for (const w of read('water.json')) if (w.rings && w.class !== 'swimming_pool') for (const r of [w.rings]) fill(r, (x, y) => { water[y][x] = '1'; });
@@ -86,7 +75,6 @@ const seen = new Set();
 const out = {
   note: 'Downtown Grand Rapids, Michigan: Overture Maps (ODbL/CDLA), USGS 3DEP lidar and SRTM, Kent County parcels; baked by scripts/bake.mjs from the 3d-city map.',
   center: [CX, CZ], tile: TILE, size: SIZE,
-  heights: { dm: true, data: heights },
   water: water.map((r) => r.join('')),
   land: land.map((r) => r.join('')),
   parcel: parcel.map((r) => r.join('')),

@@ -1,6 +1,5 @@
 import { CASTLE, CENTER, DIRS, GROUND, HOME_WARD, WALL_HALF, WALL_VERGE, ROAD, SIZE, WARD, WARDS, WATER_LEVEL } from '../config.js';
-import { mulberry32, pick, smoothstep, lerp } from '../rng.js';
-import { PLATEAU } from './generate.js';
+import { mulberry32, pick } from '../rng.js';
 import { HV, SUB, castleNorm, idx, tileRange, touchAll } from './world.js';
 
 export { castleNorm };
@@ -252,19 +251,9 @@ export function computeWalls(world) {
   return world;
 }
 
-/** Shapes the keep: a low mound for the tower, easing into the ground round it. Done once, into the base heights. */
+/** The keep stands on the ground as the map has it: nothing is shaped, and the base heights are the land's. Done once. */
 export function shapeCastle(world) {
-  if (!world.hBase) world.hBase = Float32Array.from(world.h);
-  for (let vy = 0; vy < HV; vy++) {
-    for (let vx = 0; vx < HV; vx++) {
-      const dp = castleNorm(vx / SUB, vy / SUB);
-      if (dp > 6) continue;
-      const i = vy * HV + vx;
-      const top = PLATEAU + 0.55;
-      world.hBase[i] = dp < 2.9 ? top : lerp(top, Math.max(PLATEAU, world.hBase[i]), smoothstep(2.9, 5.2, dp));
-    }
-  }
-  world.h.set(world.hBase);
+  world.hBase = Float32Array.from(world.h);
   touchAll(world);
 }
 
@@ -288,24 +277,8 @@ export function clearWallTrees(world) {
   }
 }
 
-/** Smooths the ground inside a ward the founder has taken, so there is somewhere flat to build. */
-export function gradeWard(world, id, passes = 3) {
-  const [gx, gy] = wardXY(id);
-  const vx0 = gx * WARD * SUB, vx1 = (gx + 1) * WARD * SUB, vy0 = gy * WARD * SUB, vy1 = (gy + 1) * WARD * SUB;
-  if (!world.hBase) world.hBase = Float32Array.from(world.h);
-  for (let p = 0; p < passes; p++) {
-    const copy = Float32Array.from(world.hBase);
-    for (let vy = Math.max(1, vy0); vy < Math.min(HV - 1, vy1); vy++) {
-      for (let vx = Math.max(1, vx0); vx < Math.min(HV - 1, vx1); vx++) {
-        const i = vy * HV + vx;
-        if (world.wallD[i] < 3.2 || castleNorm(vx / SUB, vy / SUB) < 6) continue;
-        if (copy[i] < 0.08) continue;
-        let sum = 0;
-        for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) sum += copy[i + dy * HV + dx];
-        world.hBase[i] = lerp(copy[i], Math.max(0.12, sum / 9), 0.75);
-      }
-    }
-  }
+/** The ground of a ward the founder has taken is left as the map has it (buildings stand on it as it lies); the walls are what change. */
+export function gradeWard(world) {
   levelLand(world);
 }
 

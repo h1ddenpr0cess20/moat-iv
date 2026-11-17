@@ -12,13 +12,10 @@ import { createFx } from './effects.js';
 import { createGates } from './gates.js';
 import { createWalls } from './walls.js';
 import { createMaterials } from './materials.js';
+import { createLand } from './land.js';
 import { createOverlays } from './overlays.js';
 import { PARCELS, parcelByType } from '../parcels.js';
 import { ZONES } from '../catalog.js';
-import { createSkyDomes, paintDay, paintReflections } from './sky.js';
-import { createTerrain } from './terrain.js';
-import { createTrees } from './trees.js';
-import { createWater } from './water.js';
 import { createTraffic } from './traffic.js';
 import { useRenderer } from './dispose.js';
 
@@ -32,18 +29,20 @@ export async function createScene({ host, game, progress = () => {} }) {
   const { world } = game;
   const viewDef = defineView({ home: { yaw: 0.3, pitch: 0.95, zoom: 2.4 }, limits: { pitch: [0.08, 1.5], zoom: [0.22, 48] } });
   const sunDir = new GFX.Vector3(-0.3, 1, 0.6).normalize();
-  const day = paintDay();
   const stage = await createStage(host, {
-    lens: { distance: 12, fov: 34 }, view: viewDef.createView(), sky: day, room: paintReflections(day),
-    lights: { key: { from: sunDir }, fill: null }, shadowSize: 2048, backdrop: '#9fb8c8', label: 'moat',
+    lens: { distance: 12, fov: 34 }, view: viewDef.createView(),
+    lights: { key: { from: sunDir }, fill: null }, shadowSize: 2048, label: 'moat',
+    // A city seen from high up: the near plane goes out with the camera, and the far past the horizon of the map.
+    depth: { ratio: 0.04, most: Infinity, far: 3300, reach: 3 },
   });
   useRenderer(stage.renderer);
   progress(0.04, 'Raising the city');
   const materials = createMaterials(GFX);
-  const terrain = createTerrain(GFX, world, materials, stage.scene);
-  const water = createWater(GFX, world, materials, stage.scene);
-  const domes = createSkyDomes(GFX, stage.scene);
-  const trees = createTrees(GFX, world, materials, stage.scene);
+  // The land is 3d-city's own (render/land.js): its ground, parks, trees, river and sky, bare.
+  const land = await createLand({ GFX, stage, progress });
+  const terrain = land.terrainSet;
+  const water = { update() {} };
+  const domes = { set() {} };
   const decals = createDecals(GFX, world, materials, stage.scene);
   const buildings = createBuildings(GFX, world, materials, stage.scene);
   const gates = createGates(GFX, world, materials, stage.scene);
@@ -55,13 +54,7 @@ export async function createScene({ host, game, progress = () => {} }) {
   const atmosphere = createAtmosphere({ GFX, stage, sunDir, materials, terrain, water, domes, fx, seed: world.seed });
 
   const cal0 = calendar(game.week);
-  water.build();
-  progress(0.08, 'Painting the beaches and the lawns');
-  await terrain.paintAll([CENTER, CENTER], (f) => progress(0.08 + f * 0.55, 'Painting the beaches and the lawns'));
-  progress(0.64, 'Planting the trees');
-  await trees.buildAll(cal0.season, [CENTER, CENTER], (f) => progress(0.64 + f * 0.2, 'Planting the trees'));
-  progress(0.86, 'Paving the streets and raising the towers');
-  trees.updateLod(stage.target.x, stage.target.z, 30);
+  progress(0.86, 'Raising the towers');
   decals.refreshFields(cal0);
   decals.buildAll();
   buildings.buildAll();
@@ -89,14 +82,13 @@ export async function createScene({ host, game, progress = () => {} }) {
 
   let emitters = [];
   let emitClock = 0;
-  let lodClock = 0;
   let time = 0;
   let lotsAt = -1;
   let lotsOn = false;
   let wasSnowing = false;
 
   const scene = {
-    GFX, stage, camera, viewDef, materials, terrain, water, trees, decals, buildings, gates, traffic, fx, overlays, atmosphere,
+    GFX, stage, camera, viewDef, materials, land, decals, buildings, gates, traffic, fx, overlays, atmosphere,
     /** Where, in the sun's day, the game is: how far through the current week (0 to 1). */
     weekFrac: 0,
     /** Shows or hides the lots of the real buildings that are not built yet. */
@@ -111,14 +103,13 @@ export async function createScene({ host, game, progress = () => {} }) {
       time += live;
       camera.update(dt);
       const cal = calendar(game.week);
-      terrain.sync(1);
-      water.sync();
-      trees.sync(cal.season, 1);
+      // The ground, water and trees are 3d-city's, drawn as they were made; the game's own marks on them are the decals.
+      for (const k of ['terrain', 'water', 'trees', 'ground']) world.dirty[k].clear();
       decals.sync(cal, 3);
       buildings.sync(1);
       buildings.restage(4);
-      lodClock -= dt;
-      if (lodClock <= 0) { lodClock = 0.3; trees.updateLod(stage.target.x, stage.target.z, Math.max(22, Math.min(55, 8 + camera.distance * 0.55))); }
+      land.update(live, stage.target.x, stage.target.z, null);
+      land.setNight(atmosphere.state.night);
       emitClock -= dt;
       if (emitClock <= 0) { emitClock = 1.5; emitters = buildings.emitters(); }
       buildings.update(live, 0.6 + 0.4 * Math.sin(time * 0.3));

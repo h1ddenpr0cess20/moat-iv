@@ -16,7 +16,7 @@
   },
   "dependencies": {
     "earcut": "^3.2.4",
-    "madness-engine": "github:h1ddenpr0cess20/madness-engine"
+    "madness-engine": "github:h1ddenpr0cess20/madness-engine#main"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
