@@ -44,14 +44,17 @@ export async function createLand({ GFX, stage, progress = () => {} }) {
   scene.add(group);
   city.builder.solid = [];
 
-  // Snow: the ground's own materials whitened (the map is of a winter day).
+  // Snow: the grass and the dirt are laid under snow: one pale surface that keeps the ground's bump, not the grass texture's tile and its stripes.
   const snowed = new Set();
   const snow = (k) => {
     group.traverse((o) => {
       const m = o.material;
       if (!m || snowed.has(m) || !/^(ground:(turf|lawn)|surface:dirt)/.test(m.name ?? '')) return;
       snowed.add(m);
-      m.color.lerp(new GFX.Color('#f2f6fb'), k);
+      m.map = null;
+      m.color.set('#c8d2dc').lerp(new GFX.Color('#e8eef4'), 1 - k);
+      m.roughness = 0.92;
+      m.needsUpdate = true;
     });
   };
 
