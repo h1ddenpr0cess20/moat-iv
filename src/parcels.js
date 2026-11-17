@@ -1,0 +1,113 @@
+import parcelData from './data/parcels.json' with { type: 'json' };
+import gr from './data/grand-rapids.json' with { type: 'json' };
+
+/**
+ * The parcels: every real building of the mapped stretch of downtown Grand
+ * Rapids, as a lot for the city to build on again. Each keeps the footprint,
+ * height, use and name the real building has, and is drawn in 3d-city's own
+ * design for that kind of building (see render/design.js). A parcel is a
+ * building type of its own (`lot0`, `lot1`, ...), so the simulation counts its
+ * homes, jobs and shoppers like any other building's.
+ *
+ * Positions in the data are 3d-city's metres (x east, z south of the middle of
+ * its map); the game's tiles are TILE metres and its (0, 0) is ORIGIN.
+ */
+
+export const TILE = gr.tile;
+export const ORIGIN = [gr.center[0] - (gr.size * gr.tile) / 2, gr.center[1] - (gr.size * gr.tile) / 2];
+
+/** A point in the data's metres from a point in tiles, and the other way. */
+export const toMetres = (x, y) => [ORIGIN[0] + x * TILE, ORIGIN[1] + y * TILE];
+export const toTiles = (mx, mz) => [(mx - ORIGIN[0]) / TILE, (mz - ORIGIN[1]) / TILE];
+
+function inside(ring, x, z) {
+  let c = false;
+  for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+    const [xi, zi] = ring[i], [xj, zj] = ring[j];
+    if ((zi > z) !== (zj > z) && x < ((xj - xi) * (z - zi)) / (zj - zi) + xi) c = !c;
+  }
+  return c;
+}
+
+const HOUSES = ['house', 'townhouse'];
+const HOMES = ['apartments'];
+const SHOPS = ['shop', 'restaurant', 'bar', 'office', 'hotel', 'parking', 'mixed'];
+const WORKS = ['industrial', 'warehouse'];
+/** Uses that are the city's own (schools, hospitals, churches, the museums): sites for the Build tool, not zoned growth. */
+export const SITE_USES = ['civic', 'church', 'school', 'university', 'hospital', 'stadium', 'station'];
+
+const LABEL = {
+  house: 'House', townhouse: 'Townhouses', apartments: 'Apartments', mixed: 'Shops and flats', shop: 'Shop', restaurant: 'Restaurant', bar: 'Tavern',
+  office: 'Office building', hotel: 'Hotel', parking: 'Parking ramp', industrial: 'Factory', warehouse: 'Warehouse', civic: 'Civic building',
+  church: 'Church', school: 'School', university: 'College building', hospital: 'Hospital', stadium: 'Arena', station: 'Station',
+};
+
+const DEFAULT_H = { house: 7, townhouse: 9, apartments: 12, mixed: 12, shop: 6, restaurant: 5, bar: 5, office: 14, hotel: 20, parking: 12, industrial: 9, warehouse: 8, civic: 12, church: 13, school: 9, university: 14, hospital: 18, stadium: 20, station: 8 };
+
+/** A real building's height, as 3d-city's designs read it. */
+export function heightOf(b) {
+  const m = b.measured;
+  if (m && (m.cover ?? 0) >= 0.25 && (m.height ?? 0) >= 2.5) return +m.height;
+  if (b.height && b.height > 1.5) return +b.height;
+  if (b.floors) return 3.6 * b.floors;
+  return DEFAULT_H[b.use] ?? 8;
+}
+
+/** The zone a use grows on, or null for the city's own. */
+export function zoneOfUse(use, h) {
+  if (HOUSES.includes(use)) return 'res';
+  if (HOMES.includes(use)) return 'dense';
+  if (SHOPS.includes(use)) return 'com';
+  if (WORKS.includes(use)) return 'ind';
+  void h;
+  return null;
+}
+
+/** What the game makes of a real building: where it stands (in tiles) and what it is worth. */
+function describe(b, index) {
+  const ring = b.rings[0];
+  const h = heightOf(b);
+  const w = [1e9, 1e9, -1e9, -1e9];
+  for (const [x, z] of ring) { w[0] = Math.min(w[0], x); w[1] = Math.min(w[1], z); w[2] = Math.max(w[2], x); w[3] = Math.max(w[3], z); }
+  const t0 = toTiles(w[0], w[1]), t1 = toTiles(w[2], w[3]);
+  const tiles = [];
+  for (let ty = Math.floor(t0[1]); ty <= Math.floor(t1[1]); ty++) {
+    for (let tx = Math.floor(t0[0]); tx <= Math.floor(t1[0]); tx++) {
+      if (tx < 0 || ty < 0 || tx >= gr.size || ty >= gr.size) continue;
+      const [mx, mz] = toMetres(tx + 0.5, ty + 0.5);
+      if (inside(ring, mx, mz)) tiles.push([tx, ty]);
+    }
+  }
+  if (!tiles.length) {
+    const [cx, cz] = toTiles((w[0] + w[2]) / 2, (w[1] + w[3]) / 2);
+    tiles.push([Math.max(0, Math.min(gr.size - 1, Math.floor(cx))), Math.max(0, Math.min(gr.size - 1, Math.floor(cz)))]);
+  }
+  const x0 = Math.min(...tiles.map((t) => t[0])), y0 = Math.min(...tiles.map((t) => t[1]));
+  const x1 = Math.max(...tiles.map((t) => t[0])), y1 = Math.max(...tiles.map((t) => t[1]));
+  const zone = zoneOfUse(b.use, h);
+  const floors = Math.max(1, Math.round(h / 3.6));
+  const mass = tiles.length * floors;
+  const tier = h < 12 ? 1 : h < 28 ? 2 : 3;
+  const name = b.name ?? LABEL[b.use] ?? 'Building';
+  const def = {
+    name, cat: zone ? (zone === 'res' || zone === 'dense' ? 'housing' : zone === 'ind' ? 'industry' : 'market') : 'civic',
+    size: [x1 - x0 + 1, y1 - y0 + 1], cost: { gold: Math.round(mass * 1.1 + 4) }, weeks: 2 + Math.round(Math.sqrt(mass) / 1.5), crew: mass > 40 ? 4 : 2,
+    parcel: index, level: tier, desc: `${b.name ? 'The real one' : `A real ${(LABEL[b.use] ?? 'building').toLowerCase()}`} on its lot in downtown Grand Rapids, ${Math.round(h)} m tall.`,
+  };
+  if (zone) def.auto = zone;
+  if (zone === 'res' || zone === 'dense') def.cap = Math.max(b.use === 'house' ? 4 : 2, Math.round(mass * 0.8));
+  else if (zone === 'com') { def.jobs = Math.round(mass * 0.45) + 2; def.shop = Math.min(8, +(def.jobs * 0.2).toFixed(1)); }
+  else if (zone === 'ind') { def.jobs = Math.round(mass * 0.7) + 3; def.shop = Math.min(4, +(def.jobs * 0.08).toFixed(1)); def.smoky = b.use === 'industrial'; }
+  return { index, type: `lot${index}`, record: b, use: b.use, zone, tier, h, x: x0, y: y0, w: def.size[0], d: def.size[1], tiles, def };
+}
+
+export const PARCELS = parcelData.map(describe);
+export const parcelByType = new Map(PARCELS.map((p) => [p.type, p]));
+
+/** Adds every parcel to the catalog, as a building type of its own (the civic ones are for the Build tool). */
+export function registerParcels(buildings) {
+  for (const p of PARCELS) {
+    if (!p.zone) continue;
+    buildings[p.type] = p.def;
+  }
+}

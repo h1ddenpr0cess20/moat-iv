@@ -1,0 +1,200 @@
+{
+ "red_brick_03": {
+  "name": "Red Brick 03",
+  "authors": [
+   "Rob Tuytel"
+  ],
+  "size_m": [
+   1.0,
+   1.0
+  ],
+  "license": "CC0",
+  "source": "https://polyhaven.com/a/red_brick_03"
+ },
+ "weathered_plank_siding": {
+  "name": "Weathered Plank Siding",
+  "authors": [
+   "Dimitrios Savva"
+  ],
+  "size_m": [
+   1.5700000524520874,
+   1.5700000524520874
+  ],
+  "license": "CC0",
+  "source": "https://polyhaven.com/a/weathered_plank_siding"
+ },
+ "roof_slates_02": {
+  "name": "Roof Slates 02",
+  "authors": [
+   "Rob Tuytel"
+  ],
+  "size_m": [
+   3.0,
+   3.0
+  ],
+  "license": "CC0",
+  "source": "https://polyhaven.com/a/roof_slates_02"
+ },
+ "white_sandstone_blocks_02": {
+  "name": "White Sandstone Blocks 02",
+  "authors": [
+   "Rob Tuytel"
+  ],
+  "size_m": [
+   2.0,
+   2.0
+  ],
+  "license": "CC0",
+  "source": "https://polyhaven.com/a/white_sandstone_blocks_02"
+ },
+ "sandstone_blocks_05": {
+  "name": "Sandstone Blocks 05",
+  "authors": [
+   "Rob Tuytel"
+  ],
+  "size_m": [
+   3.0,
+   3.0
+  ],
+  "license": "CC0",
+  "source": "https://polyhaven.com/a/sandstone_blocks_05"
+ },
+ "stone_wall": {
+  "name": "Stone Wall",
+  "authors": [
+   "Dario Barresi",
+   "Charlotte Baglioni"
+  ],
+  "size_m": [
+   2.0,
+   2.0
+  ],
+  "license": "CC0",
+  "source": "https://polyhaven.com/a/stone_wall"
+ },
+ "brushed_concrete": {
+  "name": "Brushed Concrete ",
+  "authors": [
+   "Dario Barresi",
+   "Dimitrios Savva"
+  ],
+  "size_m": [
+   2.5,
+   2.5
+  ],
+  "license": "CC0",
+  "source": "https://polyhaven.com/a/brushed_concrete"
+ },
+ "asphalt_04": {
+  "name": "Asphalt 04",
+  "authors": [
+   "Jenelle van Heerden",
+   "Sergej Majboroda"
+  ],
+  "size_m": [
+   4.039999961853027,
+   4.039999961853027
+  ],
+  "license": "CC0",
+  "source": "https://polyhaven.com/a/asphalt_04"
+ },
+ "leafy_grass": {
+  "name": "Leafy Grass",
+  "authors": [
+   "Charlotte Baglioni"
+  ],
+  "size_m": [
+   2.0,
+   2.0
+  ],
+  "license": "CC0",
+  "source": "https://polyhaven.com/a/leafy_grass"
+ },
+ "bark_brown_02": {
+  "name": "Bark Brown 02",
+  "authors": [
+   "Rob Tuytel"
+  ],
+  "size_m": [
+   0.9999990463256836,
+   0.999998927116394
+  ],
+  "license": "CC0",
+  "source": "https://polyhaven.com/a/bark_brown_02"
+ },
+ "painted_metal_shutter": {
+  "name": "Painted Metal Shutter",
+  "authors": [
+   "Dario Barresi",
+   "Rico Cilliers",
+   "Charlotte Baglioni"
+  ],
+  "size_m": [
+   2.0,
+   2.0
+  ],
+  "license": "CC0",
+  "source": "https://polyhaven.com/a/painted_metal_shutter"
+ },
+ "dirt": {
+  "name": "Dirt",
+  "authors": [
+   "Charlotte Baglioni"
+  ],
+  "size_m": [
+   2.0,
+   2.0
+  ],
+  "license": "CC0",
+  "source": "https://polyhaven.com/a/dirt"
+ },
+ "gravel": {
+  "name": "Gravel",
+  "authors": [
+   "Dimitrios Savva"
+  ],
+  "size_m": [
+   2.0,
+   2.0
+  ],
+  "license": "CC0",
+  "source": "https://polyhaven.com/a/gravel"
+ },
+ "grey_plaster": {
+  "name": "Grey Plaster",
+  "authors": [
+   "Rob Tuytel"
+  ],
+  "size_m": [
+   1.0,
+   1.0
+  ],
+  "license": "CC0",
+  "source": "https://polyhaven.com/a/grey_plaster"
+ },
+ "brick_pavement_02": {
+  "name": "Brick Pavement 02",
+  "authors": [
+   "Charlotte Baglioni"
+  ],
+  "size_m": [
+   2.0,
+   2.0
+  ],
+  "license": "CC0",
+  "source": "https://polyhaven.com/a/brick_pavement_02"
+ },
+ "corrugated_iron_02": {
+  "name": "Corrugated Iron 02",
+  "authors": [
+   "Jenelle van Heerden",
+   "Sergej Majboroda"
+  ],
+  "size_m": [
+   2.700000047683716,
+   2.700000047683716
+  ],
+  "license": "CC0",
+  "source": "https://polyhaven.com/a/corrugated_iron_02"
+ }
+}
