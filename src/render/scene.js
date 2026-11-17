@@ -92,12 +92,15 @@ export async function createScene({ host, game, progress = () => {} }) {
   let lodClock = 0;
   let time = 0;
   let lotsAt = -1;
+  let lotsOn = false;
   let wasSnowing = false;
 
   const scene = {
     GFX, stage, camera, viewDef, materials, terrain, water, trees, decals, buildings, gates, traffic, fx, overlays, atmosphere,
     /** Where, in the sun's day, the game is: how far through the current week (0 to 1). */
     weekFrac: 0,
+    /** Shows or hides the lots of the real buildings that are not built yet. */
+    setLots(on) { lotsOn = Boolean(on); },
     /** The game stands still: the world's own motion stops. */
     paused: false,
     focusOn(x, z, opts) { camera.focus(x, z, opts); },
@@ -123,14 +126,14 @@ export async function createScene({ host, game, progress = () => {} }) {
       walls.update(time);
       traffic.update(dt, { live, eye: camera.eye });
       // The lots the real buildings stood on, that the city has not built again: faintly in the color of their zone.
-      if (lotsAt !== world.bver) {
-        lotsAt = world.bver;
+      if (lotsAt !== `${world.bver}:${lotsOn}`) {
+        lotsAt = `${world.bver}:${lotsOn}`;
         const taken = new Set();
         for (const b of world.buildings.values()) { const p = parcelByType.get(b.type); if (p) taken.add(p.index); }
         for (const zone of Object.keys(ZONES)) {
           const tiles = [];
           for (const p of PARCELS) if (p.zone === zone && !taken.has(p.index)) for (const t of p.tiles) tiles.push(t);
-          overlays.fill(`lots-${zone}`, tiles, { color: ZONES[zone].color, opacity: 0.2 });
+          overlays.fill(`lots-${zone}`, lotsOn ? tiles : [], { color: ZONES[zone].color, opacity: 0.2 });
         }
       }
       overlays.update(dt);
