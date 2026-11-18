@@ -15,7 +15,7 @@ import { idx } from '../world/world.js';
 /** The share of grown adults who look for work. */
 const FIT = 0.9;
 /** Tax paid each week by a resident, by a worker in a shop, and by a worker in industry, at a rate of 10%. */
-const TAX = { res: 0.05, com: 0.06, ind: 0.05 };
+const TAX = { res: 0.08, com: 0.09, ind: 0.075 };
 /** The share of the people the shops and the industry would employ, if they could. */
 const WANT = { com: 0.22, ind: 0.28 };
 
@@ -156,7 +156,7 @@ export function weekWork(game) {
     const value = 1 + 0.18 * qualityAt(game, cx, cy) + 0.15 * covered(game, 'cheer', cx, cy) + 0.1 * covered(game, 'education', cx, cy);
     resTax += people * share * TAX.res * t * value;
   }
-  // The freight yard and the university: shops and industry do better for them.
+  // The freight yard, the airport and the university: shops and industry do better for them.
   resTax *= 1 + bonus.tax.res;
   comTax *= 1 + bonus.tax.com;
   indTax *= 1 + bonus.tax.ind;

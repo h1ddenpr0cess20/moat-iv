@@ -34,10 +34,10 @@ test('every building the city can build has a model footprint and a category on 
   for (const [type, d] of Object.entries(BUILDINGS)) if (!d.auto) assert.ok(cats.has(d.cat), `${type} is on a tab`);
 });
 
-test('a freight yard and a data center pay for themselves in taxes, and a freight yard is loud', () => {
+test('an airport, a freight yard and a data center pay for themselves in taxes, and an airport is loud', () => {
   const base = whole('a1'), built = whole('a1');
   for (const g of [base, built]) for (let w = 0; w < 30; w++) step(g);
-  for (const type of ['freightyard', 'datacenter', 'hotel']) {
+  for (const type of ['airport', 'freightyard', 'datacenter']) {
     const at = spotFor(built, type);
     assert.ok(at, `there is room for a ${type}`);
     const { building } = addBuilding(built.world, type, at[0], at[1], 0);
@@ -45,13 +45,14 @@ test('a freight yard and a data center pay for themselves in taxes, and a freigh
   }
   for (const g of [base, built]) step(g);
   const B = bonusOf(built);
-  assert.ok(B.sources.includes('freightyard') && B.sources.includes('datacenter'));
+  assert.ok(B.sources.includes('airport') && B.sources.includes('freightyard') && B.sources.includes('datacenter'));
   assert.ok(B.tax.com > 0 && B.tax.ind > 0 && B.tourism > 0);
   assert.ok(built.report.taxSplit.tour > 0, 'visitors pay');
   assert.ok(built.report.demand.ind > base.report.demand.ind, 'the freight yard raises the demand for industry');
-  const yard = [...built.world.buildings.values()].find((b) => b.type === 'freightyard');
+  assert.ok(built.report.demand.com > base.report.demand.com, 'the airport raises the demand for shops');
+  const yard = [...built.world.buildings.values()].find((b) => b.type === 'airport');
   const [cx, cy] = [yard.x + yard.w / 2, yard.y + yard.d / 2];
-  assert.ok(noiseAt(built, cx + yard.w / 2 + 1, cy) > 0.2, 'loud beside the yard');
+  assert.ok(noiseAt(built, cx + yard.w / 2 + 1, cy) > 0.5, 'loud beside the runway');
   assert.equal(noiseAt(built, cx + 40, cy + 40), 0);
   assert.ok(landValue(built, cx + yard.w / 2 + 1, cy) < landValue(base, cx + yard.w / 2 + 1, cy), 'and the land beside it is worth less');
 });

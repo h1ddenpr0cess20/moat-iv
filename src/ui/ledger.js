@@ -51,7 +51,7 @@ function treasury(ctx, body) {
         h('h3', {}, 'Landmarks'),
         bonusOf(game).sources.length
           ? h('div', {}, ...bonusOf(game).sources.map((type) => h('div', { html: `<b>${BUILDINGS[type].name}</b> <span class="dim">· ${bonusLines(BUILDINGS[type]).join(' · ')}</span>` })))
-          : h('p.dim', {}, 'A freight yard, a university, a data center or a stadium does something for the whole city. You have none yet.')),
+          : h('p.dim', {}, 'A freight yard, an airport, a university, a data center or a stadium does something for the whole city. You have none yet.')),
       h('div', {}, h('h3', {}, 'Tax rate'), slider, label,
         h('p.dim', {}, 'High taxes fill the bank and empty the city. At 9% or under people are content; over it, they grumble and firms stay away.'),
         h('h3', {}, 'Service budget'), budget, blabel,
@@ -74,7 +74,7 @@ function stores(ctx, body) {
       line('Parks', c.cheer, `${count('park')} parks, ${count('plaza')} plazas, ${count('stadium')} stadiums`),
       line('Health', c.health, `${count('hospital')} hospitals, ${count('clinic')} clinics`)))),
     (c.smog ?? 0) > 0.05 ? h('p.warn', {}, `Smog from factories reaches ${Math.round(c.smog * 100)}% of homes. Keep industry back from where people live.`) : null,
-    (c.noise ?? 0) > 0.05 ? h('p.warn', {}, `Noise from the freight yard, the data center and the like reaches ${Math.round(c.noise * 100)}% of homes.`) : null);
+    (c.noise ?? 0) > 0.05 ? h('p.warn', {}, `Noise from the airport, the freight yard, the data center and the like reaches ${Math.round(c.noise * 100)}% of homes.`) : null);
 }
 
 function labor(ctx, body) {

@@ -73,6 +73,8 @@ export const BUILDINGS = {
   // Getting to the city, and getting things out of it.
   freightyard: { name: 'Freight Yard', cat: 'transport', size: [4, 4], cost: { gold: 260 }, weeks: 14, crew: 5, jobs: 30, upkeep: 2.4, rank: 1, noisy: 0.6, bonus: { demand: { ind: 0.25 }, tax: { ind: 0.2 }, pull: 'ind' }, desc: 'Rail sidings, a gantry crane and stacks of boxes. Ships what the city makes: industry wants more land and pays more, and grows toward the yard. Noisy.', design: { use: 'warehouse', h: 13 } },
 
+  airport: { name: 'Airport', cat: 'transport', size: [6, 10], cost: { gold: 900 }, weeks: 30, crew: 8, jobs: 60, upkeep: 6, rank: 2, noisy: 1, bonus: { demand: { com: 0.2, res: 0.1 }, tax: { com: 0.15 }, tourism: 4, tourismK: 0.5, growth: 0.2, pull: 'com' }, desc: 'A runway, a glass terminal and a control tower. Brings tourists and business: shops want more land and pay more, every attraction draws half as many visitors again, and towers go up sooner. Very loud: keep it away from the homes.' },
+
   // The cloud.
   datacenter: { name: 'Data Center', cat: 'transport', size: [3, 4], cost: { gold: 380 }, weeks: 14, crew: 5, jobs: 12, upkeep: 2, rank: 1, noisy: 0.3, bonus: { tax: { com: 0.1, ind: 0.06 }, demand: { com: 0.1, ind: 0.05 }, growth: 0.08 }, desc: 'Windowless halls of servers, a yard of chillers on the roof and backup generators out back. The city’s startups run on it: shops and industry want more land and pay more, and firms grow up sooner. Its fans hum all night.', design: { use: 'warehouse', h: 12 } },
 
@@ -81,7 +83,7 @@ export const BUILDINGS = {
   // Downtown: the other kinds of building 3d-city draws, to set down where the city needs them.
   church: { name: 'Church', cat: 'downtown', size: [3, 4], cost: { gold: 70 }, weeks: 6, crew: 3, jobs: 2, upkeep: 0.3, serve: { cheer: 0.5, radius: 9 }, desc: 'A brick church with a steeple. Cheers the people near it.', design: { use: 'church', h: 14, kind: 'church' } },
   hotel: { name: 'Hotel', cat: 'downtown', size: [3, 3], cost: { gold: 120 }, weeks: 8, crew: 4, jobs: 20, upkeep: 0.5, bonus: { tourism: 1.5 }, desc: 'Visitors stay here and spend in the city.', design: { use: 'hotel', h: 26, kind: 'hotel' } },
-  parkingramp: { name: 'Parking Ramp', cat: 'downtown', size: [3, 3], cost: { gold: 40 }, weeks: 4, crew: 3, jobs: 2, desc: 'A concrete deck of cars above the street.', design: { use: 'parking', h: 12, kind: 'parking' } },
+  parkingramp: { name: 'Parking Ramp', cat: 'downtown', size: [3, 3], cost: { gold: 40 }, weeks: 4, crew: 3, jobs: 2, upkeep: 0.3, shop: 1.5, bonus: { tourism: 0.6 }, desc: 'A concrete deck of cars above the street. Downtown shoppers and visitors have somewhere to leave the car.', design: { use: 'parking', h: 12, kind: 'parking' } },
   trainstation: { name: 'Train Station', cat: 'downtown', size: [4, 3], cost: { gold: 140 }, weeks: 8, crew: 4, jobs: 8, upkeep: 1, serve: { cheer: 0.2, radius: 8 }, bonus: { tourism: 2 }, desc: 'Brings visitors in by train.', design: { use: 'station', h: 9, kind: 'station' } },
   fastfood: { name: 'Fast-Food Restaurant', cat: 'downtown', size: [2, 2], cost: { gold: 14 }, weeks: 2, crew: 2, jobs: 6, shop: 1.2, desc: 'A drive-through, a sign and a few booths.', design: { use: 'restaurant', h: 5, kind: 'fastfood', names: ['burger'] } },
   gasstation: { name: 'Gas Station', cat: 'downtown', size: [2, 3], cost: { gold: 16 }, weeks: 2, crew: 2, jobs: 4, shop: 1, desc: 'Pumps under a canopy and a little store.', design: { use: 'shop', h: 5, kind: 'mart', names: ['gas station'] } },
