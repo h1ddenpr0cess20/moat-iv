@@ -156,7 +156,7 @@ export function weekWork(game) {
     const value = 1 + 0.18 * qualityAt(game, cx, cy) + 0.15 * covered(game, 'cheer', cx, cy) + 0.1 * covered(game, 'education', cx, cy);
     resTax += people * share * TAX.res * t * value;
   }
-  // The port, the airport and the university: shops and industry do better for them.
+  // The freight yard and the university: shops and industry do better for them.
   resTax *= 1 + bonus.tax.res;
   comTax *= 1 + bonus.tax.com;
   indTax *= 1 + bonus.tax.ind;

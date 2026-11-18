@@ -5,6 +5,7 @@ import { Batch } from 'madness-engine/mesher';
 import { YAW } from './buildings.js';
 import { modelFor } from './models/index.js';
 import { freeGeometry } from './dispose.js';
+import { createDesigner, isDesigned } from './design.js';
 
 /**
  * What the founder's hand draws on the land: the tiles under the cursor, the
@@ -159,6 +160,7 @@ export function createOverlays(GFX, world, scene) {
   };
 
   // The ghost of a building: its own model, drawn through a translucent tint.
+  const designer = createDesigner(GFX, world);
   const ghostMat = new GFX.MeshStandardMaterial({ color: '#ffffff', vertexColors: true, transparent: true, opacity: 0.62, roughness: 0.9, metalness: 0, emissive: new GFX.Color('#2a6a30'), depthWrite: false });
   const ghostGroup = new GFX.Group();
   ghostGroup.visible = false;
@@ -185,24 +187,48 @@ export function createOverlays(GFX, world, scene) {
     return g;
   };
 
+  // A designed building's ghost is its design built where it would stand (so the silhouette is the one that will rise), tinted flat.
+  const designMat = new GFX.MeshStandardMaterial({ color: '#ffffff', transparent: true, opacity: 0.62, roughness: 0.9, metalness: 0, emissive: new GFX.Color('#2a6a30'), depthWrite: false });
+  const designGroup = new GFX.Group();
+  designGroup.visible = false;
+  scene.add(designGroup);
+  let designKey = '';
+  const clearDesign = () => {
+    for (const child of [...designGroup.children]) { designGroup.remove(child); child.traverse((o) => o.geometry && freeGeometry(o.geometry)); }
+    designKey = '';
+  };
+
   api.ghost = {
     /** Shows a `type` at (x, y) facing `front`; `ok` tints it green or red. */
     show(type, x, y, front, { ok = true, level = 1, variant = 3 } = {}) {
+      const [w, d] = type === 'castle' ? [6, 6] : footprint(type, front);
+      const tint = (mat) => { mat.emissive.set(ok ? '#2f7a38' : '#8a2b22'); mat.color.set(ok ? '#d8ffd8' : '#ffb8b0'); };
+      if (isDesigned({ type })) {
+        ghostGroup.visible = false;
+        const key = `${type}:${x}:${y}:${w}:${d}:${front}`;
+        if (key !== designKey) {
+          clearDesign();
+          designGroup.add(designer.ghost({ type, front, x, y, w, d }, designMat));
+          designKey = key;
+        }
+        tint(designMat);
+        designGroup.visible = true;
+        return;
+      }
+      designGroup.visible = false;
       const key = `${type}:${level}:${variant}`;
       if (key !== ghostKey) {
         for (const child of [...ghostGroup.children]) ghostGroup.remove(child);
         ghostGroup.add(ghostFor(type, level, variant));
         ghostKey = key;
       }
-      const [w, d] = type === 'castle' ? [6, 6] : footprint(type, front);
       const mx = x + w / 2, mz = y + d / 2;
       ghostGroup.position.set(mx, surface(mx, mz) + 0.02, mz);
       ghostGroup.rotation.y = YAW[front] ?? 0;
       ghostGroup.visible = true;
-      ghostMat.emissive.set(ok ? '#2f7a38' : '#8a2b22');
-      ghostMat.color.set(ok ? '#d8ffd8' : '#ffb8b0');
+      tint(ghostMat);
     },
-    hide() { ghostGroup.visible = false; },
+    hide() { ghostGroup.visible = false; designGroup.visible = false; },
   };
   return api;
 }

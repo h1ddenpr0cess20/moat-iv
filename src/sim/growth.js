@@ -62,7 +62,7 @@ export function construction(game) {
 export const landValue = (game, x, y) => covered(game, 'cheer', x, y) * 0.8 + covered(game, 'security', x, y) * 0.5 + covered(game, 'education', x, y) * 0.5
   + covered(game, 'health', x, y) * 0.3 + qualityAt(game, x, y) * 1.4 - smogAt(game, x, y) * 1.2 - noiseAt(game, x, y) * 0.9 - Math.hypot(x - CENTER, y - CENTER) * 0.012;
 
-/** How much a port or an airport draws a zone's firms to a spot: most beside it, nothing past twenty-four tiles. */
+/** How much a freight yard draws a zone's firms to a spot: most beside it, nothing past twenty-four tiles. */
 const pullAt = (spots, x, y) => spots.reduce((n, [px, py]) => n + Math.max(0, 1 - Math.hypot(x - px, y - py) / 24), 0);
 
 function valueAt(game, zone) {
@@ -73,7 +73,7 @@ function valueAt(game, zone) {
 
 /**
  * What a building needs to rise from `level` to the next: land worth so much
- * and a city so big. The airport and the university bring the big firms
+ * and a city so big. The university and the data center bring the big firms
  * sooner, so a smaller city will do.
  */
 export function upgradeNeed(game, zone, level) {
