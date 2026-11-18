@@ -94,7 +94,7 @@ export function createToolbar(ctx) {
           h('div.name', {}, d.name, heart ? h('span', { html: '★', title: 'A heart building: in the middle of a donut block it serves the whole ring.' }) : null),
           costChips(ctx, d.cost),
           h('div.cost', {}, h('small', {}, locked ? `Needs rank: ${RANKS[d.rank].name}` : `${d.crew} builders · ${d.weeks} wk${d.jobs ? ` · ${d.jobs} jobs` : ''}`)));
-        tip.attach(c, () => `<b>${d.name}</b><div>${d.desc}</div>${bonusLines(d).map((t) => `<div class="good">✦ ${t}</div>`).join('')}${d.where?.sea ? '<div class="warn">On the shore of the open sea</div>' : ''}${d.noisy ? '<div class="warn">Noisy: keep it back from the homes</div>' : ''}${heart ? `<div class="good">★ Heart: ${heart.why}. In a block's core it earns the block bonus.</div>` : ''}${d.upkeep ? `<div class="dim">Budget ${money(d.upkeep)} a week</div>` : ''}`);
+        tip.attach(c, () => `<b>${d.name}</b><div>${d.desc}</div>${bonusLines(d).map((t) => `<div class="good">✦ ${t}</div>`).join('')}${d.noisy ? '<div class="warn">Noisy: keep it back from the homes</div>' : ''}${heart ? `<div class="good">★ Heart: ${heart.why}. In a block's core it earns the block bonus.</div>` : ''}${d.upkeep ? `<div class="dim">Budget ${money(d.upkeep)} a week</div>` : ''}`);
         return c;
       }));
       const cur = o.build.type;

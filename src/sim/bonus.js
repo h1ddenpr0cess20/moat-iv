@@ -3,7 +3,7 @@ import { clamp } from '../rng.js';
 
 /**
  * What the city's big buildings do for all of it, not only the tiles around
- * them: a port that ships the factories' goods, an airport that flies the
+ * them: a freight yard that ships the factories' goods, an airport that flies the
  * tourists in, a university whose graduates found startups. Each kind counts
  * in full once; a second of a kind adds half as much again, a third a quarter.
  * A place short of staff does half its work with nobody in it, as the
@@ -50,7 +50,7 @@ export function tourism(game, cheer = 0) {
   return B.tourism * (1 + B.tourismK) * (0.5 + game.happiness / 100) * (0.7 + 0.3 * cheer);
 }
 
-/** Is a building of this type standing, ready and joined up? For the pull of ports and airports on the firms. */
+/** Is a building of this type standing, ready and joined up? For the pull of freight yards and airports on the firms. */
 export function pullers(game, zone) {
   const out = [];
   for (const b of game.world.buildings.values()) if (BUILDINGS[b.type]?.bonus?.pull === zone && b.state === 'ready' && b.connected) out.push([b.x + b.w / 2, b.y + b.d / 2]);

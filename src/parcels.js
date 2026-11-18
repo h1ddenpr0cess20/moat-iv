@@ -72,6 +72,8 @@ export function zoneOfUse(use, h) {
  * school teaches, a hospital heals, a police station keeps the peace, a museum or an arena cheers and draws visitors),
  * and the jobs its size holds. `mass` is its footprint's tiles times its storeys.
  */
+/** What the city's own building of each kind costs: a named one is priced from it. */
+const BASE_COST = { police: 60, fire: 60, library: 40, museum: 90, school: 90, university: 320, hospital: 180, stadium: 420, church: 70, station: 140, hotel: 120, civic: 100 };
 function effectsOf(b, h, mass) {
   const name = b.name ?? '', use = b.use;
   const out = { cost: { gold: Math.round(mass * 2.2 + 40) }, weeks: 4 + Math.round(Math.sqrt(mass) / 1.2), crew: mass > 60 ? 5 : 3, jobs: Math.round(mass * 0.3) + 3 };
@@ -90,6 +92,15 @@ function effectsOf(b, h, mass) {
   else if (use === 'civic') { out.serve = { cheer: 0.4, education: 0.2, radius: 12 }; out.upkeep = 0.8; note = 'A building the city is proud of.'; }
   else if (['office', 'mixed', 'apartments'].includes(use)) { out.shop = Math.min(8, +(out.jobs * 0.15).toFixed(1)); note = use === 'apartments' ? 'People live here.' : 'Firms work here.'; if (use === 'apartments') { out.cap = Math.max(8, Math.round(mass * 0.8)); out.jobs = 2; } }
   else { out.shop = Math.min(4, +(out.jobs * 0.12).toFixed(1)); }
+  // A named building does what the city's own kind does, for a premium (not by its footprint: a police headquarters the size of a block is not forty police stations), and a little more of it.
+  const kind = /police/i.test(name) ? 'police' : /fire station/i.test(name) ? 'fire' : /library/i.test(name) ? 'library' : /museum|theatre|theater/i.test(name) ? 'museum' : ['school', 'university', 'hospital', 'stadium', 'church', 'station', 'hotel', 'civic'].includes(use) ? use : null;
+  if (kind) {
+    out.cost = { gold: Math.round(BASE_COST[kind] * 1.8 + mass * 0.15) };
+    if (out.serve) out.serve = { ...out.serve, radius: Math.round(out.serve.radius * 1.25) };
+    if (out.bonus?.tourism) out.bonus = { ...out.bonus, tourism: +(out.bonus.tourism * 1.4).toFixed(1) };
+    out.weeks = Math.min(out.weeks, 4 + Math.round(BASE_COST[kind] / 25));
+    if (kind !== 'church') note += ' A landmark: a little more than the plain kind, for a good deal more.';
+  }
   out.desc = `${b.name ? 'The real ' : 'A real '}${(LABEL[use] ?? 'building').toLowerCase()} of downtown Grand Rapids, ${Math.round(h)} m tall, in 3d-city's design for it. ${note}`.trim();
   return out;
 }

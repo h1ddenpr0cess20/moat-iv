@@ -96,6 +96,16 @@ export function createDesigner(GFX, world) {
 
   return {
     forget: (id) => cache.delete(id),
+    /** The placement ghost of a building about to be set down at b's spot: its own design, as one mesh a material, in a frame that takes metres to tiles. */
+    ghost(b, material) {
+      const frame = designFrame(GFX);
+      for (const p of partsOf({ id: 'ghost', progress: 1, ...b })) {
+        const mesh = new GFX.Mesh(geometryOf(p), material);
+        mesh.renderOrder = 6;
+        frame.add(mesh);
+      }
+      return frame;
+    },
     /** Adds a mesh a material for all of `list` to `parent`, in a frame that takes metres to tiles. */
     merged(list, parent) {
       const by = new Map();
