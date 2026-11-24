@@ -9,9 +9,9 @@ export const WALKS = new Set(['footway', 'path', 'cycleway', 'steps', 'pedestria
  * it, rising to that height and coming down again at the grade of a road, along the approaches too.
  */
 
-/** The steepest a road climbs onto a bridge: rise per metre. */
+/** The steepest a road climbs onto a bridge: rise per meter. */
 const GRADE = 0.065;
-/** The clearance under a bridge, in metres: over a street, and over a path. */
+/** The clearance under a bridge, in meters: over a street, and over a path. */
 const OVER_ROAD = 5.6, OVER_WALK = 3.6;
 /** How high a highway's viaduct stands over the ground it crosses, by its level: the S-curve of US-131 and the ramps of I-196 stand on piers, not on the ground. */
 const VIADUCT = { 1: 6.8, 2: 12.6, 3: 18 };
@@ -233,7 +233,7 @@ export function profiles(roads, terrain, skip = new Set()) {
       const a = pts[Math.max(0, i - 1)], b = pts[Math.min(pts.length - 1, i + 1)], l = Math.hypot(b[0] - a[0], b[1] - a[1]) || 1;
       const dx = (b[0] - a[0]) / l, dz = (b[1] - a[1]) / l;
       const here = ys ? ys[i] : terrain.heightAt(x, z);
-      // On its own span a bridge may stand a storey over it; off it, only a ramp's rise: more is another road above.
+      // On its own span a bridge may stand a story over it; off it, only a ramp's rise: more is another road above.
       const span = p && within(mine, p.s[i] / p.total), most = span ? 9 : 3;
       let best = null;
       for (let gz = -1; gz <= 1; gz++) for (let gx = -1; gx <= 1; gx++) for (const q of decks.get(`${Math.floor(x / 12) + gx},${Math.floor(z / 12) + gz}`) ?? []) {

@@ -16,9 +16,9 @@ import gr from '../data/grand-rapids.json' with { type: 'json' };
 export const GR = gr;
 
 const N = gr.size;
-const toMetres = (vx, vy) => [ORIGIN[0] + (vx / SUB) * TILE, ORIGIN[1] + (vy / SUB) * TILE];
+const toMeters = (vx, vy) => [ORIGIN[0] + (vx / SUB) * TILE, ORIGIN[1] + (vy / SUB) * TILE];
 
-/** The ground's height at tile coordinates (x, z), in the game's units: 0 is the river's surface, a unit is a tile (SCALE metres). */
+/** The ground's height at tile coordinates (x, z), in the game's units: 0 is the river's surface, a unit is a tile (SCALE meters). */
 export function baseHeight(seed, x, z) {
   const { terrain } = groundOfMap();
   const [mx, mz] = [ORIGIN[0] + x * TILE, ORIGIN[1] + z * TILE];
@@ -34,7 +34,7 @@ export function generate(world) {
   const { terrain } = groundOfMap();
   for (let vy = 0; vy < HV; vy++) {
     for (let vx = 0; vx < HV; vx++) {
-      const [mx, mz] = toMetres(vx, vy);
+      const [mx, mz] = toMeters(vx, vy);
       world.h[vy * HV + vx] = (terrain.heightAt(mx, mz) - terrain.waterLevel) / SCALE;
     }
   }

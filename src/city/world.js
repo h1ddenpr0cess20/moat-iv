@@ -131,7 +131,7 @@ function streetward(roads) {
 
 /**
  * The height of what `materials` lay at (x, z) (the top one), or null where they lay nothing. Brick pavers count
- * only where they are a brick street's (their colour), not a plaza's.
+ * only where they are a brick street's (their color), not a plaza's.
  */
 function surfaceOf(builder, materials) {
   const C = 8, grid = new Map(), tris = [];
@@ -197,7 +197,7 @@ function dropFloating(builder, terrain) {
 }
 
 /** (x, y) in Blender's frame -> a unit vector toward the nearest street within 80 m, or null (Rivertown's street_dir). */
-function towardStreet(roads) {
+function towardtreet(roads) {
   const C = 40, grid = new Map();
   for (const r of roads) {
     if (r.subtype !== 'road' || ['footway', 'path', 'steps', 'cycleway', 'pedestrian', 'track', 'bridleway'].includes(r.class)) continue;
@@ -260,7 +260,7 @@ export function makeTerrain(data, { tile = null, outer = null, bare = false } = 
   terrain.drawn = own;
   // Rosa Parks Circle stands on level ground, and so do the stadium and the amphitheater.
   if (!tile) {
-    terrain.level(ROSA_PARKS.centre[0], ROSA_PARKS.centre[1], 32, 14);
+    terrain.level(ROSA_PARKS.center[0], ROSA_PARKS.center[1], 32, 14);
     // The low grass hill in the park, between the circle and the corner where Monroe Avenue meets Monroe Center.
     terrain.mound(-303, -128, 14, 1.6);
     // The Riverwalk downtown is a promenade on the flood wall, level with the land behind it, well over the water (the map's
@@ -456,7 +456,7 @@ export function buildCity(data, { tile = null, alone = true, outer = null, bare 
   // ground; they work in Blender's frame (x east, y north), so a point (x, z) here is (x, -z) there.
   // Their full detail is made a cell at a time as the camera comes near (builder.designs, for scene.js): here now
   // only their far versions.
-  const designs = new Designs({ ground: (x, y) => terrain.heightAt(x, -y), streetDir: towardStreet(data.roads), creative: Boolean(tile), lazy: new Map() });
+  const designs = new Designs({ ground: (x, y) => terrain.heightAt(x, -y), streetDir: towardtreet(data.roads), creative: Boolean(tile), lazy: new Map() });
   builder.designs = { cells: designs.lazy, make: (entries) => designs.detail(entries), range: 'hi', one: true, shells: designs.shells };
   const placesAt = placeIndex(data.places ?? []);
   const boarded = new Set(boards.map((s) => s.b));
@@ -501,7 +501,7 @@ export function buildCity(data, { tile = null, alone = true, outer = null, bare 
   const roadsBlock = blockedBy(data.roads, buildingIndex(data.buildings));
   const blocked = (x, z) => roadsBlock(x, z) || onPavement(x, z) !== null;
   if (data.trees) {
-    plant(builder, terrain, data.trees, { near: ROSA_PARKS.centre, blocked: (x, z) => inRosaParks(x, z) || Math.hypot(x - FORD_GRAVE[0], z - FORD_GRAVE[1]) < 8 || blocked(x, z) });
+    plant(builder, terrain, data.trees, { near: ROSA_PARKS.center, blocked: (x, z) => inRosaParks(x, z) || Math.hypot(x - FORD_GRAVE[0], z - FORD_GRAVE[1]) < 8 || blocked(x, z) });
   } else if (tile) {
     plant(builder, terrain, scatterTrees(terrain, data, built, hole, tile.box), { blocked });
   }
@@ -556,7 +556,7 @@ function scatterTrees(terrain, data, built, hole, [ax0, az0, ax1, az1]) {
       let p = null;
       for (const q of patches) if (px >= q.x0 && px <= q.x1 && pz >= q.z0 && pz <= q.z1 && inside(q.l.rings, px, pz)) p = Math.max(p ?? 0, q.p);
       const density = built(px, pz);
-      // The yards of a neighbourhood of houses are full of trees; downtown and the industrial parks are not.
+      // The yards of a neighborhood of houses are full of trees; downtown and the industrial parks are not.
       if (p === null) p = density > 0.02 && density < 0.2 ? 0.22 : density >= 0.2 ? 0.04 : 0.08;
       // The aerial photo, where it is to hand: few trees where it shows paving, more where it shows green.
       if (greenAt) { const g = greenAt(px, pz); p = g < 0.2 ? p * 0.15 : g > 0.6 ? Math.max(p, 0.26) : p; }
@@ -574,7 +574,7 @@ function scatterTrees(terrain, data, built, hole, [ax0, az0, ax1, az1]) {
 /**
  * The Riverwalk's flood wall: where the walk runs along the river (not on its own piers, which ground.js dresses), it is
  * paved out from its edge to the water, and there a white concrete wall drops into the river under a steel rail. (The map
- * draws the walk a few metres up the bank; downtown it is a promenade on the wall.)
+ * draws the walk a few meters up the bank; downtown it is a promenade on the wall.)
  *
  * Built whole along each unbroken run of the walk, not a piece at a time: the walk is sampled every 2 m, the distance
  * from each sample to the water found (gaps filled from the samples either side, then smoothed), and one paving strip,

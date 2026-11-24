@@ -8,8 +8,8 @@ export { sampleLine };
 /**
  * The flat things laid over the ground (grass, streets, pavements, car parks,
  * crossings) as draped triangles: each point sits on the terrain, lifted by
- * the layer's `lift`, so one thing lies over another without flickering (the layers a few centimetres apart, which the depth buffer tells apart as the near plane goes out with the camera: lawns 0.08, car parks and ballast 0.12, pavements 0.16, streets 0.19 to 0.25, their centre lines and crossings 0.04 above (3 cm is the least a layer may stand over the one it lies on, or the paint flickers away): flush, with no kerb wall between).
- * Textures are laid in world space (`tile` metres to a repeat) so two pieces
+ * the layer's `lift`, so one thing lies over another without flickering (the layers a few centimeters apart, which the depth buffer tells apart as the near plane goes out with the camera: lawns 0.08, car parks and ballast 0.12, pavements 0.16, streets 0.19 to 0.25, their center lines and crossings 0.04 above (3 cm is the least a layer may stand over the one it lies on, or the paint flickers away): flush, with no kerb wall between).
+ * Textures are laid in world space (`tile` meters to a repeat) so two pieces
  * of the same street line up wherever they meet.
  */
 
@@ -48,12 +48,12 @@ export function sideways(pts) {
 }
 
 /**
- * A strip of `width` metres along a line, draped on the terrain, or, with a bridge's `deck` (its profile, from
+ * A strip of `width` meters along a line, draped on the terrain, or, with a bridge's `deck` (its profile, from
  * bridges.js), held at the heights that gives it wherever it is raised over the ground. Returns the strip's
  * edges as [[x, y, z]] left and right, and for each point whether it is raised, for what goes along them.
  */
 export function ribbon(builder, terrain, material, line, width, { lift = 0.08, deckLift = 0, tile = 6, color = [1, 1, 1], deck = null, collide = false, step = 5, snug = 0.45, ends = null, slabs = 0 } = {}) {
-  // Off a bridge, a strip follows the ground closely: points every `step` metres, lifted at most `snug` more on a slope
+  // Off a bridge, a strip follows the ground closely: points every `step` meters, lifted at most `snug` more on a slope
   // so it does not sink into the ground between them (the closer the points, the less it needs).
   const pts = deck ? deck.pts : sampleLine(line, step);
   if (pts.length < 2) return null;
@@ -106,7 +106,7 @@ export function ribbon(builder, terrain, material, line, width, { lift = 0.08, d
       if (lift_ > 0) { left[i][1] += lift_; right[i][1] += lift_; }
     }
   }
-  // A pavement poured in slabs (`slabs` metres along): its texture runs along it, a whole number of slabs across its
+  // A pavement poured in slabs (`slabs` meters along): its texture runs along it, a whole number of slabs across its
   // width, the joints square across it, as a sidewalk is laid, not a grid at an angle to it.
   const along = [0];
   for (let i = 1; i < pts.length; i++) along.push(along[i - 1] + Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]));
@@ -121,7 +121,7 @@ export function ribbon(builder, terrain, material, line, width, { lift = 0.08, d
   return { left, right, raised };
 }
 
-/** A vertical wall along a run of points [[x, y, z]], from each point down (or up, for a negative `drop`) by `drop` metres, facing away from the strip it borders. */
+/** A vertical wall along a run of points [[x, y, z]], from each point down (or up, for a negative `drop`) by `drop` meters, facing away from the strip it borders. */
 export function skirt(builder, material, edge, drop, { tile = 3, color = [1, 1, 1], flip = false, collide = false, draw = true, kind = null } = {}) {
   let run = 0;
   const drops = Array.isArray(drop) ? drop : null;
@@ -149,10 +149,10 @@ export function skirt(builder, material, edge, drop, { tile = 3, color = [1, 1, 
   }
 }
 
-/** The widths of a road, in metres, by its class. */
+/** The widths of a road, in meters, by its class. */
 const WIDTH = { motorway: 11, trunk: 10, primary: 10, secondary: 9, tertiary: 8, residential: 7, living_street: 5.5, unclassified: 7, service: 4.5, pedestrian: 5, track: 3, unknown: 6, bridleway: 2, cycleway: 2, path: 1.6, steps: 1.8, footway: 1.7 };
 
-/** How high a skywalk is carried over the street, in metres. */
+/** How high a skywalk is carried over the street, in meters. */
 const SKY = 7;
 
 const valueOf = (rules) => (Array.isArray(rules) && rules.length ? rules[0].value : null);
@@ -161,7 +161,7 @@ export const widthOf = (road) => valueOf(road.width) ?? WIDTH[road.class] ?? 5;
 
 /**
  * The roads a vehicle may be on, for drive mode (src/drive.js): the streets laid on the ground and on bridges, with
- * their widths. Not the pavements and paths, the neighbours' (`ctx`), or those under the ground.
+ * their widths. Not the pavements and paths, the neighbors' (`ctx`), or those under the ground.
  */
 export const driveRoads = (roads) => roads
   .filter((r) => r.subtype === 'road' && !r.ctx && r.line?.length > 1 && !WALKS.has(r.class) && r.class !== 'fill' && r.subclass !== 'crosswalk' && !tunnelled(r))
@@ -172,7 +172,7 @@ export const driveLots = (infrastructure) => infrastructure
   .filter((p) => p.rings?.[0]?.length > 2 && p.subtype === 'transit' && p.class === 'parking' && !p.ctx)
   .map((p) => p.rings[0]);
 
-/** An enclosed walkway held up over the street: a floor, two walls and a roof of grey metal along `line`, seven metres up. For looking at, not for rolling on. */
+/** An enclosed walkway held up over the street: a floor, two walls and a roof of gray metal along `line`, seven meters up. For looking at, not for rolling on. */
 function tube(builder, terrain, line) {
   const pts = sampleLine(line, 4), side = sideways(pts);
   const steel = [0.5, 0.54, 0.58], glass = [0.16, 0.22, 0.28], inside = [0.36, 0.37, 0.4];
@@ -202,8 +202,8 @@ function tube(builder, terrain, line) {
 }
 
 /**
- * A painted line along a strip laid by `ribbon`: `f` of the way from its left edge to its right, `width` metres wide,
- * a little above it, solid or dashed (`dash`: [paint, gap] metres), and stopped `trim` metres short of each end.
+ * A painted line along a strip laid by `ribbon`: `f` of the way from its left edge to its right, `width` meters wide,
+ * a little above it, solid or dashed (`dash`: [paint, gap] meters), and stopped `trim` meters short of each end.
  */
 function stripe(builder, { left, right }, f, { width = 0.15, color = [1.7, 1.7, 1.65], dash = null, trim = 0, lift = 0.04, clear = null } = {}) {
   const [trim0, trim1] = Array.isArray(trim) ? trim : [trim, trim];
@@ -444,7 +444,7 @@ export function lay(builder, terrain, roads, { sky = new Set() } = {}) {
     const line = road.line;
     probes.road = road;
     if (line.length < 2) continue;
-    // A neighbour's road (`ctx`, from a tile of a bigger map next to this one): not drawn here, but known, so a deck
+    // A neighbor's road (`ctx`, from a tile of a bigger map next to this one): not drawn here, but known, so a deck
     // that meets it at the seam has no wall across it.
     if (road.ctx) {
       if (road.subtype === 'road' && !tunnelled(road) && !sky.has(road) && road.subclass !== 'crosswalk') {
@@ -462,7 +462,7 @@ export function lay(builder, terrain, roads, { sky = new Set() } = {}) {
     if (sky.has(road)) { tube(builder, terrain, line); continue; }
     const width = widthOf(road);
     if (walk && road.subclass === 'crosswalk') {
-      // Zebra bars, along the road, one every metre of the way across.
+      // Zebra bars, along the road, one every meter of the way across.
       const pts = sampleLine(line, 1);
       const side = sideways(pts);
       for (let i = 0; i < pts.length; i += 1) {
@@ -470,7 +470,7 @@ export function lay(builder, terrain, roads, { sky = new Set() } = {}) {
         const wide = 1.6;
         const a = [px + nx * wide, 0, pz + nz * wide], b = [px - nx * wide, 0, pz - nz * wide];
         const tx = nz * 0.22, tz = -nx * 0.22;
-        // On the street it crosses (a bridge's deck where that is up off the ground), a few centimetres over its
+        // On the street it crosses (a bridge's deck where that is up off the ground), a few centimeters over its
         // surface; only over the street itself: not where the crosswalk runs on over a pavement or the ground.
         const corners = [[a[0] - tx, a[2] - tz], [a[0] + tx, a[2] + tz], [b[0] + tx, b[2] + tz], [b[0] - tx, b[2] - tz]].map(([x, z]) => [x, laid.top(x, z), z]);
         if (corners.some((c) => c[1] === null)) continue;
@@ -481,7 +481,7 @@ export function lay(builder, terrain, roads, { sky = new Set() } = {}) {
     }
     const deck = decks.get(road) ?? null;
     if (walk) {
-      // Flush with the street (a few centimetres under it, so where the two overlap or cross the street is what is
+      // Flush with the street (a few centimeters under it, so where the two overlap or cross the street is what is
       // seen, and the ball rolls from one to the other without a step) and with the lawn.
       const edges = ribbon(builder, terrain, pavement, line, width, {
         lift: 0.16, deckLift: 0.1, tile: 3, color: [1.0, 0.98, 0.94], deck, collide: true, step: 2.5, snug: 0.08, slabs: 1.5,
@@ -508,12 +508,12 @@ export function lay(builder, terrain, roads, { sky = new Set() } = {}) {
     if (probes.strips && edges) probes.strips.push({ road, ...edges, width, deck });
     if (deck && edges?.raised.some(Boolean)) bridges.push({ ...edges, deck, width, road });
     if (!edges) continue;
-    // The paint: a highway's lanes (solid edge lines, dashed lines between the lanes), and the yellow centre line on the
+    // The paint: a highway's lanes (solid edge lines, dashed lines between the lanes), and the yellow center line on the
     // streets that carry both ways, stopped short of the junctions at either end so it does not run across the street it meets.
     // Laid once every road is down (`paint`, below), so each line can tell where another road lies over it.
     if (MARKED[road.class] && !brick) paint.push({ road, edges, run: (clear) => markings(builder, road, edges, width, clear, ends(road), divided(road)) });
   }
-  // The paint: a highway's lanes (solid edge lines, dashed lines between the lanes), and the yellow centre line on the
+  // The paint: a highway's lanes (solid edge lines, dashed lines between the lanes), and the yellow center line on the
   // streets that carry both ways, stopped short of the junctions at either end so it does not run across the street it
   // meets, and not run across another road that lies over it at its height (a ramp merging, a road crossing).
   for (const { road, run } of paint) {
@@ -541,7 +541,7 @@ export function lay(builder, terrain, roads, { sky = new Set() } = {}) {
 }
 
 /**
- * The deck between a bridge's roadway and its pavements: the map draws a pavement where it is, metres out from the
+ * The deck between a bridge's roadway and its pavements: the map draws a pavement where it is, meters out from the
  * middle of the street, and the street only as wide as its lanes, so on a bridge the two would stand apart with a
  * gap between them. Wherever a pavement on a deck runs beside a road's deck at its height, the gap is decked over.
  */
@@ -627,7 +627,7 @@ function surfaces() {
       }
     }
   };
-  /** Whether a surface other than `self`'s is at (x, z) within `tol` metres of height `y`. */
+  /** Whether a surface other than `self`'s is at (x, z) within `tol` meters of height `y`. */
   const joined = (x, z, y, self, tol = 1.2) => {
     for (const { road, a, b, half } of grid.get(`${Math.floor(x / CELLSIZE)},${Math.floor(z / CELLSIZE)}`) ?? []) {
       if (road === self) continue;
@@ -640,7 +640,7 @@ function surfaces() {
     return false;
   };
   /**
-   * The heights of the other roads' surfaces at (x, z), well inside them (`margin` metres from their edges): the
+   * The heights of the other roads' surfaces at (x, z), well inside them (`margin` meters from their edges): the
    * places where a wall, a line or a bank of this road would run through another street. Pavements and the decks
    * laid between a bridge and its pavement are not counted.
    */
@@ -725,7 +725,7 @@ function longestRun({ raised }) {
   return best && best[1] - best[0] >= 3 ? best : null;
 }
 
-/** A square steel member from a to b, `t` metres across: four faces. */
+/** A square steel member from a to b, `t` meters across: four faces. */
 function member(builder, material, a, b, t, color) {
   const d = [b[0] - a[0], b[1] - a[1], b[2] - a[2]];
   const l = Math.hypot(...d) || 1;
@@ -838,7 +838,7 @@ function oldPiers(builder, terrain, left, right, n, up, stone) {
   }
 }
 
-/** A round column from `y0` up to `y1` at (x, z), `r` metres across the middle, with `sides` faces. */
+/** A round column from `y0` up to `y1` at (x, z), `r` meters across the middle, with `sides` faces. */
 function column(builder, material, x, z, y0, y1, r, color, sides = 10) {
   for (let k = 0; k < sides; k++) {
     const a0 = (k / sides) * Math.PI * 2, a1 = ((k + 1) / sides) * Math.PI * 2, am = (a0 + a1) / 2;
@@ -849,7 +849,7 @@ function column(builder, material, x, z, y0, y1, r, color, sides = 10) {
 }
 
 /**
- * Whether there is a street, a railway or a building at ground level at (x, z), within `pad` metres of its edge:
+ * Whether there is a street, a railway or a building at ground level at (x, z), within `pad` meters of its edge:
  * where a pier must not stand. `decks` (from `profiles`) says which stretches of the bridged roads are up in the air.
  */
 export function groundRoads(roads, decks, within = null) {
@@ -896,8 +896,8 @@ function bank(builder, terrain, seg, across, blocked, over = null) {
   // Not over a street: where another road's surface lies on the slope (at about its height, or the ball and the eye
   // would take the bank for a heap on the road), the road carries on and the bank is left out.
   if (over) {
-    const centre = [(a[0] + b[0] + c[0] + d[0]) / 4, (a[1] + b[1] + c[1] + d[1]) / 4, (a[2] + b[2] + c[2] + d[2]) / 4];
-    const foots = [[(c[0] + d[0]) / 2, (c[1] + d[1]) / 2, (c[2] + d[2]) / 2], centre, [(a[0] + c[0]) / 2, (a[1] + c[1]) / 2, (a[2] + c[2]) / 2], [(b[0] + d[0]) / 2, (b[1] + d[1]) / 2, (b[2] + d[2]) / 2]];
+    const center = [(a[0] + b[0] + c[0] + d[0]) / 4, (a[1] + b[1] + c[1] + d[1]) / 4, (a[2] + b[2] + c[2] + d[2]) / 4];
+    const foots = [[(c[0] + d[0]) / 2, (c[1] + d[1]) / 2, (c[2] + d[2]) / 2], center, [(a[0] + c[0]) / 2, (a[1] + c[1]) / 2, (a[2] + c[2]) / 2], [(b[0] + d[0]) / 2, (b[1] + d[1]) / 2, (b[2] + d[2]) / 2]];
     if (foots.some(([x, y, z]) => over(x, z).some((h) => Math.abs(h - y) < 1.4))) return;
   }
   // Wound to face up whichever way the edge runs.

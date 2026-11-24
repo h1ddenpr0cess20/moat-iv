@@ -39,7 +39,7 @@ export const SCULPTED = Object.fromEntries([...KINDS.flatMap((k) => [k.def, k.de
 /** What the close-up cars are baked from. */
 const NEAR_JOBS = [...KINDS.map((k) => k.def.body.name), ...new Set(KINDS.map((k) => k.def.wheel))].map((n) => [n, NEAR_DETAIL]);
 
-/** A flat eight-sided plate standing up in the x-y plane, centred (0, cy) at depth z, its face toward +z (and its back toward -z). */
+/** A flat eight-sided plate standing up in the x-y plane, centerd (0, cy) at depth z, its face toward +z (and its back toward -z). */
 function octagon(m, cy, r, z, face, back) {
   const pts = Array.from({ length: 8 }, (_, k) => {
     const a = Math.PI / 8 + (k * Math.PI) / 4;

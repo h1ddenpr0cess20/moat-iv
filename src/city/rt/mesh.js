@@ -2,11 +2,11 @@ import earcut from 'earcut';
 import { recipe } from './look.js';
 
 /**
- * Rivertown's designs (ported from its Blender generator) work in Blender's frame: x east, y north, z up, metres.
+ * Rivertown's designs (ported from its Blender generator) work in Blender's frame: x east, y north, z up, meters.
  * This mesh takes their polygons, boxes and cylinders in that frame and lays them on 3d-city's Builder, whose frame
  * is x east, y up, z south: (x, y, z) -> (x, z, -y), a rotation, so each face keeps the way it faces.
  *
- * Texture coordinates are planar, in metres (a wall's along its length and up; a roof's flat), divided by the real
+ * Texture coordinates are planar, in meters (a wall's along its length and up; a roof's flat), divided by the real
  * size of the material's texture (look.js `recipe`), as Rivertown's game does.
  */
 const WHITE = [1, 1, 1];
@@ -153,7 +153,7 @@ export class Mesh {
     }
   }
 
-  /** A box of `size` (sx along yaw, sy across, sz up) whose base centre is `c`; `cull` leaves out the side facing
+  /** A box of `size` (sx along yaw, sy across, sz up) whose base center is `c`; `cull` leaves out the side facing
    * straight against it (the back of a box set on a wall), and its `ends` if false. */
   box(c, size, material, { yaw = 0, top = true, bottom = false, cull = null, ends = true } = {}) {
     const sx = size[0] / 2, sy = size[1] / 2, sz = size[2];
@@ -202,7 +202,7 @@ function convex4(p, nx, ny, nz) {
   return true;
 }
 
-/** A closed counter-clockwise ring moved `d` metres outwards (inwards if negative), mitred, keeping its points. */
+/** A closed counter-clockwise ring moved `d` meters outwards (inwards if negative), mitred, keeping its points. */
 export function offsetRing(ring, d) {
   const n = ring.length, out = [];
   for (let i = 0; i < n; i++) {
@@ -224,7 +224,7 @@ function norm2(x, y) {
   return L < 1e-12 ? [0, 0] : [x / L, y / L];
 }
 
-/** A counter-clockwise ring moved in by `d` metres (each corner along its bisector, at most 3x `d`). */
+/** A counter-clockwise ring moved in by `d` meters (each corner along its bisector, at most 3x `d`). */
 export function inset(ring, d) {
   const n = ring.length, out = [];
   for (let i = 0; i < n; i++) {

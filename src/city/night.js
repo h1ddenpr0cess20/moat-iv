@@ -8,7 +8,7 @@ import { glowing as designGlow } from './rt/look.js';
  *   the signs      the names on the shops' boards (their atlas is its own emissive map)
  *   the lamps      the street lamps' heads, brighter
  *   the market     the Downtown Market's greenhouse, glowing green-gold
- *   the station    Rapid Central Station's canopy, washed in slowly turning colour, as its lights do it
+ *   the station    Rapid Central Station's canopy, washed in slowly turning color, as its lights do it
  */
 
 /** How warm a lit window is, and how much of each kind of wall is lit at night. */
@@ -42,7 +42,7 @@ function windowsOf(GFX, map, kind) {
     const u = x / size, v = y / size, lu = (u * 3) % 1, edge = (Math.min(lu, 1 - lu) * size) / 3;
     on[y * size + x] = edge > size * 0.016 && v > 0.02 && v < 0.765 ? 1 : 0;
   }
-  // A pane is a run of them: keep a pixel only where most of its neighbours agree (no speckle from the texture's grain).
+  // A pane is a run of them: keep a pixel only where most of its neighbors agree (no speckle from the texture's grain).
   let glass = 0;
   for (let y = 0; y < size; y++) for (let x = 0; x < size; x++) {
     let n = 0;
@@ -93,7 +93,7 @@ export function dressForNight(GFX, name, m) {
     m.emissive = new GFX.Color('#c8e8a0');
     glow(m, 0.15, 1.4);
   } else if (name === 'prop:canopy' || name === 'prop:canopy-under') {
-    // Lit from below by coloured floods: the underside washed in it, the top only tinted, so its waves still show.
+    // Lit from below by colored floods: the underside washed in it, the top only tinted, so its waves still show.
     m.emissive = new GFX.Color('#8060ff');
     canopy.push(m);
     glow(m, 0, name === 'prop:canopy' ? 0.1 : 0.75);
@@ -106,7 +106,7 @@ export function setNight(f) {
   for (const { m, day, night } of glowing) m.emissiveIntensity = day + (night - day) * level;
 }
 
-/** The station canopy's colours turning, `t` seconds on. */
+/** The station canopy's colors turning, `t` seconds on. */
 export function nightTick(t) {
   if (!canopy.length || level <= 0) return;
   const h = (t * 0.035) % 1;

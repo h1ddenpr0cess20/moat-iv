@@ -127,7 +127,7 @@ function hull(pts) {
   return lo.slice(0, -1).concat(up.slice(0, -1));
 }
 
-/** The smallest rectangle round a footprint: centre, long axis u, short axis v, half-lengths A >= B. */
+/** The smallest rectangle round a footprint: center, long axis u, short axis v, half-lengths A >= B. */
 export function obb(ring) {
   const hp = hull(ring);
   let best = null;
@@ -170,7 +170,7 @@ export function centroid(ring) {
 const ringArea = (r) => Math.abs(r.reduce((s, p, i) => s + p[0] * r[(i + 1) % r.length][1] - r[(i + 1) % r.length][0] * p[1], 0)) / 2;
 
 // ---- the landmarks 3d-city designed (its looks), as Rivertown refined them -------------------------------------
-/** 3d-city's tints multiply a pale painted texture; the scanned brick wants the colour itself, deeper. */
+/** 3d-city's tints multiply a pale painted texture; the scanned brick wants the color itself, deeper. */
 function brickFromTint(tint) {
   const t = tint.replace('#', ''), k = 0.5;
   const [r, g, b] = [0, 2, 4].map((i) => parseInt(t.slice(i, i + 2), 16));
@@ -256,7 +256,7 @@ export function groundOf({ x0, z0, cell, nx, nz, h }) {
 }
 
 /**
- * Buildings' outlines ([cell key, ring ([x, z]), top]) -> (x, y, z) metres -> the cell key of the building the point
+ * Buildings' outlines ([cell key, ring ([x, z]), top]) -> (x, y, z) meters -> the cell key of the building the point
  * is inside (within its outline and under its top), or null.
  */
 export function insideOf(shells) {
@@ -387,7 +387,7 @@ export class Designs {
 
   frontOf(c) { return new F.Edge(c.ring[c.front], c.ring[(c.front + 1) % c.ring.length]); }
 
-  // ---- the generic block: storeys of walls, a ground floor, belt course, cornice, parapet, roof units ----------
+  // ---- the generic block: stories of walls, a ground floor, belt course, cornice, parapet, roof units ----------
   block(M, c, st, { zTop = null, ring = null, rooftop = true } = {}) {
     ring = ring ?? c.ring;
     const gz = c.gz, top = zTop ?? c.top;
@@ -665,7 +665,7 @@ export class Designs {
     if (c.area > 1200 && c.h > 14) {
       const inner = offsetRing(c.ring, -3), [cx, cy] = centroid(inner);
       if (inside(inner, cx, cy) && edgeDistance(inner, cx, cy) > 10) {
-        // The pad, its yellow ring, the dark disc in it and the H, each a few centimetres over the last: no two
+        // The pad, its yellow ring, the dark disc in it and the H, each a few centimeters over the last: no two
         // surfaces at one height (they flickered).
         M.box([cx, cy, top], [18, 18, 0.8], 'M_Concrete_Dark');
         M.cylinder([cx, cy, top + 0.8], 7.5, 0.06, 'M_Lane_Yellow', 32);
@@ -756,7 +756,7 @@ export class Designs {
     M.box([tx + (u[0] * sgn * ts) / 2, ty + (u[1] * sgn * ts) / 2, gz], [1.9, 0.3, 3.2], 'M_Door', { yaw: yaw + Math.PI / 2 });
   }
 
-  /** A pitched roof over the rectangle (centre c, axes u v, half-lengths A along the ridge and B across). */
+  /** A pitched roof over the rectangle (center c, axes u v, half-lengths A along the ridge and B across). */
   gableRoof(M, c, u, v, A, B, eave, pitch, mat, gableMat, o = 0.45, hip = false, trim = 'M_Frame_White') {
     const tp = Math.tan((pitch * Math.PI) / 180), ridge = eave + B * tp, low = eave - o * tp;
     const P = (a, b, z) => [c[0] + u[0] * a + v[0] * b, c[1] + u[1] * a + v[1] * b, z];
@@ -864,7 +864,7 @@ export class Designs {
       }
     }
     if (o.tower && A > 4 && B > 3) {
-      // A round tower on the front corner, a storey above the eaves, under a conical cap.
+      // A round tower on the front corner, a story above the eaves, under a conical cap.
       const d = this.streetDir(cx, cy) ?? v;
       const sv = v[0] * d[0] + v[1] * d[1] >= 0 ? 1 : -1, su = unit(key + 'tw') < 0.5 ? 1 : -1;
       const r = Math.min(1.9, B * 0.45);
@@ -893,7 +893,7 @@ export class Designs {
       M.box([p[0], p[1], eave - 1.0], [0.7, 0.9, ridge - eave + 2.0], 'M_Brick_8e3b2c', { yaw });
       M.box([p[0], p[1], ridge + 1.0], [0.8, 1.0, 0.12], 'M_Concrete', { yaw });
     }
-    // A dormer on the long side for the bigger two-storey and storey-and-a-half houses.
+    // A dormer on the long side for the bigger two-story and story-and-a-half houses.
     if ((o.dormers || floors === 1) && B > 3.6 && (o.dormers || unit(key + 'dorm') < 0.4)) {
       const tp = Math.tan((pitch * Math.PI) / 180);
       for (const a of A < 6 ? [-A * 0.4] : [-A * 0.45, A * 0.45]) {

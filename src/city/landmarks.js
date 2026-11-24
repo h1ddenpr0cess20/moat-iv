@@ -7,7 +7,7 @@ import { heightOf } from './buildings.js';
  * photograph show them:
  *
  * - Rosa Parks Circle (Maya Lin's "Ecliptic", 2001): a round plaza of pale concrete some 35 m across, set with the
- *   fibre-optic stars of the night sky over Grand Rapids at the turn of the millennium, that floods to be the city's
+ *   fiber-optic stars of the night sky over Grand Rapids at the turn of the millennium, that floods to be the city's
  *   ice rink in winter; round it, concentric steps of granite curb and stone dust that rise to the lawns and the
  *   birches; on its south-west edge the stage, a flat round steel canopy held up on a concrete core; tall light masts
  *   and cafe tables about it.
@@ -16,8 +16,8 @@ import { heightOf } from './buildings.js';
  * - The Public Museum's planetarium domes, and the Calder's red stabile, La Grande Vitesse, on Calder Plaza.
  */
 
-/** Where Rosa Parks Circle's plaza is (its centre, metres) and how big: from the aerial photograph. */
-export const ROSA_PARKS = { centre: [-290.4, -177.5], radius: 17.5, rings: 4, tread: 1.35, rise: 0.15, stage: [-306, -161] };
+/** Where Rosa Parks Circle's plaza is (its center, meters) and how big: from the aerial photograph. */
+export const ROSA_PARKS = { center: [-290.4, -177.5], radius: 17.5, rings: 4, tread: 1.35, rise: 0.15, stage: [-306, -161] };
 /** The map's footprint of the stage canopy, built here and not as a building. */
 export const STAGE_ID = '9587c289-6bfc-4e87-8c6d-342742867449';
 /** Where La Grande Vitesse stands on Calder Plaza (from the aerial photograph). */
@@ -55,7 +55,7 @@ function drum(builder, material, [cx, cz], r, y0, y1, color, { tile = 3, collide
   }
 }
 
-/** A box: four walls and a lid, centred on (x, z), `w` along (ax, az), `d` across, from y0 to y1. */
+/** A box: four walls and a lid, centerd on (x, z), `w` along (ax, az), `d` across, from y0 to y1. */
 function block(builder, material, x, z, ax, az, w, d, y0, y1, color, { collide = false, lid = true } = {}) {
   const px = -az, pz = ax;
   const P = (s, t, y) => [x + ax * s * w / 2 + px * t * d / 2, y, z + az * s * w / 2 + pz * t * d / 2];
@@ -96,7 +96,7 @@ export function fordGrave(builder, terrain) {
 
 /** Rosa Parks Circle: the plaza, its rings of steps, the stage, the stars, the masts and the tables. */
 export function rosaParks(builder, terrain) {
-  const { centre: C, radius: R, rings, tread, rise, stage: S } = ROSA_PARKS;
+  const { center: C, radius: R, rings, tread, rise, stage: S } = ROSA_PARKS;
   const base = terrain.heightAt(C[0], C[1]) + 0.12;
   const pale = [1.06, 1.05, 1.0], curb = linear('#e4e0d8'), dust = [1.0, 0.92, 0.82];
   // The plaza: a disc of pale concrete, a little sunk below its rings.
@@ -124,7 +124,7 @@ export function rosaParks(builder, terrain) {
     builder.quad('road:concrete', a, b, [b[0], Math.min(gb, b[1]) - 0.2, b[2]], [a[0], Math.min(ga, a[1]) - 0.2, a[2]], [0, 0], [1, 0], [1, 1], [0, 1], curb);
   }
 
-  // The stars: points of fibre-optic light set in the plaza, the constellations of the night of the millennium.
+  // The stars: points of fiber-optic light set in the plaza, the constellations of the night of the millennium.
   for (let k = 0; k < 150; k++) {
     const a = unit(`star${k}a`) * TAU, d = Math.sqrt(unit(`star${k}d`)) * (R - 0.6);
     const x = C[0] + Math.cos(a) * d, z = C[1] + Math.sin(a) * d, s = 0.05 + unit(`star${k}s`) * 0.06;
@@ -183,7 +183,7 @@ export function rosaParks(builder, terrain) {
 
 /** Whether (x, z) is somewhere in Rosa Parks Circle's plaza, its rings or its stage: where no tree may stand. */
 export function inRosaParks(x, z) {
-  const { centre: C, radius: R, rings, tread, stage: S } = ROSA_PARKS;
+  const { center: C, radius: R, rings, tread, stage: S } = ROSA_PARKS;
   return Math.hypot(x - C[0], z - C[1]) < R + rings * tread + 1.2 || Math.hypot(x - S[0], z - S[1]) < 7.5;
 }
 
@@ -195,7 +195,7 @@ export function museumPorch(builder, terrain, buildings) {
   const gram = buildings.find((b) => b.name === 'Grand Rapids Art Museum');
   if (!gram) return;
   const ring = open(gram.rings[0]);
-  const [tx, tz] = ROSA_PARKS.centre;
+  const [tx, tz] = ROSA_PARKS.center;
   let cx = 0, cz = 0;
   for (const [x, z] of ring) { cx += x / ring.length; cz += z / ring.length; }
   // The longest wall that looks toward the circle.
@@ -226,7 +226,7 @@ export function museumPorch(builder, terrain, buildings) {
 
 /** A dome on each round wing of the Public Museum: the planetarium and its twin. */
 export function museumDomes(builder, terrain, buildings, lidar = {}) {
-  const grey = linear('#b4b8bc');
+  const gray = linear('#b4b8bc');
   for (const b of buildings) {
     if (b.name !== 'Grand Rapids Public Museum') continue;
     const ring = open(b.rings[0]), area = areaOf(b.rings[0]);
@@ -247,8 +247,8 @@ export function museumDomes(builder, terrain, buildings, lidar = {}) {
         const t0 = TAU * i / seg, t1 = TAU * (i + 1) / seg;
         const a = [cx + Math.cos(t1) * r0, y0, cz + Math.sin(t1) * r0], bb = [cx + Math.cos(t0) * r0, y0, cz + Math.sin(t0) * r0];
         const c = [cx + Math.cos(t0) * r1, y1, cz + Math.sin(t0) * r1], d = [cx + Math.cos(t1) * r1, y1, cz + Math.sin(t1) * r1];
-        builder.tri('prop:steel', a, bb, c, [0, 0], [1, 0], [1, 1], grey);
-        if (r1 > 0.01) builder.tri('prop:steel', a, c, d, [0, 0], [1, 1], [0, 1], grey);
+        builder.tri('prop:steel', a, bb, c, [0, 0], [1, 0], [1, 1], gray);
+        if (r1 > 0.01) builder.tri('prop:steel', a, c, d, [0, 0], [1, 1], [0, 1], gray);
       }
     }
   }

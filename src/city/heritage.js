@@ -9,7 +9,7 @@ import { kindOf } from './looks.js';
  * shapes the district's.
  *
  * - Queen Anne: steep cross-gabled roofs, a gable over a front bay, often a round-cornered tower with a conical cap,
- *   a deep porch on turned posts; painted clapboard in the colours of the period (sage, cream, slate blue, oxblood).
+ *   a deep porch on turned posts; painted clapboard in the colors of the period (sage, cream, slate blue, oxblood).
  * - Italianate: a low hipped roof on deep eaves carried on brackets, tall windows, often red brick, sometimes a cupola.
  * - Colonial Revival: a side-gabled roof with dormers, a symmetrical front and a porch at its middle, white or yellow.
  * - American Foursquare: a square block under a hipped roof with a hipped dormer, a porch across the whole front.
@@ -17,7 +17,7 @@ import { kindOf } from './looks.js';
  * Every house stands on a stone foundation, has a chimney, and faces the street it is nearest.
  */
 
-/** Where Heritage Hill is, in metres: Lafayette Avenue to Union Avenue, Michigan Street to the south edge of the map. */
+/** Where Heritage Hill is, in meters: Lafayette Avenue to Union Avenue, Michigan Street to the south edge of the map. */
 export const HERITAGE = { x0: 495, x1: 1118, z0: -690, z1: 1110 };
 export const inHeritageHill = (x, z) => x > HERITAGE.x0 && x < HERITAGE.x1 && z > HERITAGE.z0 && z < HERITAGE.z1;
 
@@ -88,12 +88,12 @@ export function heritageHouse(builder, b, h, foot, front, seed, opts = {}) {
   const roofColor = linear(roofTint);
   const stone = linear('#a49a8c');
   const wallMat = brick ? 'wall:facade:historic' : 'wall:facade:house';
-  const storey = brick ? 4.0 : 4.2, ratio = brick ? 0.8 : 1.6;
+  const story = brick ? 4.0 : 4.2, ratio = brick ? 0.8 : 1.6;
 
-  // Storeys: two, or three for a big house; the eaves where the map's height (to the ridge) allows.
-  const storeys = area > 300 || h > 12 ? 3 : 2;
+  // Stories: two, or three for a big house; the eaves where the map's height (to the ridge) allows.
+  const stories = area > 300 || h > 12 ? 3 : 2;
   const base = foot + 0.9;
-  const eave = base + Math.min(storeys * 3.3, Math.max(5.6, h * 0.62));
+  const eave = base + Math.min(stories * 3.3, Math.max(5.6, h * 0.62));
   const hw = W / 2, hd = D / 2;
 
   // The foundation: a band of stone all round, and the walls above it.
@@ -114,7 +114,7 @@ export function heritageHouse(builder, b, h, foot, front, seed, opts = {}) {
   const ring = (fn) => { for (let i = 0; i < 4; i++) { const [u0, v0] = corners[i], [u1, v1] = corners[(i + 1) % 4]; fn(u0, v0, u1, v1); } };
   ring((u0, v0, u1, v1) => {
     wall(u0, v0, u1, v1, foot - 0.3, base, 'road:concrete', stone);
-    wall(u0, v0, u1, v1, base, eave, wallMat, paint, Math.max(1, Math.round((eave - base) / storey)));
+    wall(u0, v0, u1, v1, base, eave, wallMat, paint, Math.max(1, Math.round((eave - base) / story)));
   });
 
   // The eaves: a trim band under the roof, deep on an Italianate house (where its brackets stand).
@@ -123,7 +123,7 @@ export function heritageHouse(builder, b, h, foot, front, seed, opts = {}) {
   ring((a0, b0, a1, b1) => {
     wall(a0, b0, a1, b1, eave - eaveDepth, eave, 'road:concrete', trim);
     if (style === 'italianate') {
-      // Brackets under the eave, paired, every metre and a half.
+      // Brackets under the eave, paired, every meter and a half.
       const a = at(a0, b0, 0), c = at(a1, b1, 0), L = Math.hypot(c[0] - a[0], c[2] - a[2]);
       const m = at((a0 + a1) / 2, (b0 + b1) / 2, 0), o = at(0, 0, 0), ml = Math.hypot(m[0] - o[0], m[2] - o[2]) || 1;
       const nx = (m[0] - o[0]) / ml, nz = (m[2] - o[2]) / ml;
@@ -218,7 +218,7 @@ export function heritageHouse(builder, b, h, foot, front, seed, opts = {}) {
   face(builder, 'road:concrete', [[ra[0], deck + 0.85, ra[2]], [rb[0], deck + 0.85, rb[2]], [rb[0], deck + 0.95, rb[2]], [ra[0], deck + 0.95, ra[2]]], trim, [f[0], 0, f[1]], () => [0, 0]);
 
   // The chimney: brick, through the roof near one end.
-  // Its height: a metre and more above the roof where it comes through (about a third of the way down from the ridge).
+  // Its height: a meter and more above the roof where it comes through (about a third of the way down from the ridge).
   const rise = style === 'italianate' ? Math.min(ow, od) * 0.42 : style === 'foursquare' ? Math.min(ow, od) * 0.75 : style === 'colonial' ? od * 0.7 : ow * 1.05;
   const cu = (unit(`${seed}ch`) < 0.5 ? -1 : 1) * hw * 0.3, cv = -hd * 0.25;
   const top = eave + rise * 0.72 + 1.3;
@@ -259,7 +259,7 @@ export function dormer(builder, at, u, v, y, w, rise, color, trim, roofMat, roof
   }
 }
 
-/** A round-cornered Queen Anne tower: eight sided, a storey above the eaves, with a tall conical cap. */
+/** A round-cornered Queen Anne tower: eight sided, a story above the eaves, with a tall conical cap. */
 export function tower(builder, c, base, eave, r, color, roofMat, roofColor, foot) {
   const sides = 8, top = eave + 2.6, cap = top + r * 2.6;
   for (let i = 0; i < sides; i++) {

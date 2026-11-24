@@ -7,32 +7,32 @@ import { isTypicalHouse, pickKind, typicalHouse } from './houses.js';
 
 /**
  * Buildings out of footprints: walls that run up from the ground in whole
- * storeys of the engine's facades, a roof, and a tint no two alike.
+ * stories of the engine's facades, a roof, and a tint no two alike.
  *
- * A facade is a texture that repeats once a storey and once a bay, so every
+ * A facade is a texture that repeats once a story and once a bay, so every
  * wall gets a whole number of both: the windows then land on the corners.
  */
 
-// What each facade (textures/town: FACADES) looks like: the height of a storey, in metres, and its width as a multiple of that.
+// What each facade (textures/town: FACADES) looks like: the height of a story, in meters, and its width as a multiple of that.
 const FACADE = {
-  office: { storey: 3.6, ratio: 0.9, tints: ['#a9bdd0', '#8fa6bc', '#c4ccd2', '#9fb0a8', '#b4bcc8', '#7f98b0'] },
-  brick: { storey: 3.9, ratio: 1.2, tints: ['#e0b090', '#cf9474', '#e6c8a6', '#bf8a70', '#dcc9b0', '#b09484', '#d4a080'] },
-  house: { storey: 4.2, ratio: 1.6, tints: ['#f0e4cc', '#cfdcc4', '#e0d0be', '#bccbdc', '#ecd6c4', '#f6f0e2', '#d8d0c0'] },
-  curtain: { storey: 3.6, ratio: 1, tints: ['#ffffff', '#f0f6ff', '#e6f0f8', '#f6faff', '#e0ecf6'] },
-  precast: { storey: 3.6, ratio: 1, tints: ['#ffffff', '#f4ecde', '#ece4d4', '#f8f0e0', '#efe8dc'] },
-  terracotta: { storey: 3.6, ratio: 1, tints: ['#ffffff', '#f4e8e0', '#e8d8cc'] },
-  sandstone: { storey: 3.6, ratio: 1, tints: ['#ffffff', '#f0e4dc', '#e0d0c4', '#d4c8bc'] },
-  garage: { storey: 3.0, ratio: 1.0, tints: ['#d0ccc0', '#c0bcb2', '#d8d4c8'] },
-  shop: { storey: 4.4, ratio: 2.4, tints: ['#ffffff', '#f0e6d8', '#e0e8ee', '#f2dcd0', '#e4ecdc'] },
+  office: { story: 3.6, ratio: 0.9, tints: ['#a9bdd0', '#8fa6bc', '#c4ccd2', '#9fb0a8', '#b4bcc8', '#7f98b0'] },
+  brick: { story: 3.9, ratio: 1.2, tints: ['#e0b090', '#cf9474', '#e6c8a6', '#bf8a70', '#dcc9b0', '#b09484', '#d4a080'] },
+  house: { story: 4.2, ratio: 1.6, tints: ['#f0e4cc', '#cfdcc4', '#e0d0be', '#bccbdc', '#ecd6c4', '#f6f0e2', '#d8d0c0'] },
+  curtain: { story: 3.6, ratio: 1, tints: ['#ffffff', '#f0f6ff', '#e6f0f8', '#f6faff', '#e0ecf6'] },
+  precast: { story: 3.6, ratio: 1, tints: ['#ffffff', '#f4ecde', '#ece4d4', '#f8f0e0', '#efe8dc'] },
+  terracotta: { story: 3.6, ratio: 1, tints: ['#ffffff', '#f4e8e0', '#e8d8cc'] },
+  sandstone: { story: 3.6, ratio: 1, tints: ['#ffffff', '#f0e4dc', '#e0d0c4', '#d4c8bc'] },
+  garage: { story: 3.0, ratio: 1.0, tints: ['#d0ccc0', '#c0bcb2', '#d8d4c8'] },
+  shop: { story: 4.4, ratio: 2.4, tints: ['#ffffff', '#f0e6d8', '#e0e8ee', '#f2dcd0', '#e4ecdc'] },
   // The city's own (facades.js).
-  'glass-bronze': { storey: 3.9, ratio: 1, tints: ['#ffffff'] },
-  'glass-blue': { storey: 3.9, ratio: 1, tints: ['#ffffff'] },
-  'glass-teal': { storey: 3.9, ratio: 1, tints: ['#ffffff'] },
-  'glass-dark': { storey: 3.9, ratio: 1, tints: ['#ffffff'] },
-  limestone: { storey: 3.9, ratio: 0.85, tints: ['#ffffff', '#f6f0e6', '#ece6da'] },
-  historic: { storey: 4.0, ratio: 0.8, tints: ['#d08a70', '#a8705c', '#fbecc8'] },
-  'historic-arched': { storey: 4.0, ratio: 0.8, tints: ['#d08a70', '#a8705c', '#fbecc8'] },
-  concrete: { storey: 4.2, ratio: 1.2, tints: ['#ffffff', '#f0f0ee'] },
+  'glass-bronze': { story: 3.9, ratio: 1, tints: ['#ffffff'] },
+  'glass-blue': { story: 3.9, ratio: 1, tints: ['#ffffff'] },
+  'glass-teal': { story: 3.9, ratio: 1, tints: ['#ffffff'] },
+  'glass-dark': { story: 3.9, ratio: 1, tints: ['#ffffff'] },
+  limestone: { story: 3.9, ratio: 0.85, tints: ['#ffffff', '#f6f0e6', '#ece6da'] },
+  historic: { story: 4.0, ratio: 0.8, tints: ['#d08a70', '#a8705c', '#fbecc8'] },
+  'historic-arched': { story: 4.0, ratio: 0.8, tints: ['#d08a70', '#a8705c', '#fbecc8'] },
+  concrete: { story: 4.2, ratio: 1.2, tints: ['#ffffff', '#f0f0ee'] },
 };
 const PLAIN = {
   stucco: { tile: 3, tints: ['#e6dcc8', '#d8cdb8', '#efe6d4', '#cfc6b4'] },
@@ -40,22 +40,22 @@ const PLAIN = {
   corrugated: { tile: 3, tints: ['#c8ccd0', '#b0b8c0', '#d4d4cc'] },
   clapboard: { tile: 3, tints: ['#e8e0d0', '#d8d8c8', '#c8d0d8'] },
 };
-const FLAT_ROOFS = [['ground:membrane-white', 3, 0.34], ['ground:membrane-grey', 3, 0.22], ['ground:gravel-roof', 2, 0.44]];
+const FLAT_ROOFS = [['ground:membrane-white', 3, 0.34], ['ground:membrane-gray', 3, 0.22], ['ground:gravel-roof', 2, 0.44]];
 const SHINGLES = ['ground:shingles-charcoal', 'ground:shingles-brown'];
-/** The mean colour of each roof texture, to tint it toward the photograph's colour of the real roof. */
+/** The mean color of each roof texture, to tint it toward the photograph's color of the real roof. */
 const ROOF_REF = {
-  'ground:membrane-white': [205, 205, 200], 'ground:membrane-grey': [150, 152, 154], 'ground:gravel-roof': [125, 122, 118],
+  'ground:membrane-white': [205, 205, 200], 'ground:membrane-gray': [150, 152, 154], 'ground:gravel-roof': [125, 122, 118],
   'ground:shingles-charcoal': [60, 60, 64], 'ground:shingles-brown': [96, 68, 52], 'ground:turf': [60, 88, 36],
 };
 const clampTint = (v) => Math.max(0.55, Math.min(1.3, v));
-/** A roof's tint toward the colour the aerial photograph shows (hazy and bright, so eased halfway). */
+/** A roof's tint toward the color the aerial photograph shows (hazy and bright, so eased halfway). */
 const tintToward = (material, rgb) => ROOF_REF[material].map((ref, i) => clampTint(1 + (rgb[i] / ref - 1) * 0.6));
 
 const HOMEY = new Set(['house', 'detached', 'semidetached_house', 'residential', 'cabin', 'bungalow', 'terrace', 'farm', 'static_caravan']);
 const OFFICEY = new Set(['office', 'commercial', 'hotel', 'civic', 'government', 'hospital', 'university', 'college', 'public', 'education', 'service', 'transportation', 'medical']);
 const DECKS = new Set(['parking', 'garage', 'garages', 'carport']);
 
-/** The height of a building, in metres, from what is known about it. */
+/** The height of a building, in meters, from what is known about it. */
 export function heightOf(b) {
   // What the lidar measured, where it saw enough of the roof.
   if (b.measured && b.measured.cover >= 0.25 && b.measured.height >= 2.5) return b.measured.height;
@@ -73,7 +73,7 @@ export function heightOf(b) {
 /**
  * How each kind of building looks, from its `use` (scripts/uses.py): a house in clapboard under a hip roof, flats in
  * brick, a shop with a shop front, a bar in dark paint, a church in sandstone under shingles, a school in buff brick,
- * a hospital in white precast over a glass lobby, a warehouse in grey block, a factory in corrugated steel, and so on.
+ * a hospital in white precast over a glass lobby, a warehouse in gray block, a factory in corrugated steel, and so on.
  * Null where `use` says nothing the looks below do not (they then go by height and form).
  */
 export function styleByUse(use, h, area, r) {
@@ -160,7 +160,7 @@ export function building(builder, terrain, b, index) {
   const area = areaOf(b.rings[0]);
   // A height the list of the city's tallest buildings gives, for those built since the lidar flew (or that it missed).
   const named = LOOKS[b.id] ?? LOOKS[b.name];
-  // A shop on a main street stands at least a storey and a parapet tall, for its windows and its sign.
+  // A shop on a main street stands at least a story and a parapet tall, for its windows and its sign.
   const h = named?.height ?? (b.storefront ? Math.max(5.8, heightOf(b)) : heightOf(b));
   const foot = footOf(terrain, b);
   const bottom = b.min ? foot + b.min : foot;
@@ -171,12 +171,12 @@ export function building(builder, terrain, b, index) {
   // Buildings that are one of Heritage Hill's kind of house wherever they stand: the Jenison Museum, an old house with a turret.
   const featured = FEATURED[b.name];
   if (featured && b.rings.length === 1) { heritageHouse(builder, b, h, foot, b.front, seed, featured); return; }
-  // The houses of the region: ranch, cape, bungalow, gabled cottage, gambrel, two-storey traditional (houses.js).
+  // The houses of the region: ranch, cape, bungalow, gabled cottage, gambrel, two-story traditional (houses.js).
   if (!named && isTypicalHouse(b, h, area)) { typicalHouse(builder, b, h, foot, b.front, seed, pickKind(h, area, seed)); return; }
   let style = styleOf(b, h, area);
   // The important buildings look as their photographs say; the rest of downtown as its kind of building does there.
   const [cx, cz] = outer[0];
-  const core = Math.hypot(cx - CORE.centre[0], cz - CORE.centre[1]) < CORE.radius;
+  const core = Math.hypot(cx - CORE.center[0], cz - CORE.center[1]) < CORE.radius;
   // A shop, bar or restaurant's building: downtown, its block as downtown's are (with shop windows); elsewhere a main street's.
   const shopLook = () => (core ? (({ base, ...l }) => ({ ...l, base: { wall: 'shop', h: 4.4 } }))(coreLook(b, Math.max(h, 7), b.id ?? seed) ?? storefrontLook(b.id ?? seed)) : storefrontLook(b.id ?? seed));
   const front = !named && b.storefront && style.roof !== 'hip' && area < 3000 ? shopLook() : null;
@@ -227,8 +227,8 @@ function raise(builder, polygon, { bottom, top, base, style, seed, h, hipRect = 
   const wallBands = [];
   const tintOf = (kind, t, salt) => (t ? linear(t) : pick((FACADE[kind] ?? PLAIN[kind]).tints, seed + salt));
   const upper = style.wall ? { kind: style.wall, tint: tintOf(style.wall, style.tint, '') } : { kind: style.plain ?? 'stucco', plain: true, tint: tintOf(style.plain ?? 'stucco', style.tint, '') };
-  // The lowest storeys: shop fronts, a stone base or a glass lobby, where the building reaches the ground.
-  const ground = style.base === 'shop' ? { wall: 'shop', h: FACADE.shop.storey } : style.base;
+  // The lowest stories: shop fronts, a stone base or a glass lobby, where the building reaches the ground.
+  const ground = style.base === 'shop' ? { wall: 'shop', h: FACADE.shop.story } : style.base;
   if (ground && base) {
     const gh = Math.min(ground.h, h);
     wallBands.push({ kind: ground.wall, from: bottom, to: bottom + gh, tint: tintOf(ground.wall, ground.tint, 's'), lower: true });
@@ -254,7 +254,7 @@ function raise(builder, polygon, { bottom, top, base, style, seed, h, hipRect = 
           u1 = L / t; v1 = height / t; material = `wall:${band.kind}`;
         } else {
           const f = FACADE[band.kind];
-          const rows = Math.max(1, Math.round(height / f.storey));
+          const rows = Math.max(1, Math.round(height / f.story));
           const tileH = height / rows, tileW = tileH / f.ratio;
           u1 = Math.max(1, Math.round(L / tileW)); v1 = rows; material = `wall:facade:${band.kind}`;
         }
@@ -277,7 +277,7 @@ function raise(builder, polygon, { bottom, top, base, style, seed, h, hipRect = 
 }
 
 /**
- * A cornice round the top of a wall: a band `h` metres deep standing `d` metres proud of it, with its underside and
+ * A cornice round the top of a wall: a band `h` meters deep standing `d` meters proud of it, with its underside and
  * its top, and a low parapet lip above the roof. `ring` runs so that (-dz, dx) of each edge is outward.
  */
 function cornice(builder, ring, top, { h = 1, d = 0.6, tint = '#e8e0d0' }) {
@@ -310,7 +310,7 @@ function cornice(builder, ring, top, { h = 1, d = 0.6, tint = '#e8e0d0' }) {
   }
 }
 
-/** A box from y0 to y1 over the rectangle round (x, z) along (ax, az), `w` by `d` metres: four walls and a lid. */
+/** A box from y0 to y1 over the rectangle round (x, z) along (ax, az), `w` by `d` meters: four walls and a lid. */
 function box(builder, wallMat, lidMat, x, z, ax, az, w, d, y0, y1, color, lid = color) {
   const px = -az, pz = ax, hw = w / 2, hd = d / 2;
   const P = (s, t, y) => [x + ax * s + px * t, y, z + az * s + pz * t];
@@ -329,13 +329,13 @@ function box(builder, wallMat, lidMat, x, z, ax, az, w, d, y0, y1, color, lid = 
 function rooftop(builder, polygon, top, seed, area) {
   const r = boundingRectangle(polygon[0]);
   if (!r || r.w < 8 || r.d < 6) return;
-  const grey = linear('#b8b6b0');
+  const gray = linear('#b8b6b0');
   const big = top > 40;
   const pw = Math.max(4, Math.min(r.w * 0.34, 22)), pd = Math.max(3.5, Math.min(r.d * 0.34, 14));
   const ox = (unit(`${seed}px`) - 0.5) * (r.w - pw) * 0.4, oz = (unit(`${seed}pz`) - 0.5) * (r.d - pd) * 0.4;
   const cx = r.x + r.ax * ox - r.az * oz, cz = r.z + r.az * ox + r.ax * oz;
   const fits = (x, z, w, d) => [[1, 1], [-1, 1], [-1, -1], [1, -1]].every(([s, t]) => inside(polygon, x + r.ax * s * w / 2 - r.az * t * d / 2, z + r.az * s * w / 2 + r.ax * t * d / 2));
-  if (fits(cx, cz, pw + 2, pd + 2)) box(builder, 'wall:block', 'ground:membrane-grey', cx, cz, r.ax, r.az, pw, pd, top - 0.1, top + (big ? 4.6 : 3.2), grey);
+  if (fits(cx, cz, pw + 2, pd + 2)) box(builder, 'wall:block', 'ground:membrane-gray', cx, cz, r.ax, r.az, pw, pd, top - 0.1, top + (big ? 4.6 : 3.2), gray);
   // The units: steel boxes with a fan on top, a few on a small roof and more on a big one.
   const count = Math.min(8, 1 + Math.floor(area / 500));
   const steel = linear('#9ea4aa');
@@ -353,16 +353,16 @@ function flat(builder, rings, y, seed, photo = null) {
   const t = triangulate(rings);
   let material, tile, color;
   if (photo) {
-    // What the photograph shows: a bright roof is white membrane, a mid grey one grey membrane or gravel, a dark one gravel, a green one planted.
+    // What the photograph shows: a bright roof is white membrane, a mid gray one gray membrane or gravel, a dark one gravel, a green one planted.
     const [r, g, b, green] = photo;
     const lum = (r + g + b) / 3;
-    material = green > 0.085 ? 'ground:turf' : lum >= 168 ? 'ground:membrane-white' : lum >= 138 && unit(`${seed}m`) < 0.55 ? 'ground:membrane-grey' : 'ground:gravel-roof';
+    material = green > 0.085 ? 'ground:turf' : lum >= 168 ? 'ground:membrane-white' : lum >= 138 && unit(`${seed}m`) < 0.55 ? 'ground:membrane-gray' : 'ground:gravel-roof';
     tile = material === 'ground:turf' ? 1.5 : material === 'ground:gravel-roof' ? 2 : 3;
     color = tintToward(material, [r, g, b]);
     // A white roof in the sun is bright in the photograph and brighter still lit in the scene: kept a little down, so it does not glare.
     if (material === 'ground:membrane-white') color = color.map((c) => c * 0.8);
   } else {
-    // Each roof is its own kind: white or grey membrane, or gravel over tar.
+    // Each roof is its own kind: white or gray membrane, or gravel over tar.
     let pick = unit(seed + 'roof') * FLAT_ROOFS.reduce((a, r) => a + r[2], 0), kind = FLAT_ROOFS[0];
     for (const r of FLAT_ROOFS) { pick -= r[2]; if (pick <= 0) { kind = r; break; } }
     [material, tile] = kind;
@@ -420,7 +420,7 @@ function hip(builder, r, y, key, seed, photo = null) {
 }
 
 /**
- * A canopy: a flat roof `h` metres up on slim steel posts, its fascia round the edge and its underside lit pale, with
+ * A canopy: a flat roof `h` meters up on slim steel posts, its fascia round the edge and its underside lit pale, with
  * nothing to bump into under it but the posts.
  */
 export function canopy(builder, rings, foot, h, seed) {
@@ -446,12 +446,12 @@ export function canopy(builder, rings, foot, h, seed) {
   const at = (i, y) => [t.points[i * 2], y, t.points[i * 2 + 1]];
   for (let k = 0; k < t.index.length; k += 3) {
     const a = at(t.index[k], top), b = at(t.index[k + 1], top), c = at(t.index[k + 2], top);
-    builder.tri('ground:membrane-grey', a, b, c, [a[0] / 3, a[2] / 3], [b[0] / 3, b[2] / 3], [c[0] / 3, c[2] / 3], [0.9, 0.9, 0.9], [0, 1, 0]);
+    builder.tri('ground:membrane-gray', a, b, c, [a[0] / 3, a[2] / 3], [b[0] / 3, b[2] / 3], [c[0] / 3, c[2] / 3], [0.9, 0.9, 0.9], [0, 1, 0]);
     builder.collide(a, b, c);
     const d = at(t.index[k], top - deep), e = at(t.index[k + 1], top - deep), f = at(t.index[k + 2], top - deep);
     builder.tri('surface:concrete', d, f, e, [0, 0], [1, 1], [1, 0], under, [0, -1, 0]);
   }
-  // The posts: inset from the corners, one every twelve metres or so along the longer runs.
+  // The posts: inset from the corners, one every twelve meters or so along the longer runs.
   const posts = [];
   const cx = ring.reduce((s, p) => s + p[0], 0) / n, cz = ring.reduce((s, p) => s + p[1], 0) / n;
   for (let i = 0; i < n; i++) {

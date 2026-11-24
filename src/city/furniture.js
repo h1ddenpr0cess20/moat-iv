@@ -7,7 +7,7 @@ import { createDrive } from '../drive.js';
 
 /**
  * What stands in the streets. The ornamental lamp: a black cast-iron post on a flared base, a curved arm and a
- * globe, as the photographs of downtown show them (metres, y up; the arm points along +x).
+ * globe, as the photographs of downtown show them (meters, y up; the arm points along +x).
  */
 function lampTemplate() {
   const m = new Mesher();
@@ -29,8 +29,8 @@ function lampTemplate() {
 const SPACING = { primary: 64, secondary: 64, tertiary: 80, residential: 110, unclassified: 110 };
 const bridged = (r) => Array.isArray(r.flags) && r.flags.some((f) => f.values?.some((v) => v === 'is_bridge' || v === 'is_tunnel'));
 
-/** Lamps along the streets, alternating sides, off the roadway and out of the buildings; side streets get them only within `core` metres of `centre`. */
-export function lamps(builder, terrain, roads, buildings, { centre = [-316, -163], core = 380, bounds = [-1450, -1090, 1450, 1090] } = {}) {
+/** Lamps along the streets, alternating sides, off the roadway and out of the buildings; side streets get them only within `core` meters of `center`. */
+export function lamps(builder, terrain, roads, buildings, { center = [-316, -163], core = 380, bounds = [-1450, -1090, 1450, 1090] } = {}) {
   const template = lampTemplate();
   const within = buildingIndex(buildings);
   // Not on a pavement or a path: a post there stops the ball (and a walker).
@@ -54,7 +54,7 @@ export function lamps(builder, terrain, roads, buildings, { centre = [-316, -163
       next += every;
       side = -side;
       // At the back of the pavement, or failing that at the kerb, wherever the pavement is not, and off every road: at
-      // this point of the street, or a few metres along it either way.
+      // this point of the street, or a few meters along it either way.
       let x = 0, z = 0, nx = 0, nz = 0, found = false;
       for (const dk of [0, 2, -2, 4, -4, 7, -7]) {
         const k = i + dk;
@@ -67,7 +67,7 @@ export function lamps(builder, terrain, roads, buildings, { centre = [-316, -163
         if (found) break;
       }
       if (!found) continue;
-      if (!main && Math.hypot(x - centre[0], z - centre[1]) > core) continue;
+      if (!main && Math.hypot(x - center[0], z - center[1]) > core) continue;
       // The arm reaches back over the road.
       const yaw = Math.atan2(nz * side, -nx * side);
       const y = terrain.heightAt(x, z) + 0.34;

@@ -11,8 +11,8 @@ import gr from './data/grand-rapids.json' with { type: 'json' };
  * building type of its own (`lot0`, `lot1`, ...), so the simulation counts its
  * homes, jobs and shoppers like any other building's.
  *
- * Positions in the data are 3d-city's metres (x east, z south of the middle of
- * its map); the game's tiles are TILE metres and its (0, 0) is ORIGIN.
+ * Positions in the data are 3d-city's meters (x east, z south of the middle of
+ * its map); the game's tiles are TILE meters and its (0, 0) is ORIGIN.
  */
 
 /** The founder's tower: the real Amway Grand Hotel, on the middle of the map. */
@@ -20,8 +20,8 @@ export const TOWER = tower;
 export const TILE = gr.tile;
 export const ORIGIN = [gr.center[0] - (gr.size * gr.tile) / 2, gr.center[1] - (gr.size * gr.tile) / 2];
 
-/** A point in the data's metres from a point in tiles, and the other way. */
-export const toMetres = (x, y) => [ORIGIN[0] + x * TILE, ORIGIN[1] + y * TILE];
+/** A point in the data's meters from a point in tiles, and the other way. */
+export const toMeters = (x, y) => [ORIGIN[0] + x * TILE, ORIGIN[1] + y * TILE];
 export const toTiles = (mx, mz) => [(mx - ORIGIN[0]) / TILE, (mz - ORIGIN[1]) / TILE];
 
 function inside(ring, x, z) {
@@ -70,7 +70,7 @@ export function zoneOfUse(use, h) {
 /**
  * What a named building does for the city that raises it again: the same as the city's own kinds of building did (a
  * school teaches, a hospital heals, a police station keeps the peace, a museum or an arena cheers and draws visitors),
- * and the jobs its size holds. `mass` is its footprint's tiles times its storeys.
+ * and the jobs its size holds. `mass` is its footprint's tiles times its stories.
  */
 /** What the city's own building of each kind costs: a named one is priced from it. */
 const BASE_COST = { police: 60, fire: 60, library: 40, museum: 90, school: 90, university: 320, hospital: 180, stadium: 420, church: 70, station: 140, hotel: 120, civic: 100 };
@@ -81,7 +81,7 @@ function effectsOf(b, h, mass) {
   if (/police/i.test(name)) { out.serve = { security: 1, radius: 14 }; out.upkeep = 1.6; note = 'Keeps crime down within fourteen tiles.'; }
   else if (/fire station/i.test(name)) { out.serve = { fire: 1, radius: 14 }; out.upkeep = 1.4; note = 'Fires start less and are put out sooner within fourteen tiles.'; }
   else if (/library/i.test(name)) { out.serve = { education: 0.6, cheer: 0.2, radius: 10 }; out.upkeep = 0.6; note = 'Some of what a school does.'; }
-  else if (/museum|art museum|theatre|theater/i.test(name)) { out.serve = { cheer: 0.8, radius: 12 }; out.bonus = { tourism: 2 }; out.upkeep = 1; note = 'Cheers the people near it and draws visitors.'; }
+  else if (/museum|art museum|theater|theater/i.test(name)) { out.serve = { cheer: 0.8, radius: 12 }; out.bonus = { tourism: 2 }; out.upkeep = 1; note = 'Cheers the people near it and draws visitors.'; }
   else if (use === 'school') { out.serve = { education: 1, radius: 14 }; out.upkeep = 1.8; note = 'Educated people want better homes and bring better firms.'; }
   else if (use === 'university') { out.serve = { education: 1, radius: 20 }; out.upkeep = 2.5; out.bonus = { tax: { com: 0.04 }, growth: 0.04 }; note = 'Educates a wide circle.'; }
   else if (use === 'hospital') { out.serve = { health: 1, radius: 18 }; out.upkeep = 3; note = 'Healthier people, who live longer and stay.'; }
@@ -93,7 +93,7 @@ function effectsOf(b, h, mass) {
   else if (['office', 'mixed', 'apartments'].includes(use)) { out.shop = Math.min(8, +(out.jobs * 0.15).toFixed(1)); note = use === 'apartments' ? 'People live here.' : 'Firms work here.'; if (use === 'apartments') { out.cap = Math.max(8, Math.round(mass * 0.8)); out.jobs = 2; } }
   else { out.shop = Math.min(4, +(out.jobs * 0.12).toFixed(1)); }
   // A named building does what the city's own kind does, for a premium (not by its footprint: a police headquarters the size of a block is not forty police stations), and a little more of it.
-  const kind = /police/i.test(name) ? 'police' : /fire station/i.test(name) ? 'fire' : /library/i.test(name) ? 'library' : /museum|theatre|theater/i.test(name) ? 'museum' : ['school', 'university', 'hospital', 'stadium', 'church', 'station', 'hotel', 'civic'].includes(use) ? use : null;
+  const kind = /police/i.test(name) ? 'police' : /fire station/i.test(name) ? 'fire' : /library/i.test(name) ? 'library' : /museum|theater|theater/i.test(name) ? 'museum' : ['school', 'university', 'hospital', 'stadium', 'church', 'station', 'hotel', 'civic'].includes(use) ? use : null;
   if (kind) {
     out.cost = { gold: Math.round(BASE_COST[kind] * 1.8 + mass * 0.15) };
     if (out.serve) out.serve = { ...out.serve, radius: Math.round(out.serve.radius * 1.25) };
@@ -116,7 +116,7 @@ function describe(b, index) {
   for (let ty = Math.floor(t0[1]); ty <= Math.floor(t1[1]); ty++) {
     for (let tx = Math.floor(t0[0]); tx <= Math.floor(t1[0]); tx++) {
       if (tx < 0 || ty < 0 || tx >= gr.size || ty >= gr.size) continue;
-      const [mx, mz] = toMetres(tx + 0.5, ty + 0.5);
+      const [mx, mz] = toMeters(tx + 0.5, ty + 0.5);
       if (inside(ring, mx, mz)) tiles.push([tx, ty]);
     }
   }
@@ -152,7 +152,7 @@ const PIECES = [
   { name: 'La Grande Vitesse', note: 'Alexander Calder’s vermilion steel stabile, in the middle of Calder Plaza.', set: 'vitesse', tiles: 4, serve: { cheer: 0.9, radius: 16 }, bonus: { tourism: 2 } },
 ];
 const pieceRecord = (piece, i) => {
-  const [x0, z0] = toMetres(0, 0), side = piece.tiles * TILE;
+  const [x0, z0] = toMeters(0, 0), side = piece.tiles * TILE;
   const ring = [[x0, z0], [x0 + side, z0], [x0 + side, z0 + side], [x0, z0 + side], [x0, z0]];
   return { id: `piece-${i}`, name: piece.name, use: 'civic', rings: [ring], height: 13 };
 };
@@ -176,7 +176,7 @@ export const parcelByType = new Map(PARCELS.map((p) => [p.type, p]));
 /** The tiles a parcel stands on when its building's rectangle is put at (x, y): the lot's own, moved. */
 export const tilesAt = (p, x, y) => p.tiles.map(([tx, ty]) => [tx + x - p.x, ty + y - p.y]);
 
-/** A real building's record moved to (x, y), in the data's metres: for a landmark raised away from its own lot. */
+/** A real building's record moved to (x, y), in the data's meters: for a landmark raised away from its own lot. */
 export function recordAt(p, x, y) {
   const dx = (x - p.x) * TILE, dz = (y - p.y) * TILE;
   if (!dx && !dz) return p.record;

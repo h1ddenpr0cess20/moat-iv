@@ -101,7 +101,7 @@ export function plant(builder, terrain, trees, { near = null, blocked = null } =
     const sxz = Math.max(rad, 1.3) / m.R, sy = Math.min(h, 30) / m.H;
     const y = terrain.heightAt(x, z) - 0.15;
     const yaw = unit(`${seed}y`) * Math.PI * 2;
-    // The photograph's colour is hazy (a crown comes out grey-green and bright): keep its hue, deepen it to the albedo of a leaf, and let each tree be a shade of its own.
+    // The photograph's color is hazy (a crown comes out gray-green and bright): keep its hue, deepen it to the albedo of a leaf, and let each tree be a shade of its own.
     const lum = (r + g + b) / 3, boost = (c) => Math.max(0, lum + (c - lum) * 3.2);
     const k = (kind === 1 ? 0.62 : 0.8) * (0.82 + 0.36 * unit(`${seed}k`));
     const tint = [boost(r), boost(g), boost(b)].map((c) => Math.min(1.5, srgbToLinear(Math.min(255, c * k)) / 0.8));

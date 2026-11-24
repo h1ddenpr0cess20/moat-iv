@@ -5,8 +5,8 @@ import { unit } from './geometry.js';
  * `public/data/landmark-credits.json` says whose and under what licence) and the USGS aerial photograph.
  *
  * A look says what a building is clad in (`wall`: one of the facades in buildings.js) and the tint on it; what its
- * lowest storeys are (`base`: { wall, h, tint }: a stone base, a row of shop fronts, a glass lobby); the cornice it
- * wears (`cornice`: { h, d, tint }, metres tall and proud of the wall, or `false`); the side of it that is glass
+ * lowest stories are (`base`: { wall, h, tint }: a stone base, a row of shop fronts, a glass lobby); the cornice it
+ * wears (`cornice`: { h, d, tint }, meters tall and proud of the wall, or `false`); the side of it that is glass
  * (`glass`: { toward: [dx, dz], wall }); and whether its roof carries a penthouse (`penthouse: false` for none).
  *
  *   glass-bronze      the Amway Grand Plaza's tower, Campau Square Plaza
@@ -26,7 +26,7 @@ const STONE = '#f4ecdc';
 const CORNICE = { h: 1.1, d: 0.7, tint: '#e8e0d0' };
 
 export const LOOKS = {
-  // Heartside's entertainment district. The Pyramid Scheme (68 Commerce, the old Maxi's): a two-storey brick block at
+  // Heartside's entertainment district. The Pyramid Scheme (68 Commerce, the old Maxi's): a two-story brick block at
   // Commerce and Oakes, painted dark, its windows black, the bar and the stage behind them.
   'Pyramid Scheme': { wall: 'historic', tint: '#6a6466', base: { wall: 'shop', h: 4.4, tint: '#d8d2cc' }, cornice: { h: 0.9, d: 0.5, tint: '#2a2628' }, penthouse: false },
   // Rapid Central Station's terminal (Progressive AE, 2004; its canopy is transit.js's): brick and a great deal of
@@ -57,14 +57,14 @@ export const LOOKS = {
   'Kent County Courthouse': { wall: 'terracotta', tint: '#ffffff' },
   'Secchia Center': { wall: 'precast', tint: '#f6f0e4' },
   'Van Andel Institute': { wall: 'glass-teal', tint: '#ffffff' },
-  // The arena: red-brown brick to the concourse, grey metal panel above it, and a tall glass entrance on its
+  // The arena: red-brown brick to the concourse, gray metal panel above it, and a tall glass entrance on its
   // north-west corner, at Fulton and Ottawa.
   'Van Andel Arena': { wall: 'concrete', tint: '#c4c8cc', base: { wall: 'historic', h: 10, tint: BROWN }, glass: { toward: [-1, -1], wall: 'glass-blue', spread: 0.93 }, cornice: { h: 0.8, d: 0.4, tint: '#7c8086' }, penthouse: false },
   // The art museum: board-formed concrete with glass, a great flat canopy over its porch (see landmarks.js).
   'Grand Rapids Art Museum': { wall: 'concrete', tint: '#ffffff', glass: { toward: [-1, -0.4], wall: 'glass-dark' }, cornice: false, penthouse: false },
   // DeVos Place: a long wall of glass to the river, pale precast to the city.
   'DeVos Place Convention Center': { wall: 'precast', tint: '#f4f0e8', glass: { toward: [-1, 0], wall: 'glass-blue' }, cornice: { h: 0.6, d: 0.3, tint: '#cfcac0' }, penthouse: false },
-  // The Ford Museum (Marvin DeWinter, 1981): two storeys on a triangle, steel and white precast, its long east side a
+  // The Ford Museum (Marvin DeWinter, 1981): two stories on a triangle, steel and white precast, its long east side a
   // wall of glass three hundred feet long to the river and the city; a deep white fascia round its flat roof.
   'Gerald R. Ford Presidential Museum': { wall: 'precast', tint: '#fbfbf8', glass: { toward: [1, 0.04], wall: 'glass-blue', spread: 0.85 }, cornice: { h: 1.7, d: 1.0, tint: '#f6f6f3' }, penthouse: false },
   // The Public Museum: buff brick and glass on the river, and the planetarium's dome (landmarks.js).
@@ -78,7 +78,7 @@ export const LOOKS = {
   "Saint Mark's Church": { wall: 'sandstone', tint: '#e0dcd4', cornice: false },
   'Fountain Street Church': { wall: 'sandstone', tint: '#d8ccc0', cornice: false },
   'L.V. Eberhard Center (EC)': { wall: 'precast', tint: '#fbf6ee', glass: { toward: [1, 0], wall: 'glass-blue' } },
-  'Civic Theatre': { wall: 'historic', tint: BUFF, cornice: CORNICE },
+  'Civic Theater': { wall: 'historic', tint: BUFF, cornice: CORNICE },
 
   // Newer than the lidar (2016), or missed by it: heights from the list of the city's tallest buildings.
   'The Warner Building': { height: 59, wall: 'glass-blue', tint: '#f4f8ff', base: { wall: 'glass-dark', h: 6 }, cornice: { h: 0.6, d: 0.4, tint: '#e4e6e8' } },
@@ -88,7 +88,7 @@ export const LOOKS = {
   // Plaza Towers (105 m), with the Courtyard hotel in its foot.
   '61f99372-48e6-4be4-96c5-01c403b8c6b9': { height: 105, wall: 'precast', tint: '#fbf3e4', base: { wall: 'glass-dark', h: 6 } },
   // Those the map leaves unnamed, by their id.
-  // McKay Tower: sixteen storeys of cream stone, a colonnade three storeys tall at its foot, a heavy bracketed cornice.
+  // McKay Tower: sixteen stories of cream stone, a colonnade three stories tall at its foot, a heavy bracketed cornice.
   'e08b0d92-7cad-450c-8a2c-12240e22de18': { height: 79, wall: 'limestone', tint: '#fffaf0', base: { wall: 'limestone', h: 12, tint: '#e8e4dc' }, cornice: { h: 2.2, d: 1.4, tint: '#f2ecdf' } },
   // Campau Square Plaza: a box of bronze glass.
   '0a63640c-1dce-43f7-8de9-bdeb78cc69f4': { wall: 'glass-bronze', tint: '#ffffff', cornice: { h: 0.5, d: 0.2, tint: '#4a3a2c' } },
@@ -104,7 +104,7 @@ export const LOOKS = {
   '4da2399e-120f-407f-890d-4aef51591ced': { wall: 'historic-arched', tint: BUFF, base: { wall: 'shop', h: 4.4 }, cornice: CORNICE },
 };
 
-/** The middle of downtown (metres), and how far round it the buildings are dressed as the real ones are, not as a generic town. */
+/** The middle of downtown (meters), and how far round it the buildings are dressed as the real ones are, not as a generic town. */
 /**
  * What kind of building this is, in the words the styles below read: the `use` scripts/uses.py wrote (the map's class,
  * the businesses in it, the assessors' parcel, the land use, its shape), else Overture's class, else nothing.
@@ -117,7 +117,7 @@ const USE_KIND = {
 };
 export const kindOf = (b) => USE_KIND[b.use] ?? (b.class || b.subtype);
 
-export const CORE = { centre: [-330, -190], radius: 720 };
+export const CORE = { center: [-330, -190], radius: 720 };
 
 /** The palettes the core's brick comes in: mostly red and brown, some buff and cream. */
 const BRICKS = [RED, RED, BROWN, DARKRED, BUFF, CREAM, '#c88a6c', '#e0b090'];

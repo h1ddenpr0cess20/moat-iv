@@ -1,5 +1,5 @@
 import { DIRS, ROAD } from '../config.js';
-import { TILE, toMetres } from '../parcels.js';
+import { TILE, toMeters } from '../parcels.js';
 import { Builder } from '../city/builder.js';
 import { lay } from '../city/ground.js';
 import { cityGroup } from '../city/scene.js';
@@ -19,7 +19,7 @@ const PLAIN = new Set([ROAD.DIRT, ROAD.COBBLE, ROAD.AVENUE]);
 export function streetRecords(world) {
   const road = (x, y) => inb(x, y) && world.road[idx(x, y)] !== ROAD.NONE;
   const plain = (x, y) => inb(x, y) && PLAIN.has(world.road[idx(x, y)]);
-  const at = (x, y) => toMetres(x + 0.5, y + 0.5);
+  const at = (x, y) => toMeters(x + 0.5, y + 0.5);
   const records = [];
   const add = (line, cls, width, subclass = null, surface = null) => {
     if (line.length >= 2) records.push({ line, subtype: 'road', class: cls, subclass, surface, flags: null, level: null, width: [{ value: width }], name: null });

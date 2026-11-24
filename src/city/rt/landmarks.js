@@ -123,9 +123,9 @@ export function devosHall(builder, ground) {
 }
 
 /**
- * The rest of DeVos Place, on its footprint (`ring`, [x, z] as the map has it): a convention centre, not offices. Plain
+ * The rest of DeVos Place, on its footprint (`ring`, [x, z] as the map has it): a convention center, not offices. Plain
  * light precast walls about 11 m high under a flat white roof; on the river, south of the exhibit halls, the ballroom's
- * two storeys of glass; its south-west corner tan stone, and on the east the old Civic Auditorium's limestone and
+ * two stories of glass; its south-west corner tan stone, and on the east the old Civic Auditorium's limestone and
  * pilasters. (The exhibit halls' roof is devosHall's.) Over it, as the laser survey has them: the stage house at 18 m and its
  * white fly tower at 25 m.
  */

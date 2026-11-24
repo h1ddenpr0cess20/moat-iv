@@ -37,7 +37,7 @@ export function materialFor(GFX, name, cache, painted) {
     const glow = name === 'prop:glow', matte = name === 'prop:cloth' || name === 'prop:board' || name === 'prop:canopy' || name === 'prop:canopy-under';
     m = new GFX.MeshStandardMaterial({ name, vertexColors: true, roughness: glow ? 0.4 : matte ? 0.88 : 0.5, metalness: glow || matte ? 0 : name === 'prop:steel' ? 0.55 : 0.6, ...(glow ? { emissive: new GFX.Color('#ffd890'), emissiveIntensity: 0.9 } : {}) });
   } else if (name === 'tree:leafcard' || name === 'tree:needlecard') {
-    // Leaf cards: the engine's foliage atlas, cut out where it is clear; the tree's green from its vertex colours.
+    // Leaf cards: the engine's foliage atlas, cut out where it is clear; the tree's green from its vertex colors.
     m = new GFX.MeshStandardMaterial({ name, vertexColors: true, map: foliageTexture(GFX, name === 'tree:leafcard' ? 'broad' : 'needle'), alphaTest: 0.45, roughness: 0.78, metalness: 0 });
   } else if (name.startsWith('tree:')) {
     m = new GFX.MeshStandardMaterial({ name, vertexColors: true, roughness: name === 'tree:bark' ? 0.95 : 0.82, metalness: 0 });
@@ -132,7 +132,7 @@ export function cityGroup(GFX, parts, bounds, painted, full = null) {
     geometry.setAttribute('position', new GFX.BufferAttribute(p.pos, 3));
     geometry.setAttribute('normal', new GFX.BufferAttribute(p.nor, 3));
     geometry.setAttribute('uv', new GFX.BufferAttribute(p.uv, 2));
-    // (Rivertown's designs take their colour from their material, not from each corner.)
+    // (Rivertown's designs take their color from their material, not from each corner.)
     if (!p.material.startsWith('M_')) geometry.setAttribute('color', new GFX.BufferAttribute(p.col, 3));
     geometry.computeBoundingSphere();
     // A city is millions of triangles that never change: once on the card, the page lets go of its own copy.
@@ -140,7 +140,7 @@ export function cityGroup(GFX, parts, bounds, painted, full = null) {
     const mesh = new GFX.Mesh(geometry, materialFor(GFX, p.material, cache, painted));
     mesh.matrixAutoUpdate = false;
     if (p.lod) {
-      // The cell's centre in tiles, and how far its corner is from it, for choosing by distance.
+      // The cell's center in tiles, and how far its corner is from it, for choosing by distance.
       mesh.userData.lod = { kind: p.lod, x: (p.x - bounds.x0) / SCALE, z: (p.z - bounds.z0) / SCALE, r: CELL * 0.71 / SCALE, key: `${Math.floor(p.x / CELL)}|${Math.floor(p.z / CELL)}` };
       lods.push(mesh);
     }
@@ -188,12 +188,12 @@ function grow(sphere, other) {
   sphere.radius = r * (1 + 1e-6) + 1e-3;
 }
 
-/** How far, in metres, the full trees and the lamps are drawn, and the thin trees after them. */
+/** How far, in meters, the full trees and the lamps are drawn, and the thin trees after them. */
 export const RANGE = { hi: 260, near: 650, lo: 1500 };
 
 /**
  * Shows each cell of trees and lamps that is the right distance from (x, z) tiles; call as the camera moves. `eye`:
- * the camera, [x, y, z] metres: a cell with a building it is inside is shown in its far version (seen from inside, a
+ * the camera, [x, y, z] meters: a cell with a building it is inside is shown in its far version (seen from inside, a
  * wall is not drawn, but the sides of its windows' openings would be, as rows of posts).
  */
 export function chooseLods(group, x, z, eye = null) {
@@ -233,7 +233,7 @@ export function chooseLods(group, x, z, eye = null) {
 /** The physics world for the city: its solid triangles in tiles, counted from the north-west corner. */
 export function cityWorld(World, solid, bounds, trunks = [], reach = null) {
   // The patch the world covers, in tiles from the corner: the map, or as far as its solid things reach (`reach`,
-  // [x0, z0, x1, z1] metres: a road whose middle is in it runs on past its edge).
+  // [x0, z0, x1, z1] meters: a road whose middle is in it runs on past its edge).
   if (reach === true) {
     reach = [bounds.x0, bounds.z0, bounds.x1, bounds.z1];
     for (let i = 0; i < solid.length; i += 3) {
