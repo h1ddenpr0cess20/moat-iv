@@ -1,6 +1,6 @@
 /**
  * The greater city round downtown: Walker and Grandville to East Grand Rapids and Cascade, Comstock Park to
- * Kentwood, in tiles of two kilometres (scripts/metro.py), each built as the ball comes near it and let go
+ * Kentwood, in tiles of two kilometers (scripts/metro.py), each built as the ball comes near it and let go
  * when it is left behind. Downtown is a hole in the tiles: its own map is the detailed one.
  *
  * `buildTile` is pure maths on plain objects, like `buildCity`, so it runs in a worker (metro.worker.js).
@@ -13,7 +13,7 @@ import { driveRoads, driveLots } from './ground.js';
 /** What every tile shares: the grid, the ground's heights, the river's surface, the ocean's level, downtown's hole. */
 export function metroShared({ index, elevation, waterLevel, coreLevel, hole }) {
   const g = waterLevel;
-  // The river's surface: the grid's heights above sea level, as metres above BASE; never below the ocean's.
+  // The river's surface: the grid's heights above sea level, as meters above BASE; never below the ocean's.
   const surface = (x, z) => {
     const fx = Math.max(0, Math.min(g.cols - 1.001, (x - g.x0) / g.step)), fz = Math.max(0, Math.min(g.rows - 1.001, (z - g.z0) / g.step));
     const i = Math.floor(fx), j = Math.floor(fz), tx = fx - i, tz = fz - j, h = g.heights;
@@ -23,12 +23,12 @@ export function metroShared({ index, elevation, waterLevel, coreLevel, hole }) {
   return { index, elevation, surface, level: coreLevel, hole };
 }
 
-/** The box of tile (i, j), in metres: [x0, z0, x1, z1]. */
+/** The box of tile (i, j), in meters: [x0, z0, x1, z1]. */
 export const tileBox = (index, i, j) => [index.x0 + i * index.tile, index.z0 + j * index.tile, index.x0 + (i + 1) * index.tile, index.z0 + (j + 1) * index.tile];
 
 /**
  * Builds tile (i, j) from its data: the parts to draw (as `Builder.finish` gives them), the solid triangles
- * (Float32Array, metres), the trunks, the full trees by cell, and the named streets (for saying where the ball is).
+ * (Float32Array, meters), the trunks, the full trees by cell, and the named streets (for saying where the ball is).
  */
 export function buildTile(data, i, j, shared) {
   const box = tileBox(shared.index, i, j);
@@ -70,9 +70,9 @@ export function transferables(tile) {
 }
 
 /**
- * The far ground: the whole area's heights in coarse cells, a metre and a half under where a tile's ground will
+ * The far ground: the whole area's heights in coarse cells, a meter and a half under where a tile's ground will
  * be, so the horizon is land before the tiles there are built; one part per tile, hidden once its tile is.
- * Past the edge of the tiles it carries on for `reach` metres. Returns Map(key -> parts) ('i,j', and 'edge').
+ * Past the edge of the tiles it carries on for `reach` meters. Returns Map(key -> parts) ('i,j', and 'edge').
  */
 export function backdrop(shared, { cell = 50, reach = 3000, far = null } = {}) {
   const { index, elevation, hole } = shared;
@@ -112,12 +112,12 @@ export function backdrop(shared, { cell = 50, reach = 3000, far = null } = {}) {
   return out;
 }
 
-/** What the far city's buildings are: a wall's colour and a roof, by kind (houses, flats, shops, works, offices). */
+/** What the far city's buildings are: a wall's color and a roof, by kind (houses, flats, shops, works, offices). */
 const KINDS = [
   { wall: [0.95, 0.9, 0.82], roof: 'ground:shingles-charcoal' },
-  { wall: [0.85, 0.66, 0.55], roof: 'ground:membrane-grey' },
+  { wall: [0.85, 0.66, 0.55], roof: 'ground:membrane-gray' },
   { wall: [0.9, 0.88, 0.84], roof: 'ground:membrane-white' },
-  { wall: [0.78, 0.8, 0.82], roof: 'ground:membrane-grey' },
+  { wall: [0.78, 0.8, 0.82], roof: 'ground:membrane-gray' },
   { wall: [0.75, 0.82, 0.9], roof: 'ground:gravel-roof' },
 ];
 const ROAD_WIDTH = [12, 10, 8, 6.5];

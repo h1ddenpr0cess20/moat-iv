@@ -1,7 +1,7 @@
 import { DIRS } from '../config.js';
 import { BUILDINGS } from '../catalog.js';
 import { heightAt } from '../world/world.js';
-import { ORIGIN, TILE, TOWER, parcelByType, recordAt, toMetres } from '../parcels.js';
+import { ORIGIN, TILE, TOWER, parcelByType, recordAt, toMeters } from '../parcels.js';
 import { Builder } from '../city/builder.js';
 import { devosPlace, vitesse } from '../city/rt/landmarks.js';
 import { Designs } from '../city/rt/buildings.js';
@@ -11,14 +11,14 @@ import { castsShadow } from './materials.js';
 /**
  * Buildings in 3d-city's own designs (src/city/rt, from its Rivertown-derived generator): a real parcel keeps the
  * footprint, height and name of the building it was, and the lots the zones grow are rectangles of a given use and
- * height. Each is built in metres in 3d-city's frame (x east, z south of the middle of its map) and shown in a group
+ * height. Each is built in meters in 3d-city's frame (x east, z south of the middle of its map) and shown in a group
  * that scales it to the game's tiles and puts it where the map is.
  */
 
 /** Is this building drawn in a design (not one of the engine's models)? */
 export const isDesigned = (b) => b.type === 'castle' || Boolean(BUILDINGS[b.type]?.design || BUILDINGS[b.type]?.parcel !== undefined);
 
-/** The group every designed mesh goes in: metres in, tiles out. */
+/** The group every designed mesh goes in: meters in, tiles out. */
 export function designFrame(GFX) {
   const g = new GFX.Group();
   g.scale.setScalar(1 / TILE);
@@ -32,7 +32,7 @@ export function recordOf(b) {
   const real = parcelByType.get(b.type);
   if (real) return recordAt(real, b.x, b.y);
   const def = BUILDINGS[b.type], m = 1.4;
-  const [x0, z0] = toMetres(b.x, b.y), [x1, z1] = toMetres(b.x + b.w, b.y + b.d);
+  const [x0, z0] = toMeters(b.x, b.y), [x1, z1] = toMeters(b.x + b.w, b.y + b.d);
   const ring = [[x0 + m, z0 + m], [x1 - m, z0 + m], [x1 - m, z1 - m], [x0 + m, z1 - m]];
   ring.push(ring[0]);
   return { id: `lot${b.id}`, rings: [ring], use: def.design.use, height: def.design.h, kind: def.design.kind };
@@ -49,7 +49,7 @@ export function createDesigner(GFX, world) {
 
   /** A building's parts (each { material, pos, nor, uv, col }), built the first time and again when its ground or street changes. */
   const partsOf = (b) => {
-    const sig = `${b.type}:${b.front}:${b.x}:${b.y}:${b.w}:${b.d}:${ground(...toMetres(b.x + b.w / 2, b.y + b.d / 2).map((v, i) => (i ? -v : v))).toFixed(2)}`;
+    const sig = `${b.type}:${b.front}:${b.x}:${b.y}:${b.w}:${b.d}:${ground(...toMeters(b.x + b.w / 2, b.y + b.d / 2).map((v, i) => (i ? -v : v))).toFixed(2)}`;
     const kept = cache.get(b.id);
     if (kept && kept.sig === sig) return kept.parts;
     const [dx, dy] = DIRS[b.front] ?? [0, 1];
@@ -96,7 +96,7 @@ export function createDesigner(GFX, world) {
 
   return {
     forget: (id) => cache.delete(id),
-    /** The placement ghost of a building about to be set down at b's spot: its own design, as one mesh a material, in a frame that takes metres to tiles. */
+    /** The placement ghost of a building about to be set down at b's spot: its own design, as one mesh a material, in a frame that takes meters to tiles. */
     ghost(b, material) {
       const frame = designFrame(GFX);
       for (const p of partsOf({ id: 'ghost', progress: 1, ...b })) {
@@ -106,7 +106,7 @@ export function createDesigner(GFX, world) {
       }
       return frame;
     },
-    /** Adds a mesh a material for all of `list` to `parent`, in a frame that takes metres to tiles. */
+    /** Adds a mesh a material for all of `list` to `parent`, in a frame that takes meters to tiles. */
     merged(list, parent) {
       const by = new Map();
       for (const b of list) {
@@ -125,7 +125,7 @@ export function createDesigner(GFX, world) {
     site(b, parent) {
       const frame = designFrame(GFX);
       const holder = new GFX.Group();
-      const gm = ground(...toMetres(b.x + b.w / 2, b.y + b.d / 2).map((v, i) => (i ? -v : v)));
+      const gm = ground(...toMeters(b.x + b.w / 2, b.y + b.d / 2).map((v, i) => (i ? -v : v)));
       holder.position.y = gm;
       for (const p of partsOf(b)) { const mesh = meshOf(geometryOf(p), p.material); mesh.position.y = -gm; holder.add(mesh); }
       holder.scale.y = Math.max(0.08, b.progress);

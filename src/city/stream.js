@@ -1,6 +1,6 @@
 /**
  * The greater city, on the page: which tiles are built and shown, round where the ball is. A tile is asked of
- * the workers (metro.worker.js) when the ball comes within `near` metres of it, and let go (its meshes and its
+ * the workers (metro.worker.js) when the ball comes within `near` meters of it, and let go (its meshes and its
  * piece of the physics) when the ball is `far` from it. The far ground (metro.js `backdrop`) stands in for a
  * tile until it is built.
  */
@@ -101,7 +101,7 @@ export async function createMetro({ GFX, scene, World, worlds, bounds, painted, 
     if (b) b.visible = true;
   }
 
-  /** How far (x, z) metres is from tile (i, j)'s box. */
+  /** How far (x, z) meters is from tile (i, j)'s box. */
   const distance = (i, j, x, z) => {
     const [x0, z0, x1, z1] = tileBox(index, i, j);
     return Math.hypot(Math.max(x0 - x, 0, x - x1), Math.max(z0 - z, 0, z - z1));
@@ -109,7 +109,7 @@ export async function createMetro({ GFX, scene, World, worlds, bounds, painted, 
 
   const metro = {
     index, shared, onTile, onDrop: null,
-    /** Asks for the tiles near (x, z) metres, nearest first, and lets go of the far ones; call as the ball moves. */
+    /** Asks for the tiles near (x, z) meters, nearest first, and lets go of the far ones; call as the ball moves. */
     update(x, z) {
       const wanted = [];
       for (const [key, f] of files) {
@@ -124,17 +124,17 @@ export async function createMetro({ GFX, scene, World, worlds, bounds, painted, 
     },
     /** Shows each built tile's trees and lamps by distance from (x, z) tiles. */
     chooseLods(x, z, eye = null) { for (const t of tiles.values()) if (t.group) chooseLods(t.group, x, z, eye); },
-    /** Whether the tile under (x, z) metres is built (or there is none, being downtown or off the map). */
+    /** Whether the tile under (x, z) meters is built (or there is none, being downtown or off the map). */
     built(x, z) {
       const i = Math.floor((x - index.x0) / index.tile), j = Math.floor((z - index.z0) / index.tile);
       const f = files.get(`${i},${j}`);
       return !f || tiles.get(`${i},${j}`)?.state === 'built';
     },
-    /** The ground's height at (x, z) metres where a tile is built there, else the far ground's, else null. */
+    /** The ground's height at (x, z) meters where a tile is built there, else the far ground's, else null. */
     heightAt(x, z) {
       for (const t of tiles.values()) {
         const g = t.ground;
-        // Each tile's own ground (it reaches on under its neighbours' edges, where theirs is the one drawn).
+        // Each tile's own ground (it reaches on under its neighbors' edges, where theirs is the one drawn).
         if (!g || x < g.box[0] || x > g.box[2] || z < g.box[1] || z > g.box[3]) continue;
         const fx = (x - g.x0) / g.cell, fz = (z - g.z0) / g.cell;
         if (fx < 0 || fz < 0 || fx > g.nx - 1 || fz > g.nz - 1) continue;
@@ -148,11 +148,11 @@ export async function createMetro({ GFX, scene, World, worlds, bounds, painted, 
       const i = Math.floor(fx), j = Math.floor(fz), tx = fx - i, tz = fz - j;
       return Math.max(coreLevel + 0.3, (heights[j][i] * (1 - tx) + heights[j][i + 1] * tx) * (1 - tz) + (heights[j + 1][i] * (1 - tx) + heights[j + 1][i + 1] * tx) * tz - BASE);
     },
-    /** The street lamps of the built tiles: [x, y, z] metres, where each one's light hangs. */
+    /** The street lamps of the built tiles: [x, y, z] meters, where each one's light hangs. */
     *lamps() { for (const t of tiles.values()) if (t.lamps) yield* t.lamps; },
     /** The named streets of the built tiles: [{ name, line }]. */
     *streets() { for (const t of tiles.values()) if (t.names) yield* t.names; },
-    /** The edge of everything, in metres: [x0, z0, x1, z1]. */
+    /** The edge of everything, in meters: [x0, z0, x1, z1]. */
     edge: [index.x0, index.z0, index.x0 + index.ni * index.tile, index.z0 + index.nj * index.tile],
     tiles,
   };

@@ -32,7 +32,7 @@ class Floats {
     d[o] = a; d[o + 1] = b; d[o + 2] = c;
     this.length = o + 3;
   }
-  /** The same three values three times (a flat triangle's normal, or its colour). */
+  /** The same three values three times (a flat triangle's normal, or its color). */
   push3x3(a, b, c) {
     if (this.length + 9 > this.data.length) this.room(9);
     const d = this.data, o = this.length;
@@ -67,19 +67,19 @@ class Floats {
  * Where the city's triangles are gathered before they become meshes: per
  * material and per chunk of the city, so a mesh is one material over a
  * patch of ground and the renderer can leave out whatever is far off.
- * Positions are in metres (x east, y up, z south); colours are linear.
+ * Positions are in meters (x east, y up, z south); colors are linear.
  */
 export class Builder {
-  /** `chunk`: the side of the patch of ground one mesh covers, metres (CHUNK): larger for what is seen from afar, so it is fewer meshes to draw. */
+  /** `chunk`: the side of the patch of ground one mesh covers, meters (CHUNK): larger for what is seen from afar, so it is fewer meshes to draw. */
   constructor({ chunk = CHUNK } = {}) {
     this.chunk = chunk;
     this.parts = new Map();
     // How `part` finds them: lod -> material -> cell -> part, and the last one found.
     this.index = new Map();
     this.last = null;
-    /** The triangles the ball rolls on and bumps into, in metres: [ax, ay, az, bx, by, bz, cx, cy, cz, ...]. */
+    /** The triangles the ball rolls on and bumps into, in meters: [ax, ay, az, bx, by, bz, cx, cy, cz, ...]. */
     this.solid = [];
-    /** Upright cylinders to bump into (a trunk): [x, z, radius, y0, y1], metres. */
+    /** Upright cylinders to bump into (a trunk): [x, z, radius, y0, y1], meters. */
     this.trunks = [];
   }
 
@@ -104,7 +104,7 @@ export class Builder {
     return p;
   }
 
-  /** A triangle a, b, c ([x, y, z]) with a normal n, texture corners ua, ub, uc ([u, v]) and one colour. */
+  /** A triangle a, b, c ([x, y, z]) with a normal n, texture corners ua, ub, uc ([u, v]) and one color. */
   tri(material, a, b, c, ua, ub, uc, color, n = null) {
     let nx, ny, nz;
     if (!n) {
@@ -122,7 +122,7 @@ export class Builder {
     else if (Array.isArray(n[0])) p.nor.points3(n[0], n[1], n[2]);
     else p.nor.push3x3(n[0], n[1], n[2]);
     p.uv.points2(ua, ub, uc);
-    // (A colour times white is itself.)
+    // (A color times white is itself.)
     if (base === WHITE) p.col.push3x3(color[0], color[1], color[2]);
     else p.col.push3x3(color[0] * base[0], color[1] * base[1], color[2] * base[2]);
   }
@@ -135,7 +135,7 @@ export class Builder {
     this.tri(material, a, c, d, ua, uc, ud, color, each ? [n[0], n[2], n[3]] : n);
   }
 
-  /** A copy of a template's `part` (triangles, y up) stood at (x, y, z), turned by `yaw` and stretched `sx` across and `sy` up, its colours multiplied by `tint`. */
+  /** A copy of a template's `part` (triangles, y up) stood at (x, y, z), turned by `yaw` and stretched `sx` across and `sy` up, its colors multiplied by `tint`. */
   stamp(material, part, x, y, z, yaw, sx, sy, tint = null, lod = null) {
     const p = this.part(material, x, z, lod);
     const c = Math.cos(yaw), s = Math.sin(yaw);
@@ -172,7 +172,7 @@ export class Builder {
 }
 
 const cache = new Map();
-/** A hex colour as linear RGB. */
+/** A hex color as linear RGB. */
 export function linear(hex) {
   let c = cache.get(hex);
   if (c) return c;
@@ -188,9 +188,9 @@ export const mul = (a, b) => [a[0] * b[0], a[1] * b[1], a[2] * b[2]];
 
 const bases = new Map();
 const WHITE = [1, 1, 1];
-/** What a surface's texture is multiplied by: the colour the engine's town paints its tops in. */
+/** What a surface's texture is multiplied by: the color the engine's town paints its tops in. */
 function baseOf(material) {
-  // (The surfaces Rivertown's look dresses, rt/look.js, carry their own colour.)
+  // (The surfaces Rivertown's look dresses, rt/look.js, carry their own color.)
   if (!material.startsWith('surface:') || material === 'surface:concrete' || material === 'surface:dirt') return WHITE;
   let c = bases.get(material);
   if (!c) {

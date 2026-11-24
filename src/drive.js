@@ -1,11 +1,11 @@
 /**
- * Drive mode: the player is kept on the roads. Every drivable street is a corridor (its centreline and half its width on
+ * Drive mode: the player is kept on the roads. Every drivable street is a corridor (its centerline and half its width on
  * each side, as ground.js lays it); after each step of the physics a ball that has left every corridor is put back on
  * the edge of the nearest one and loses the part of its speed that was carrying it out, so it slides along the kerb as
  * along a wall. Where corridors meet (a junction, a ramp, a street under a bridge) the ball may be in any of them.
  *
  * The roads of the tiles come and go as the tiles are built and let go, each under a key (`add(key, roads)`,
- * `remove(key)`). All distances are in metres, on the map (x east, z south), as the data is.
+ * `remove(key)`). All distances are in meters, on the map (x east, z south), as the data is.
  *
  *     const drive = createDrive();
  *     drive.add('core', [{ line: [[x, z], ...], width: 8 }]);
@@ -37,7 +37,7 @@ export function createDrive({ slack = 0.25 } = {}) {
     sources.delete(source);
   }
 
-  /** `roads`: [{ line: [[x, z], ...], width }] (metres). A road's segments are indexed under `source`. */
+  /** `roads`: [{ line: [[x, z], ...], width }] (meters). A road's segments are indexed under `source`. */
   function add(source, roads, lots = []) {
     remove(source);
     const held = new Set();
@@ -156,13 +156,13 @@ export function createDrive({ slack = 0.25 } = {}) {
     return { x: best.px + out[0] * at, z: best.pz + out[1] * at, nx: out[0], nz: out[1] };
   }
 
-  /** Whether (x, z) is within some corridor, `margin` metres further in (0: anywhere on a road's width). */
+  /** Whether (x, z) is within some corridor, `margin` meters further in (0: anywhere on a road's width). */
   function inside(x, z, margin = 0) {
     for (const seg of cells.get(key(Math.floor(x / CELL), Math.floor(z / CELL))) ?? []) if (probe(seg, x, z, margin).room >= 0) return true;
     return inLot(x, z, margin);
   }
 
-  /** The nearest point on any road to (x, z) within `within` metres, or null: to put a player down on a road. */
+  /** The nearest point on any road to (x, z) within `within` meters, or null: to put a player down on a road. */
   function nearest(x, z, within = 300) {
     const r = Math.ceil(within / CELL);
     const ci = Math.floor(x / CELL), cj = Math.floor(z / CELL);

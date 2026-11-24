@@ -12,8 +12,8 @@ import { setGlow } from '../city/rt/look.js';
 /**
  * The land: 3d-city's own, as 3d-city draws it (src/city, copied from it): the ground draped over the satellite's heights
  * in its painted surfaces, the parks and lawns, the lidar's trees, and the Grand River as the engine's ocean, a river's
- * waves and a current. Built bare: no streets and no buildings, which the game puts back. The map's metres are the
- * game's tiles (`SCALE` metres each), with the first tile at `ORIGIN` and the river's surface at height 0.
+ * waves and a current. Built bare: no streets and no buildings, which the game puts back. The map's meters are the
+ * game's tiles (`SCALE` meters each), with the first tile at `ORIGIN` and the river's surface at height 0.
  */
 
 export async function createLand({ GFX, stage, progress = () => {} }) {

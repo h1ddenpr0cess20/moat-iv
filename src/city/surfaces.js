@@ -3,7 +3,7 @@ import { onCanvas } from 'madness-engine/textures/pixel-kit';
 /**
  * The surfaces of the ground, painted by the engine's own painters
  * (textures/road, textures/ground) in workers, all at once. Each is a tile
- * that wraps, `tile` metres across, with a bump map in the same pixels.
+ * that wraps, `tile` meters across, with a bump map in the same pixels.
  */
 export const SURFACES = {
   asphalt: { painter: 'asphalt', tile: 2, bump: 2.2, rough: 0.93, options: { age: 0.55, cracks: 0.12, stains: 0.3, seed: 1 } },
@@ -30,7 +30,7 @@ export const SURFACES = {
   'facade-historic': { painter: 'city', tile: 3.6, bump: 2.4, rough: 0.88, small: true, options: { kind: 'historic', seed: 1 } },
   'facade-historic-arched': { painter: 'city', tile: 3.6, bump: 2.4, rough: 0.88, small: true, options: { kind: 'historic', arch: true, seed: 3 } },
   'facade-concrete': { painter: 'city', tile: 3.6, bump: 1.6, rough: 0.8, small: true, options: { kind: 'concrete', seed: 1 } },
-  'membrane-grey': { painter: 'membrane', tile: 3, bump: 1.4, rough: 0.75, small: true, options: { tone: 'grey', age: 0.35, seed: 2 } },
+  'membrane-gray': { painter: 'membrane', tile: 3, bump: 1.4, rough: 0.75, small: true, options: { tone: 'gray', age: 0.35, seed: 2 } },
 };
 
 /** The pixel size the surfaces are painted at: `?texture=2048` for the best, 1024 to load quickly. */

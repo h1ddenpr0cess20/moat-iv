@@ -10,12 +10,12 @@
  *   sloped lawn for 5,000 at the back; over the stage and most of the seats an elliptical steel canopy the size of a
  *   football field, shaped like one, held up by two pillars at its sides.
  *
- * Positions are metres from the middle of the map (x east, z south), placed from the aerial photograph of the sites.
+ * Positions are meters from the middle of the map (x east, z south), placed from the aerial photograph of the sites.
  */
 import { inside } from './geometry.js';
 
 const TAU = Math.PI * 2;
-/** The middle of the stadium's pitch, and the front of the amphitheater's stage, metres. */
+/** The middle of the stadium's pitch, and the front of the amphitheater's stage, meters. */
 export const STADIUM = [-990, -434], AMPHITHEATER = [-742, 455];
 const DOWNRIVER = [-0.494, 0.869];
 
@@ -85,8 +85,8 @@ function column(builder, material, x, z, r, y0, y1, color, sides = 12) {
 const BRICK = [0.62, 0.36, 0.28], PANEL = [0.78, 0.8, 0.83], CONCRETE = [0.74, 0.73, 0.7], WHITE = [0.95, 0.95, 0.93];
 
 /**
- * A bank of seats: rows stepping up from `near` to `far` metres out from an edge, along it from `b0` to `b1`, in the
- * frame P. Drawn as treads and risers, the seats a band of colour on each tread; rolled on as one smooth rake.
+ * A bank of seats: rows stepping up from `near` to `far` meters out from an edge, along it from `b0` to `b1`, in the
+ * frame P. Drawn as treads and risers, the seats a band of color on each tread; rolled on as one smooth rake.
  */
 function stand(builder, P, { near, far, b0, b1, y0, rise, rows, seat, end = true }) {
   const depth = (far - near) / rows;
@@ -176,7 +176,7 @@ export function amwayStadium(builder, terrain) {
   }
 
   // The roofs over the long sides: from a truss on the back of the stand, out over three-quarters of the seats with
-  // nothing under them (cantilevered), the tip a little higher than the root, white beneath and grey on top.
+  // nothing under them (cantilevered), the tip a little higher than the root, white beneath and gray on top.
   for (const side of [-1, 1]) {
     const Q = (a, b, y) => P(b, side * a, y);
     const root = sideTop + 7, tip = sideTop + 8.2, a0 = outW + 0.5, a1 = runW + 4.5, t = 1.4;
@@ -215,7 +215,7 @@ export function acrisureAmphitheater(builder, terrain) {
   const spread = 1.15; // how far round either side the seats reach, radians
   const polar = (r, t, y) => P(r * Math.cos(t), r * Math.sin(t), y);
 
-  // The floor in front of the stage, and the fixed seats in a fan: rows of a metre, rising half a metre each.
+  // The floor in front of the stage, and the fixed seats in a fan: rows of a meter, rising half a meter each.
   const pit = 14, seats = 60, rows = 40, rise = 0.24;
   const seg = 28;
   for (let k = 0; k < seg; k++) {
@@ -251,13 +251,13 @@ export function acrisureAmphitheater(builder, terrain) {
     both(builder, 'road:concrete', polar(seats, t, y0), polar(lawn, t, y0), polar(lawn, t, yl), polar(seats, t, yc), CONCRETE);
   }
 
-  // The stage: a deck two metres up, and the stage house behind it, its back to Market Ave.
+  // The stage: a deck two meters up, and the stage house behind it, its back to Market Ave.
   const sw = 22, sd = 16;
   top(builder, 'road:concrete', P(0, -sw, y0 + 2), P(0, sw, y0 + 2), P(-sd, sw, y0 + 2), P(-sd, -sw, y0 + 2), [0.25, 0.25, 0.27]);
   both(builder, 'road:concrete', P(0, -sw, y0), P(0, sw, y0), P(0, sw, y0 + 2), P(0, -sw, y0 + 2), [0.2, 0.2, 0.22]);
   const house = [P(-sd, -sw - 4, 0), P(-sd, sw + 4, 0), P(-sd - 24, sw + 4, 0), P(-sd - 24, -sw - 4, 0)].map((p) => [p[0], p[2]]);
   for (let i = 0; i < 4; i++) wall(builder, i === 0 ? 'wall:stucco' : 'wall:corrugated', house[i], house[(i + 1) % 4], y0, y0 + 21, i === 0 ? [0.12, 0.12, 0.13] : [0.32, 0.34, 0.37], 3);
-  top(builder, 'ground:membrane-grey', [house[0][0], y0 + 21, house[0][1]], [house[1][0], y0 + 21, house[1][1]], [house[2][0], y0 + 21, house[2][1]], [house[3][0], y0 + 21, house[3][1]], [0.9, 0.9, 0.9]);
+  top(builder, 'ground:membrane-gray', [house[0][0], y0 + 21, house[0][1]], [house[1][0], y0 + 21, house[1][1]], [house[2][0], y0 + 21, house[2][1]], [house[3][0], y0 + 21, house[3][1]], [0.9, 0.9, 0.9]);
   // The proscenium's sides, the screens either side of it.
   for (const s of [-1, 1]) {
     both(builder, 'wall:stucco', P(-1, s * (sw + 1), y0 + 2), P(-sd, s * (sw + 1), y0 + 2), P(-sd, s * (sw + 1), y0 + 19), P(-1, s * (sw + 1), y0 + 19), [0.14, 0.14, 0.15]);

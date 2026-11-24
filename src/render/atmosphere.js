@@ -67,7 +67,7 @@ export function createAtmosphere({ GFX, stage, sunDir, materials, terrain, water
       else clock = { day: 0.45, dusk: 0.74, night: 0.0 }[mode] ?? clock;
       const maxElev = 0.5 + 0.04 * Math.cos(Math.PI * 2 * yearT);
       const L = lightAt(clock, maxElev);
-      // A blizzard brings its own snow, and a sky as dark as it gets; the rest of the time snow comes in three-week spells under a grey sky.
+      // A blizzard brings its own snow, and a sky as dark as it gets; the rest of the time snow comes in three-week spells under a gray sky.
       const snowing = forced ?? (storm || rainAt(week, seed));
       overcast += ((snowing ? 1 : 0.35) - overcast) * Math.min(1, dt * 0.8);
       const dim = 1 - 0.38 * overcast;

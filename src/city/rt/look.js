@@ -2,18 +2,18 @@ import { flat } from './colors.js';
 
 /**
  * How each of Rivertown's materials (by its M_* name, as its designs name them) is drawn in the Madness engine: the
- * tiling texture it takes and how big one repeat is in metres, how rough, metallic or glassy it is, and whether the
+ * tiling texture it takes and how big one repeat is in meters, how rough, metallic or glassy it is, and whether the
  * ball collides with it. `recipe(name)` is plain data, so the region worker can read it too; `materialFor` makes the
  * engine material, painting its texture on a canvas the first time.
  */
 
 const GLASS = /^M_(Glass_|Window|StoreGlass|Spandrel)/;
 
-// The scanned textures (Poly Haven, CC0), as the Blender materials use them: [material, asset, its size in metres].
-// Each is drawn tinted by the material's own colour (or the colour given here); until its image arrives, the painted texture stands in.
+// The scanned textures (Poly Haven, CC0), as the Blender materials use them: [material, asset, its size in meters].
+// Each is drawn tinted by the material's own color (or the color given here); until its image arrives, the painted texture stands in.
 const SCANS = [
   [/^M_Brick_/, 'red_brick_03', [1, 1]], [/^M_Siding_/, 'weathered_plank_siding', [1.57, 1.57]],
-  [/^M_(Shingles_|Slate$)/, 'roof_slates_02', [3, 3]], [/^M_Stucco_/, 'grey_plaster', [1, 1]],
+  [/^M_(Shingles_|Slate$)/, 'roof_slates_02', [3, 3]], [/^M_Stucco_/, 'gray_plaster', [1, 1]],
   [/^M_Limestone$/, 'white_sandstone_blocks_02', [2, 2]], [/^M_Sandstone$/, 'sandstone_blocks_05', [3, 3]],
   [/^M_Stone_Base$/, 'stone_wall', [2, 2]], [/^M_(Precast|Concrete|Concrete_Dark|Curb)$/, 'brushed_concrete', [4, 4]],
   [/^M_Concrete_Board$/, 'brushed_concrete', [2.5, 2.5]], [/^M_Asphalt$/, 'asphalt_04', [4.04, 4.04], '#2f2f31'],
@@ -62,7 +62,7 @@ export function solid(name) {
 
 let seed = 1;
 const rnd = () => ((seed = (seed * 16807) % 2147483647) - 1) / 2147483646;
-const grey = (v) => { const k = Math.max(0, Math.min(255, Math.round(v * 255))); return `rgb(${k},${k},${k})`; };
+const gray = (v) => { const k = Math.max(0, Math.min(255, Math.round(v * 255))); return `rgb(${k},${k},${k})`; };
 
 function grain(g, w, h, amount, size = 1) {
   const img = g.getImageData(0, 0, w, h), d = img.data;
@@ -79,9 +79,9 @@ function grain(g, w, h, amount, size = 1) {
 const PAINT = {
   // Running bond: 10 bricks by 20 courses.
   brick(g, w, h) {
-    g.fillStyle = grey(0.72); g.fillRect(0, 0, w, h);
+    g.fillStyle = gray(0.72); g.fillRect(0, 0, w, h);
     const bw = w / 10, bh = h / 20, j = 2;
-    for (let r = 0; r < 20; r++) for (let k = -1; k < 11; k++) { g.fillStyle = grey(0.82 + rnd() * 0.3); g.fillRect(k * bw + (r % 2) * bw / 2 + j / 2, r * bh + j / 2, bw - j, bh - j); }
+    for (let r = 0; r < 20; r++) for (let k = -1; k < 11; k++) { g.fillStyle = gray(0.82 + rnd() * 0.3); g.fillRect(k * bw + (r % 2) * bw / 2 + j / 2, r * bh + j / 2, bw - j, bh - j); }
     grain(g, w, h, 26);
   },
   // Lap siding: eight boards, each shadowed at its foot.
@@ -89,62 +89,62 @@ const PAINT = {
     const bh = h / 8;
     for (let r = 0; r < 8; r++) {
       const grd = g.createLinearGradient(0, r * bh, 0, (r + 1) * bh);
-      grd.addColorStop(0, grey(1)); grd.addColorStop(0.85, grey(0.9)); grd.addColorStop(1, grey(0.55));
+      grd.addColorStop(0, gray(1)); grd.addColorStop(0.85, gray(0.9)); grd.addColorStop(1, gray(0.55));
       g.fillStyle = grd; g.fillRect(0, r * bh, w, bh);
     }
     grain(g, w, h, 10);
   },
   shingles(g, w, h) {
-    g.fillStyle = grey(0.4); g.fillRect(0, 0, w, h);
+    g.fillStyle = gray(0.4); g.fillRect(0, 0, w, h);
     const tw = w / 4, th = h / 10;
-    for (let r = 0; r < 10; r++) for (let k = -1; k < 5; k++) { g.fillStyle = grey(0.75 + rnd() * 0.3); g.fillRect(k * tw + (r % 2) * tw / 2 + 2, r * th + 1, tw - 4, th - 3); }
+    for (let r = 0; r < 10; r++) for (let k = -1; k < 5; k++) { g.fillStyle = gray(0.75 + rnd() * 0.3); g.fillRect(k * tw + (r % 2) * tw / 2 + 2, r * th + 1, tw - 4, th - 3); }
     grain(g, w, h, 60, 2);
   },
   stone(g, w, h) {
-    g.fillStyle = grey(0.7); g.fillRect(0, 0, w, h);
+    g.fillStyle = gray(0.7); g.fillRect(0, 0, w, h);
     const bw = w / 2, bh = h / 4;
-    for (let r = 0; r < 4; r++) for (let k = -1; k < 3; k++) { g.fillStyle = grey(0.9 + rnd() * 0.12); g.fillRect(k * bw + (r % 2) * bw / 2 + 1, r * bh + 1, bw - 2, bh - 2); }
+    for (let r = 0; r < 4; r++) for (let k = -1; k < 3; k++) { g.fillStyle = gray(0.9 + rnd() * 0.12); g.fillRect(k * bw + (r % 2) * bw / 2 + 1, r * bh + 1, bw - 2, bh - 2); }
     grain(g, w, h, 22);
   },
   panel(g, w, h) {
-    g.fillStyle = grey(0.62); g.fillRect(0, 0, w, h);
-    for (let r = 0; r < 2; r++) { g.fillStyle = grey(0.93 + rnd() * 0.07); g.fillRect(1, r * h / 2 + 1, w - 2, h / 2 - 2); }
+    g.fillStyle = gray(0.62); g.fillRect(0, 0, w, h);
+    for (let r = 0; r < 2; r++) { g.fillStyle = gray(0.93 + rnd() * 0.07); g.fillRect(1, r * h / 2 + 1, w - 2, h / 2 - 2); }
     grain(g, w, h, 14);
   },
   board(g, w, h) {
-    for (let r = 0; r < 8; r++) { g.fillStyle = grey(0.85 + rnd() * 0.15); g.fillRect(0, r * h / 8, w, h / 8 - 1); }
+    for (let r = 0; r < 8; r++) { g.fillStyle = gray(0.85 + rnd() * 0.15); g.fillRect(0, r * h / 8, w, h / 8 - 1); }
     grain(g, w, h, 24);
   },
   slabs(g, w, h) {
     // Four slabs, the saw-cut joints between them dark enough to read from the street.
     const j = Math.max(2, Math.round(w / 128));
-    g.fillStyle = grey(0.5); g.fillRect(0, 0, w, h);
-    for (let r = 0; r < 2; r++) for (let k = 0; k < 2; k++) { g.fillStyle = grey(0.9 + rnd() * 0.08); g.fillRect(k * w / 2 + j, r * h / 2 + j, w / 2 - 2 * j, h / 2 - 2 * j); }
+    g.fillStyle = gray(0.5); g.fillRect(0, 0, w, h);
+    for (let r = 0; r < 2; r++) for (let k = 0; k < 2; k++) { g.fillStyle = gray(0.9 + rnd() * 0.08); g.fillRect(k * w / 2 + j, r * h / 2 + j, w / 2 - 2 * j, h / 2 - 2 * j); }
     grain(g, w, h, 20);
   },
   asphalt(g, w, h) {
-    g.fillStyle = grey(0.85); g.fillRect(0, 0, w, h);
+    g.fillStyle = gray(0.85); g.fillRect(0, 0, w, h);
     for (let k = 0; k < 14; k++) { g.fillStyle = `rgba(0,0,0,${0.04 + rnd() * 0.06})`; g.beginPath(); g.ellipse(rnd() * w, rnd() * h, 20 + rnd() * 80, 10 + rnd() * 50, rnd() * 3, 0, 7); g.fill(); }
     grain(g, w, h, 70);
   },
   rough(g, w, h) {
-    g.fillStyle = grey(0.88); g.fillRect(0, 0, w, h);
+    g.fillStyle = gray(0.88); g.fillRect(0, 0, w, h);
     for (let k = 0; k < 20; k++) { g.fillStyle = `rgba(0,0,0,${0.03 + rnd() * 0.05})`; g.beginPath(); g.arc(rnd() * w, rnd() * h, 10 + rnd() * 60, 0, 7); g.fill(); }
     grain(g, w, h, 30);
   },
   grass(g, w, h) {
-    g.fillStyle = grey(0.85); g.fillRect(0, 0, w, h);
+    g.fillStyle = gray(0.85); g.fillRect(0, 0, w, h);
     for (let k = 0; k < 40; k++) { g.fillStyle = `rgba(${rnd() < 0.5 ? '0,0,0' : '255,255,200'},${0.04 + rnd() * 0.06})`; g.beginPath(); g.arc(rnd() * w, rnd() * h, 8 + rnd() * 50, 0, 7); g.fill(); }
     grain(g, w, h, 50);
   },
   metal(g, w, h) {
-    g.fillStyle = grey(0.3); g.fillRect(0, 0, w, h);
-    for (let r = 0; r < 2; r++) { g.fillStyle = grey(0.92 + rnd() * 0.08); g.fillRect(1, r * h / 2 + 1, w - 2, h / 2 - 2); }
+    g.fillStyle = gray(0.3); g.fillRect(0, 0, w, h);
+    for (let r = 0; r < 2; r++) { g.fillStyle = gray(0.92 + rnd() * 0.08); g.fillRect(1, r * h / 2 + 1, w - 2, h / 2 - 2); }
     for (let x = 0; x < w; x += w / 12) { g.fillStyle = 'rgba(0,0,0,0.08)'; g.fillRect(x, 0, 2, h); }
   },
   leaves(g, w, h) {
-    g.fillStyle = grey(0.7); g.fillRect(0, 0, w, h);
-    for (let k = 0; k < 900; k++) { g.fillStyle = grey(0.5 + rnd() * 0.7); g.beginPath(); g.ellipse(rnd() * w, rnd() * h, 3 + rnd() * 5, 2 + rnd() * 3, rnd() * 3, 0, 7); g.fill(); }
+    g.fillStyle = gray(0.7); g.fillRect(0, 0, w, h);
+    for (let k = 0; k < 900; k++) { g.fillStyle = gray(0.5 + rnd() * 0.7); g.beginPath(); g.ellipse(rnd() * w, rnd() * h, 3 + rnd() * 5, 2 + rnd() * 3, rnd() * 3, 0, 7); g.fill(); }
   },
 };
 
@@ -165,7 +165,7 @@ function textureOf(GFX, kind, [sx, sy], painted = null) {
     const also = [];
     textures.set(kind, { map, bump, canvas: c, also });
     if (scan) {
-      // The scan, scaled so its average is a light grey: the material's colour then tints it as it tints the painted one.
+      // The scan, scaled so its average is a light gray: the material's color then tints it as it tints the painted one.
       const img = new Image();
       img.onload = () => {
         const g = c.getContext('2d');
@@ -201,7 +201,7 @@ export function materialFor(GFX, name) {
   if (r.glass) {
     m = new GFX.MeshPhysicalMaterial({ name: key, color: c, metalness: r.stained ? 0.1 : r.metal, roughness: r.stained ? 0.2 : 0.06, clearcoat: 1, clearcoatRoughness: 0.03 });
     // Lit from within at night: a share of the city's windows warm, the shop fronts most.
-    // Drawn in front of a wall it lies on (a far building's windows are a few centimetres proud of its wall).
+    // Drawn in front of a wall it lies on (a far building's windows are a few centimeters proud of its wall).
     m.polygonOffset = true;
     m.polygonOffsetFactor = -1;
     m.polygonOffsetUnits = -4;
@@ -229,7 +229,7 @@ export function setGlow(night) {
 }
 
 /**
- * 3d-city's ground, as Rivertown dressed it: its name -> [Rivertown's material, the metres one repeat of 3d-city's
+ * 3d-city's ground, as Rivertown dressed it: its name -> [Rivertown's material, the meters one repeat of 3d-city's
  * texture coordinates covers there (its surfaces' `tile`)].
  */
 const GROUND = {
@@ -241,11 +241,11 @@ const GROUND = {
 export const dressesGround = (name) => name in GROUND;
 
 /** The engine material for one of 3d-city's ground surfaces, in Rivertown's look: its own copy of the texture,
- * repeated to the scan's real size, in the material's own colour (as Rivertown's: not 3d-city's tints). */
+ * repeated to the scan's real size, in the material's own color (as Rivertown's: not 3d-city's tints). */
 export function groundMaterial(GFX, name) {
   if (made.has(name)) return made.get(name);
   const [key, tile] = GROUND[name];
-  if (key.startsWith('M_Lane_')) { const m = materialFor(GFX, key); made.set(name, m); return m; } // paint: its flat colour
+  if (key.startsWith('M_Lane_')) { const m = materialFor(GFX, key); made.set(name, m); return m; } // paint: its flat color
   const r = recipe(key), f = flat(key);
   const t = textureOf(GFX, r.kind, r.size, r.painted);
   const own = (color) => {

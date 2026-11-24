@@ -1,11 +1,11 @@
 /**
- * Facades the engine's set does not have, painted the same way (one storey of one bay, tiling across and up; the
- * top of the picture is the top of the storey), for the buildings of downtown Grand Rapids as their photographs show
+ * Facades the engine's set does not have, painted the same way (one story of one bay, tiling across and up; the
+ * top of the picture is the top of the story), for the buildings of downtown Grand Rapids as their photographs show
  * them:
  *
  * - `glass`: a curtain wall of reflective glass in a `tone`: `bronze` (the Amway Grand tower, Campau Square Plaza),
  *   `blue` (the old National City building on Monroe), `teal` (the JW Marriott), `dark` (the newer towers),
- *   with mullions to suit and a spandrel at the foot of each storey.
+ *   with mullions to suit and a spandrel at the foot of each story.
  * - `limestone`: pale ashlar in courses with a rusticated joint, a tall window with a dressed lintel and a sill:
  *   McKay Tower, the old Federal Building, the banks of Pearl Street.
  * - `historic`: running-bond brick (light, to be tinted red, brown or buff) round a tall one-over-one sash window
@@ -93,7 +93,7 @@ function limestone(s, { seed }) {
 function historic(s, { seed, arch = false }) {
   const n = s.size;
   const cloud = fractal(seed * 3 + 5, 6, 3);
-  // Running bond: a brick 0.2 m by 0.065 m, a storey of four metres: some 60 courses.
+  // Running bond: a brick 0.2 m by 0.065 m, a story of four meters: some 60 courses.
   const courses = 58, perRow = 16;
   for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) {
     const i = y * n + x, u = x / n, v = y / n;

@@ -408,7 +408,7 @@ export const LOOKS = {
    "wall": "glass-blue"
   }
  },
- "Civic Theatre": {
+ "Civic Theater": {
   "wall": "historic",
   "tint": "#fbecc8",
   "cornice": {

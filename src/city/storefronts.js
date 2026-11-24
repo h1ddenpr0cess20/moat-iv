@@ -11,10 +11,10 @@ import { WALKS } from './bridges.js';
 
 /** A slot of the atlas, in pixels: eight to one, as a board is. */
 export const SLOT = { w: 256, h: 32, cols: 8 };
-/** How high a board is, and how high its middle stands over the pavement, metres. */
+/** How high a board is, and how high its middle stands over the pavement, meters. */
 const BOARD = 0.8, AT = 3.95;
 
-/** The main street's brick and paint: red and brown brick, cream, and the colours its shops are painted. */
+/** The main street's brick and paint: red and brown brick, cream, and the colors its shops are painted. */
 const TINTS = ['#c47a62', '#a8705c', '#d08a70', '#f0e2c4', '#7fa8a2', '#d9b14e', '#9a5a68', '#6f8a66', '#c9744e', '#7a8fae', '#e8d9bd', '#b06a58'];
 const CORNICES = ['#efe6d4', '#3f4a4a', '#e2d6bc', '#5a3a34', '#f4efe6'];
 
@@ -31,7 +31,7 @@ export function storefrontLook(key) {
 }
 
 /**
- * Where each business's board goes: on the building it is in (or the nearest, a few metres off), on that building's
+ * Where each business's board goes: on the building it is in (or the nearest, a few meters off), on that building's
  * wall nearest the street, along it where the business is, not over another's. Marks those buildings `storefront`.
  * Returns the boards: [{ name, kind, b, A, B, n, t0, t1, slot, used }].
  */
@@ -80,12 +80,12 @@ export function shopfronts(buildings, places, roads) {
   for (const p of places) {
     const k = `${Math.round(p[1])},${Math.round(p[2])}`;
     const was = spots.get(k);
-    const rank = (q) => (/^Downtown Market/.test(q[0]) ? 2 : /Market|Hall|Center|Centre/.test(q[0]) ? 1 : 0);
+    const rank = (q) => (/^Downtown Market/.test(q[0]) ? 2 : /Market|Hall|Center|Center/.test(q[0]) ? 1 : 0);
     if (!was || rank(p) > rank(was)) spots.set(k, p);
   }
   for (const [full, px, pz, kind] of spots.values()) {
     const name = full.replace(/,?\s+(Inc\.?|LLC|L\.L\.C\.)$/i, '').replace(/^Downtown Market Grand Rapids$/, 'Downtown Market').trim();
-    // Its building: the one it is in, or the nearest within a few metres.
+    // Its building: the one it is in, or the nearest within a few meters.
     let best = null;
     for (const i of near(grid, px, pz, 16)) {
       const b = buildings[i];
@@ -256,13 +256,13 @@ function patio(builder, x, z, y, cloth) {
   }
 }
 
-/** Awning cloth: deep red, forest green, navy, black, mustard, teal, striped colours made plain. */
+/** Awning cloth: deep red, forest green, navy, black, mustard, teal, striped colors made plain. */
 const AWNINGS = [[0.55, 0.08, 0.08], [0.1, 0.3, 0.16], [0.08, 0.12, 0.3], [0.05, 0.05, 0.05], [0.75, 0.55, 0.1], [0.1, 0.38, 0.4], [0.45, 0.12, 0.3], [0.3, 0.3, 0.32]];
 
 /** How many rows of slots a tile's atlas has: enough for `n` boards, a power of two. */
 export const atlasRows = (n) => { let r = 4; while (r * SLOT.cols < n) r *= 2; return r; };
 
-/** What each board looks like on the atlas: the colours and the lettering, by the kind of place and its name. */
+/** What each board looks like on the atlas: the colors and the lettering, by the kind of place and its name. */
 const STYLES = {
   drink: [['#141418', '#ff6fb0'], ['#16181c', '#ffcf5a'], ['#101820', '#6ff0ff'], ['#2a0f12', '#f6d27a']],
   food: [['#8c1c1c', '#fff4dc'], ['#1f4d2c', '#fff4dc'], ['#d9a62a', '#2a1a10'], ['#1d2c4a', '#ffe6b0'], ['#f4ead2', '#8c1c1c']],

@@ -55,20 +55,20 @@ export function opening(M, e, u0, u1, z0, z1, wx0, wx1, wy0, wy1, depth, wall, b
   M.poly([e.P(wx0, wy0, d), e.P(wx1, wy0, d), e.P(wx1, wy1, d), e.P(wx0, wy1, d)], back, e.n);
 }
 
-/** A box on the wall: base centre at (u, z) `k` deep (negative = proud of the wall); its back is left out. */
+/** A box on the wall: base center at (u, z) `k` deep (negative = proud of the wall); its back is left out. */
 export function bar(M, e, u, z, k, sx, sy, sz, mat, { top = true, bottom = false, ends = true } = {}) {
   if (M.coarse && Math.min(sx, sz) < 0.35) return; // sills, lintels, mullions, rails: too thin to see from afar
   M.box(e.P(u, z, k), [sx, sy, sz], mat, { yaw: e.yaw, top, bottom, cull: k + sy / 2 >= -0.01 ? e.n : null, ends });
 }
 
-/** A flat strip on the wall's plane `k` deep, bottom centre at (u, z): a frame bar, a mullion, a shutter. */
+/** A flat strip on the wall's plane `k` deep, bottom center at (u, z): a frame bar, a mullion, a shutter. */
 export function plate(M, e, u, z, k, sx, sz, mat) {
   if (M.coarse) return; // frames, mullions, shutters
   const a = u - sx / 2, b = u + sx / 2;
   M.poly([e.P(a, z, k), e.P(b, z, k), e.P(b, z + sz, k), e.P(a, z + sz, k)], mat, e.n);
 }
 
-/** A punched window in a bay of one storey. */
+/** A punched window in a bay of one story. */
 export function window(M, e, u0, u1, z0, z1, st, wall = null) {
   const w = u1 - u0, h = z1 - z0;
   const [fw, , head] = st.win;
@@ -101,7 +101,7 @@ export function window(M, e, u0, u1, z0, z1, st, wall = null) {
 }
 
 /**
- * A storey of punched windows across the bays `xs` (u0..u1 each), on `wall`. `own(k, u0, u1)` may draw bay k itself
+ * A story of punched windows across the bays `xs` (u0..u1 each), on `wall`. `own(k, u0, u1)` may draw bay k itself
  * (a door) and return true. From afar the windows of a run share one band of wall above and below them.
  */
 export function windowRow(M, e, xs, z0, z1, st, wall = null, own = null) {
@@ -117,7 +117,7 @@ export function windowRow(M, e, xs, z0, z1, st, wall = null, own = null) {
     if (own?.(k, xs[k], xs[k + 1])) { k++; continue; }
     let k1 = k;
     while (k1 < xs.length - 1 && !(k1 > k && own && ownProbe(own, k1))) k1++;
-    // Bays k .. k1-1 are windows: one sheet of wall, the glass on it (a few centimetres proud, drawn in front).
+    // Bays k .. k1-1 are windows: one sheet of wall, the glass on it (a few centimeters proud, drawn in front).
     const u0 = xs[k], u1 = xs[k1];
     plain(M, e, u0, u1, z0, z1, wall);
     if (wy1 - wy0 >= 0.6) for (let b = k; b < k1; b++) {
@@ -192,7 +192,7 @@ export function curtainWall(M, e, z0, z1, floors, st) {
   }
 }
 
-/** A band round a footprint: a cornice, a belt course or a parapet cap, `out` metres proud of the wall. */
+/** A band round a footprint: a cornice, a belt course or a parapet cap, `out` meters proud of the wall. */
 export function ringSlab(M, ring, out, z0, z1, mat, inner = 0) {
   const o = offsetRing(ring, out);
   const ir = inner ? offsetRing(ring, -inner) : ring;

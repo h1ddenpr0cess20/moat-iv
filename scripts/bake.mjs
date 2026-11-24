@@ -1,6 +1,6 @@
 // Bakes a window of downtown Grand Rapids (from the 3d-city map data) into one small file the game loads:
 //   node scripts/bake.mjs <3d-city/public/data> [cx cz] [out dir]   (the middle: the Amway Grand Hotel is at -501 -301)   (writes grand-rapids.json and parcels.json)
-// Coordinates are metres from the middle of 3d-city's map (x east, z south). One tile is TILE metres.
+// Coordinates are meters from the middle of 3d-city's map (x east, z south). One tile is TILE meters.
 import { readFileSync, writeFileSync } from 'node:fs';
 
 const dir = process.argv[2];
@@ -85,7 +85,7 @@ const out = {
 writeFileSync(`${OUT}/grand-rapids.json`, JSON.stringify(out));
 
 // The parcels: every real building worth a lot, with what it is, as 3d-city's designs build it. Coordinates stay in
-// 3d-city's metres (x east, z south of the middle of its map), which its landmark and district tables are in.
+// 3d-city's meters (x east, z south of the middle of its map), which its landmark and district tables are in.
 const lidar = read('lidar.json');
 const r1 = (n) => Math.round(n * 10) / 10;
 const parcels = [];

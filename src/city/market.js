@@ -1,5 +1,5 @@
 /**
- * The Downtown Market on Ionia (Hugh A. Boyd Architects, 2013): a hall of brick and glass three storeys high, the
+ * The Downtown Market on Ionia (Hugh A. Boyd Architects, 2013): a hall of brick and glass three stories high, the
  * greenhouse on its roof under three glass pyramids (lit at night, seen from US-131), and the long open shed of the
  * outdoor market along its south side. Its shape is the lidar's: the shed is the low part of the footprint, the
  * hall the middle, the greenhouse the top.

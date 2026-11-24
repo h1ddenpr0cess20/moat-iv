@@ -4,14 +4,14 @@ import { dormer, face, gableEnd, heritageHouse, post, roof } from './heritage.js
 
 /**
  * The houses of Grand Rapids and its suburbs, built as the kinds the region has rather than as boxes under hip roofs:
- * the postwar ranch (one storey, a low hipped roof, brick or siding, a garage door at one end), the two-storey
+ * the postwar ranch (one story, a low hipped roof, brick or siding, a garage door at one end), the two-story
  * traditional of the subdivisions (side-gabled, siding, an attached garage, a gabled porch over the door), the Cape Cod
- * (a storey and a half under a steep side gable, two dormers), the Craftsman bungalow (a low front gable with a deep
- * overhang and a wide porch on brick piers), the front-gabled cottage of the old neighbourhoods (narrow, steep, a small
+ * (a story and a half under a steep side gable, two dormers), the Craftsman bungalow (a low front gable with a deep
+ * overhang and a wide porch on brick piers), the front-gabled cottage of the old neighborhoods (narrow, steep, a small
  * porch), the Dutch Colonial's gambrel (the West Michigan Dutch settlers' barn roof, as a house's), and the Foursquare.
  * (Heritage Hill's own houses are heritage.js's; the Jenison Museum, an old house with a turret, is one of those.)
  *
- * What a house is comes from its footprint, its height (a one-storey ranch is under 5.4 m to its ridge, a two-storey
+ * What a house is comes from its footprint, its height (a one-story ranch is under 5.4 m to its ridge, a two-story
  * 8 m and more) and its size; which of the kinds it is, where they overlap, from its id, so a street of them is mixed.
  * They are lean (a few dozen triangles) because there are 160 000 of them: no foundation band, no eaves trim, a chimney
  * of four faces. Each faces the street it is nearest.
@@ -76,11 +76,11 @@ export function typicalHouse(builder, b, h, foot, front, seed, kind) {
   const [roofMat, roofTint] = pick(ROOFS, `${seed}rf`) ;
   const roofColor = linear(roofTint);
   const wallMat = brick ? 'wall:facade:brick' : 'wall:facade:house';
-  const storey = brick ? 3.9 : 4.2, ratio = brick ? 1.2 : 1.6;
+  const story = brick ? 3.9 : 4.2, ratio = brick ? 1.2 : 1.6;
 
   const base = foot + 0.3;
   const eave = base + Math.min(P.eave, Math.max(2.4, h * 0.74));
-  const rows = Math.max(1, Math.round((eave - base) / storey));
+  const rows = Math.max(1, Math.round((eave - base) / story));
 
   // The walls, four faces, with their collision.
   const corners = [[-hw, -hd], [hw, -hd], [hw, hd], [-hw, hd]];

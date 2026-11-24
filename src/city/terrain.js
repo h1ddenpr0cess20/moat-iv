@@ -6,13 +6,13 @@ const smooth = (t) => { t = Math.max(0, Math.min(1, t)); return t * t * (3 - 2 *
 
 /**
  * The ground: the SRTM heights resampled to a finer grid, with the river's
- * bed cut into it. Heights are metres above BASE. `rawAt` is the ground as
+ * bed cut into it. Heights are meters above BASE. `rawAt` is the ground as
  * the satellite saw it (a bridge's ends stand on that), `heightAt` the ground
  * as it is drawn.
  */
 export class Terrain {
   /**
-   * `box` ([x0, z0, x1, z1] metres): the patch of `elevation` this ground covers, for a tile of a bigger map (all of
+   * `box` ([x0, z0, x1, z1] meters): the patch of `elevation` this ground covers, for a tile of a bigger map (all of
    * it, by default). `level`: the height of the water the engine's ocean is drawn at, if it is known already (the
    * river's, worked out from what the satellite saw over it, by default). `surface(x, z)`: the river's own surface
    * there, where it runs higher than that (above a dam, upstream); `floor`: no dry ground lower than this, so the
@@ -20,7 +20,7 @@ export class Terrain {
    */
   constructor(elevation, water = [], { cell = 8, bank = 18, box = null, level = undefined, surface = null, floor = null, outer = null, pad = 0 } = {}) {
     this.elevation = elevation;
-    // The heights round `elevation`'s own (the greater area's), for the ground `pad` metres past its edge.
+    // The heights round `elevation`'s own (the greater area's), for the ground `pad` meters past its edge.
     this.outer = outer;
     this.cell = cell;
     const { step, cols, rows } = elevation;
@@ -130,7 +130,7 @@ export class Terrain {
 
   heightAt(x, z) { return this.sample(this.h, x, z); }
 
-  /** Levels the ground within `r` metres of (cx, cz) to its mean height there, easing back to the ground as it was over `feather` metres: for a plaza. */
+  /** Levels the ground within `r` meters of (cx, cz) to its mean height there, easing back to the ground as it was over `feather` meters: for a plaza. */
   level(cx, cz, r, feather = 10) {
     let sum = 0, n = 0;
     const each = (fn) => {
@@ -145,7 +145,7 @@ export class Terrain {
     return y;
   }
 
-  /** Lifts the ground within `r` metres of (cx, cz) to at least `y`: a bank built up to a level, as behind a wall. */
+  /** Lifts the ground within `r` meters of (cx, cz) to at least `y`: a bank built up to a level, as behind a wall. */
   embank(cx, cz, r, y) {
     const i0 = Math.max(0, Math.floor((cx - r - this.x0) / this.cell)), i1 = Math.min(this.nx - 1, Math.ceil((cx + r - this.x0) / this.cell));
     const j0 = Math.max(0, Math.floor((cz - r - this.z0) / this.cell)), j1 = Math.min(this.nz - 1, Math.ceil((cz + r - this.z0) / this.cell));
@@ -154,7 +154,7 @@ export class Terrain {
     }
   }
 
-  /** Raises a low hill `height` metres high at (cx, cz), easing out to nothing `r` metres off: a park's mound. */
+  /** Raises a low hill `height` meters high at (cx, cz), easing out to nothing `r` meters off: a park's mound. */
   mound(cx, cz, r, height) {
     for (let j = 0; j < this.nz; j++) for (let i = 0; i < this.nx; i++) {
       const d = Math.hypot(this.x0 + i * this.cell - cx, this.z0 + j * this.cell - cz);
@@ -163,7 +163,7 @@ export class Terrain {
   }
 
   /**
-   * A point `lift` metres over the ground at (x, z), lifted a little more where the ground is steep: a strip
+   * A point `lift` meters over the ground at (x, z), lifted a little more where the ground is steep: a strip
    * is flat between its points and the ground is not, so on a slope it would sink through between them.
    */
   over(x, z, lift, most = 0.45) {
@@ -195,7 +195,7 @@ export class Terrain {
   mesh(builder, { grass: grassMaterial = 'surface:grass', paved: pavedMaterial = 'road:concrete', built = null, skip = null } = {}, tile = 1.5) {
     const { nx, nz, cell } = this;
     const green = [[1, 1, 1], [1.08, 1.06, 1], [0.92, 0.96, 0.92], [1.04, 1.1, 0.96]];
-    const grey = [[1, 1, 1], [1.05, 1.04, 1.02], [0.94, 0.94, 0.94], [0.98, 0.97, 1.0]];
+    const gray = [[1, 1, 1], [1.05, 1.04, 1.02], [0.94, 0.94, 0.94], [0.98, 0.97, 1.0]];
     for (let j = 0; j < nz - 1; j++) {
       for (let i = 0; i < nx - 1; i++) {
         // A cell some other ground covers (downtown's, in a tile round it) is left to it.
@@ -218,7 +218,7 @@ export class Terrain {
         // Under the river (all of it below the water): silt, dark as a riverbed is, not lawn seen through the shallows.
         const level = this.surface ? this.surface(a[0], a[2]) : this.waterLevel;
         const under = !urban && level !== null && level !== undefined && Math.max(a[1], b[1], c[1], d[1]) < level - 0.02;
-        builder.quad(urban ? pavedMaterial : under ? 'ground:riverbed' : grassMaterial, a, b, c, d, at(a), at(b), at(c), at(d), urban ? grey[k] : under ? [1, 1, 1] : green[k], ns);
+        builder.quad(urban ? pavedMaterial : under ? 'ground:riverbed' : grassMaterial, a, b, c, d, at(a), at(b), at(c), at(d), urban ? gray[k] : under ? [1, 1, 1] : green[k], ns);
         builder.collide(a, b, c);
         builder.collide(a, c, d);
       }
